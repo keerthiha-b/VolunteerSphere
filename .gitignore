@@ -1,0 +1,5 @@
+# Ignore all log files
+*.log
+
+# Ignore node_modules directory used by Node.js
+node_modules/
