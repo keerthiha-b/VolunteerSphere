@@ -5,10 +5,43 @@ const SignUpScreen = () => {
   const [isOrg, setIsOrg] = useState(false);
   const [orgName, setOrgName] = useState('');
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+
+  const sendSignUpToBackend = async () => {
+    const newUser = {
+      isOrg: isOrg,
+      orgName: orgName,
+      username: username,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+      email: email
+    };
+
+    console.log(JSON.stringify(newUser));
+
+    try {
+      const response = await fetch('http://localhost:3001/new-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newUser)
+      });
+
+      if (response.ok) {
+        console.log('Object added successfully');
+      } else {
+        console.error('Error adding object');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -36,6 +69,12 @@ const SignUpScreen = () => {
       />
       <TextInput
         style={styles.input}
+        placeholder="Enter an email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
         placeholder="Enter a password for this account"
         secureTextEntry
         value={password}
@@ -52,13 +91,13 @@ const SignUpScreen = () => {
         <>
           <TextInput
             style={styles.input}
-            placeholder="Provide a first and last name"
+            placeholder="Provide a first name"
             value={firstName}
             onChangeText={setFirstName}
           />
           <TextInput
             style={styles.input}
-            placeholder="Last Name"
+            placeholder="Provide a last Name"
             value={lastName}
             onChangeText={setLastName}
           />
@@ -66,7 +105,7 @@ const SignUpScreen = () => {
       )}
       <Button
         title="Sign Up"
-        onPress={() => console.log("Sign Up Pressed")} // Here you will later add the function to handle the Firebase signup
+        onPress={sendSignUpToBackend} // Here you will later add the function to handle the Firebase signup
       />
     </View>
   );
