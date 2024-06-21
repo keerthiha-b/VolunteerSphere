@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
 const newUser = require('./API/newUser');
+const loginUser = require('./API/loginUser');
+
 const cors = require('cors');
 
 const MONGO_DB = "mongodb+srv://Volunteer1:Admin$trator@volunteersphere.5bhk4hh.mongodb.net/?retryWrites=true&w=majority&appName=VolunteerSphere";
@@ -19,6 +22,10 @@ mongoose.connect(MONGO_DB, {dbName: "UserTest"})
 // SIGN-UP
 // API call to create new object
 app.post('/new-user', newUser);
+
+// LOG-IN
+// API call to log in user
+app.post('/login-user', newUser);
 
 // Listening on Port 3001
 const PORT = 3001;
