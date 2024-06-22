@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 
 const newUser = require('./API/newUser');
 const loginUser = require('./API/loginUser');
+const Activity = require('./Schema/Activity');
 
 const cors = require('cors');
 
@@ -26,6 +27,18 @@ app.post('/new-user', newUser);
 // LOG-IN
 // API call to log in user
 app.post('/login-user', newUser);
+
+// Endpoint to handle activity submission
+app.post('/activities', async (req, res) => {
+  const activity = new Activity(req.body);
+  try {
+    await activity.save();
+    res.status(200).send('Activity saved successfully');
+  } catch (error) {
+    res.status(500).send('Error saving activity');
+  }
+});
+
 
 // Listening on Port 3001
 const PORT = 3001;
