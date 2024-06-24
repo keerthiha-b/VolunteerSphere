@@ -8,13 +8,13 @@
     "server": "cd .. && cd backend && node server.js ",
     "client": "npm install && npx expo start",
     "test": "echo \"Error: no test specified\" && exit 1"
-
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.7.2",
-    "expo": "^51.0.11"
+    "expo": "^51.0.11",
+    "mongodb": "^6.7.0"
   },
   "devDependencies": {
     "@types/react": "~18.2.79",

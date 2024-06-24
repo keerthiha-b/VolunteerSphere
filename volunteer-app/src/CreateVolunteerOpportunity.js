@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
 import AddressAutocomplete from './AddressAutocomplete';
 
 const CreateVolunteerOpportunity = () => {
+  const navigation = useNavigation();
   const [name, setName] = useState('');
   const [month, setMonth] = useState(null);
   const [day, setDay] = useState(null);
@@ -132,8 +134,9 @@ const CreateVolunteerOpportunity = () => {
       console.log('Submitting activity:', activity);
       const response = await axios.post('http://localhost:3001/activities', activity);
       console.log('Response:', response);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         Alert.alert('Success', 'Activity submitted successfully!');
+        // Clear form
         setName('');
         setMonth(null);
         setDay(null);
@@ -143,6 +146,9 @@ const CreateVolunteerOpportunity = () => {
         setAddress('');
         setDescription('');
         setPhoneNumber('');
+        // Navigate to Volunteer Opportunities page
+        console.log('Navigating to VolunteerOpportunities');
+        navigation.navigate('VolunteerOpportunities');
       } else {
         Alert.alert('Error', 'Something went wrong. Please try again.');
       }
