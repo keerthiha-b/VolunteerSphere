@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Switch } from 'react-native';
 
-const SignUpScreen = () => {
+const SignUpScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,6 +22,7 @@ const SignUpScreen = () => {
 
       if (response.ok) {
         console.log('Logged in successfully');
+        navigation.navigate('Home')
       } else {
         console.error('Error adding object');
       }

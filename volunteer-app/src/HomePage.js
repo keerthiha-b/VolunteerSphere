@@ -1,20 +1,17 @@
-
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-const LandingPage = ({ navigation }) => {
+const HomePage = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />
-      <Text style={styles.title}>Volunteer Sphere</Text>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>Log In</Text>
+      <Text style={styles.title}>Welcome back</Text>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Profile')}>
+        <Text style={styles.buttonText}>Profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => {
-        console.log("Navigation object:", navigation);
-        navigation.navigate('SignUp');}}>
-      <Text style={styles.buttonText}>Sign Up</Text>
-    </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('LandingPage')}>
+        <Text style={styles.buttonText}>Sign out</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -54,4 +51,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default LandingPage;
+export default HomePage;
