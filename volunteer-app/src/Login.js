@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, Switch } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
 
-const SignUpScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,8 +22,9 @@ const SignUpScreen = () => {
 
       if (response.ok) {
         console.log('Logged in successfully');
+        navigation.navigate('OrgLandingPage');
       } else {
-        console.error('Error adding object');
+        console.error('Error logging in');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -32,14 +33,13 @@ const SignUpScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> Log In </Text>
+      <Text style={styles.title}>Log In</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder="Email"
         value={username}
         onChangeText={setUsername}
       />
-     
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -49,12 +49,11 @@ const SignUpScreen = () => {
       />
       <Button
         title="Log In"
-        onPress={attemptLogin} // Here you will later add the function to handle the Firebase signup
+        onPress={attemptLogin}
       />
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -68,12 +67,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
   input: {
     marginBottom: 10,
     borderWidth: 1,
@@ -82,4 +75,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SignUpScreen;
+export default LoginScreen;

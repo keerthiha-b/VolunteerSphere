@@ -10,22 +10,12 @@ const SignUpScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [validationErrors, setValidationErrors] = useState(['Email is required', 'Your first name is required', 'Your last name is required', 'Username is required', 'Password is required']);
+  const [validationErrors, setValidationErrors] = useState([]);
   const [matchError, setMatchError] = useState('');
 
-  // For future reference:
-  // password validation is done as the user is inputting information
-  // matching error checking is done only when the user presses sign-up, and is removed once any textbox is changed afterwards 
-
   const sendSignUpToBackend = async () => {
-    if(validationErrors.length > 0) {
-      return;
-    }
-
-    confirmMatch();
-    if(matchError != '') 
-    {
-      return;
+    if (!validatePasswordAndEmail() || !confirmMatch()) {
+      return; // Prevent submission if errors exist
     }
 
     const newUser = {
@@ -60,36 +50,28 @@ const SignUpScreen = () => {
   }
 
   const validatePasswordAndEmail = () => {
-    var errors = [];
+    let errors = [];
 
-    // Validating email -> semantics changed later
-    if(email == '')
-    {
+    // Validation logic
+    if (email === '') {
       errors.push('Email is required');
     }
-    if(isOrg && orgName == '')
-    {
+    if (isOrg && orgName === '') {
       errors.push('Organization name is required');
     }
-    if(!isOrg && firstName == '')
-    {
+    if (!isOrg && firstName === '') {
       errors.push('Your first name is required');
     }
-    if(!isOrg && lastName == '')
-    {
+    if (!isOrg && lastName === '') {
       errors.push('Your last name is required');
     }
-    if(username == '')
-    {
+    if (username === '') {
       errors.push('Username is required');
     }
-    if (password == '')
-    {
+    if (password === '') {
       errors.push('Password is required');
-    }
-    else 
-    {
-      if(password.length <= 8) {
+    } else {
+      if (password.length <= 8) {
         errors.push('Password must be length of at least 8');
       }
       if (!/[A-Z]/.test(password)) {
@@ -97,10 +79,10 @@ const SignUpScreen = () => {
       }
       if (!/[a-z]/.test(password)) {
         errors.push('Password must contain at least one lowercase letter');
-      } 
+      }
       if (!/[0-9]/.test(password)) {
         errors.push('Password must contain at least one number');
-      } 
+      }
       if (!/[$%&#]/.test(password)) {
         errors.push('Password must contain at least one special character (one of $ % & #)');
       }
@@ -108,27 +90,26 @@ const SignUpScreen = () => {
 
     setValidationErrors(errors);
     console.log(validationErrors);
-    
+
     // Return if the number of errors is zero
     return errors.length === 0;
   }
 
   const confirmMatch = () => {
-    if(password != confirmPassword) {
+    if (password !== confirmPassword) {
       setMatchError('Unable to sign up, passwords don\'t match');
-    }
-    else
-    {
+      return false;
+    } else {
       setMatchError('');
+      return true;
     }
-    console.log(matchError);
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sign Up</Text>
       <View style={styles.switchContainer}>
-        <Text>Are you representing an organization or facility?</Text>
+        <Text>Toggle on for signing up as an organization</Text>
         <Switch
           value={isOrg}
           onValueChange={newVal => setIsOrg(newVal)}
@@ -137,11 +118,12 @@ const SignUpScreen = () => {
       {isOrg && (
         <TextInput
           style={styles.input}
-          placeholder="What is the name of your organization or facility?"
+          placeholder="What is the name of your organization?"
           value={orgName}
           onChangeText={(e) => {
             setMatchError('');
-            setOrgName(e)}}
+            setOrgName(e)
+          }}
         />
       )}
       <TextInput
@@ -151,7 +133,8 @@ const SignUpScreen = () => {
         onChangeText={(e) => {
           setMatchError('');
           setUsername(e);
-          validatePasswordAndEmail()}}
+          validatePasswordAndEmail()
+        }}
       />
       <TextInput
         style={styles.input}
@@ -160,7 +143,8 @@ const SignUpScreen = () => {
         onChangeText={(e) => {
           setMatchError('');
           setEmail(e);
-          validatePasswordAndEmail()}}
+          validatePasswordAndEmail()
+        }}
       />
       <TextInput
         style={styles.input}
@@ -170,7 +154,8 @@ const SignUpScreen = () => {
         onChangeText={(e) => {
           setMatchError('');
           setPassword(e);
-          validatePasswordAndEmail()}}
+          validatePasswordAndEmail()
+        }}
       />
       <TextInput
         style={styles.input}
@@ -180,7 +165,8 @@ const SignUpScreen = () => {
         onChangeText={(e) => {
           setMatchError('');
           setConfirmPassword(e);
-          validatePasswordAndEmail()}}
+          validatePasswordAndEmail()
+        }}
       />
       {!isOrg && (
         <>
@@ -191,18 +177,30 @@ const SignUpScreen = () => {
             onChangeText={(e) => {
               setMatchError('');
               setFirstName(e);
-              validatePasswordAndEmail()}}
+              validatePasswordAndEmail()
+            }}
           />
           <TextInput
             style={styles.input}
-            placeholder="Provide a last Name"
+            placeholder="Provide a last name"
             value={lastName}
             onChangeText={(e) => {
               setMatchError('');
               setLastName(e);
-              validatePasswordAndEmail()}}
+              validatePasswordAndEmail()
+            }}
           />
         </>
+      )}
+      {validationErrors.length > 0 && (
+        <View style={styles.errorContainer}>
+          {validationErrors.map((error, index) => (
+            <Text key={index} style={styles.errorText}>{error}</Text>
+          ))}
+        </View>
+      )}
+      {matchError !== '' && (
+        <Text style={styles.errorText}>{matchError}</Text>
       )}
       <Button
         title="Sign Up"
@@ -211,7 +209,6 @@ const SignUpScreen = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -236,6 +233,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     padding: 10,
+  },
+  errorContainer: {
+    backgroundColor: '#ffcba4',
+    borderRadius: 5,
+    padding: 10,
+    marginVertical: 10,
+  },
+  errorText: {
+    color: '#721c24',
+    textAlign: 'center',
+    fontSize: 14,
   }
 });
 
