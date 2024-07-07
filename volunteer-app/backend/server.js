@@ -1,33 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
 const newUser = require('./API/newUser');
 const loginUser = require('./API/loginUser');
 const Activity = require('./Schema/Activity');
-
-
 const cors = require('cors');
 
-const MONGO_DB = "mongodb+srv://Volunteer1:Admin$trator@volunteersphere.5bhk4hh.mongodb.net/?retryWrites=true&w=majority&appName=VolunteerSphere";
-
 const app = express();
+const PORT = process.env.PORT || 3001; 
+const MONGO_DB_URI = process.env.MONGO_DB_URI || "mongodb+srv://Volunteer1:Admin$trator@volunteersphere.5bhk4hh.mongodb.net/?retryWrites=true&w=majority&appName=VolunteerSphere";
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect(MONGO_DB, {dbName: "UserTest"})
+mongoose.connect(MONGO_DB_URI, { dbName: "UserTest" })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// SIGN-UP
-// API call to create new object
+// SIGN-UP - API call to create a new user
 app.post('/new-user', newUser);
 
-// LOG-IN
-// API call to log in user
-app.post('/login-user', newUser);
+// LOG-IN - API call to log in a user
+app.post('/login-user', loginUser);
 
 // Endpoint to handle activity submission
 app.post('/activities', async (req, res) => {
@@ -60,7 +54,4 @@ app.get('/activities', async (req, res) => {
   }
 });
 
-
-// Listening on Port 3001
-const PORT = 3001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

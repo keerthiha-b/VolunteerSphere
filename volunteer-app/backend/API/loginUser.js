@@ -1,54 +1,30 @@
-const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs');
 const User = require("../Schema/User");
 const Organization = require('../Schema/Organization');
-const express = require('express');
-const cors = require('cors');
 
-// Bcrypt for hashing
-const bcryptjs = require('bcryptjs');
-
-// Middleware
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// API call to create new object
 const loginUser = async (req, res) => {
     try {
-      // Using the passed from front-end object
-      const passedUser = req.body;
-  
-      const user = await User.findOne({
-        "username": passedUser.username
-      });
+        const { username, password } = req.body;
 
-      const org = await Organization.findOne({
-        "username": passedUser.username
-      })
+        // Attempt to find a user or organization by the username
+        const account = await User.findOne({ username }) || await Organization.findOne({ username });
 
-      if (!user && !org) {
-        return res.status(401).json({errorMsg : "Unable to log in, account is not found or verified"});
-      }
+        if (!account) {
+            return res.status(401).json({ errorMsg: "Account not found or not verified" });
+        }
 
-      // Compare the provided password with the stored hash
-      const isPasswordValid = false;
-      if (user) {
-        isPasswordValid = bcryptjs.compareSync(passedUser.password, user.password);
-      }
-      else if (org) {
-        isPasswordValid = bcryptjs.compareSync(passedUser.password, org.password);
-      }
-  
-      if (!isPasswordValid) {
-        return res.status(401).json({errorMsg : "Unable to log in, password is incorrect"});
-      }
+        // Asynchronously compare the provided password with the stored hash
+        const isPasswordValid = await bcrypt.compare(password, account.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ errorMsg: "Password is incorrect" });
+        }
 
-      // Send tokens to the frontend
-      res.status(200).send('Good to go');
-  
+        // Login successful, return a success message
+        res.status(200).json({ message: 'Logged in successfully' });
     } catch (error) {
-      res.status(500).send('Error logging in user: ' + error.message);
+        console.error('Error logging in user:', error);
+        res.status(500).json({ errorMsg: 'Error logging in user', details: error.message });
     }
-  };
-  
-  module.exports = loginUser;
+};
+
+module.exports = loginUser;

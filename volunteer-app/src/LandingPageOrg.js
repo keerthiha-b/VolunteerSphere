@@ -12,7 +12,7 @@ const OrgLandingPage = ({ navigation }) => {
         <Text style={styles.buttonText}>Create a New Volunteer Opportunity</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.optionButton}>
+      <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('VolunteerOpportunities')}>
         <Text style={styles.buttonText}>Manage Volunteer Opportunity(s)</Text>
       </TouchableOpacity>
 

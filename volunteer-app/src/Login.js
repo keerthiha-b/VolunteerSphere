@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const attemptLogin = async () => {
-    const currUser = {
-      username: username,
-      password: password
-    };
+    if (!username.trim() || !password.trim()) {
+      Alert.alert("Validation Error", "Username and password cannot be empty.");
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:3001/login-user', {
@@ -17,17 +17,21 @@ const LoginScreen = ({ navigation }) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(currUser)
+        body: JSON.stringify({ username, password })
       });
 
+      const data = await response.json();
+
       if (response.ok) {
-        console.log('Logged in successfully');
-        navigation.navigate('OrgLandingPage');
+        console.log('Logged in successfully:', data.message);
+        navigation.navigate('OrgLandingPage'); // Navigate to the next screen
       } else {
-        console.error('Error logging in');
+        console.error('Login Error:', data.errorMsg);
+        Alert.alert("Login Failed", data.errorMsg);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Network Error:', error);
+      Alert.alert("Network Error", "Unable to connect. Please try again later.");
     }
   }
 
@@ -36,7 +40,7 @@ const LoginScreen = ({ navigation }) => {
       <Text style={styles.title}>Log In</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />

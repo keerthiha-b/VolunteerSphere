@@ -23,6 +23,7 @@
     "expo-status-bar": "~1.12.1",
     "express": "^4.19.2",
     "firebase": "^10.12.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
