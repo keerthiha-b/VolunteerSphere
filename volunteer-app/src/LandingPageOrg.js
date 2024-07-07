@@ -1,11 +1,15 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const OrgLandingPage = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.greeting}>Welcome back</Text>
-      
+    <SafeAreaView style={styles.container}>
+      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile')}>
+            <Text>⚙️</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.greeting}>Welcome back, {name} </Text>
       <Text style={styles.title}>What would you like to do?</Text>
       
       <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CreateVolunteerOpportunity')}>
@@ -19,15 +23,23 @@ const OrgLandingPage = ({ navigation }) => {
       <TouchableOpacity style={styles.optionButton}>
         <Text style={styles.buttonText}>Review Comments on Past Postings</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: '#ffcba4',
+  },
+  profileGear: {
+    marginBottom: 10,
+    alignItems: 'left',
+    justifyContent: 'left',
+    fontSize: 30,
   },
   greeting: {
     fontSize: 20,
