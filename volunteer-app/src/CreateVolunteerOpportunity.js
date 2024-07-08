@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
@@ -8,10 +8,10 @@ import AddressAutocomplete from './AddressAutocomplete';
 const CreateVolunteerOpportunity = () => {
   const navigation = useNavigation();
   const [name, setName] = useState('');
-  const [month, setMonth] = useState(null);
-  const [day, setDay] = useState(null);
-  const [hour, setHour] = useState(null);
-  const [minute, setMinute] = useState(null);
+  const [month, setMonth] = useState('');
+  const [day, setDay] = useState('');
+  const [hour, setHour] = useState('');
+  const [minute, setMinute] = useState('');
   const [duration, setDuration] = useState('');
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState('');
@@ -37,6 +37,12 @@ const CreateVolunteerOpportunity = () => {
   const hours = Array.from({ length: 24 }, (_, i) => ({ label: i.toString().padStart(2, '0'), value: i }));
 
   const minutes = Array.from({ length: 60 }, (_, i) => ({ label: i.toString().padStart(2, '0'), value: i }));
+
+  const durations = [
+    { label: '1 hr', value: '1 hr' },
+    { label: '1 hr 30 min', value: '1 hr 30 min' },
+    { label: '2 hr', value: '2 hr' },
+  ];
 
   const validateFields = () => {
     const phonePattern = /^\d{3}-\d{3}-\d{4}$/;
@@ -138,16 +144,14 @@ const CreateVolunteerOpportunity = () => {
         Alert.alert('Success', 'Activity submitted successfully!');
         // Clear form
         setName('');
-        setMonth(null);
-        setDay(null);
-        setHour(null);
-        setMinute(null);
+        setMonth('');
+        setDay('');
+        setHour('');
+        setMinute('');
         setDuration('');
         setAddress('');
         setDescription('');
         setPhoneNumber('');
-        // Navigate to Volunteer Opportunities page
-        console.log('Navigating to VolunteerOpportunities');
         navigation.navigate('VolunteerOpportunities');
       } else {
         Alert.alert('Error', 'Something went wrong. Please try again.');
@@ -160,7 +164,9 @@ const CreateVolunteerOpportunity = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Create a New Volunteer Opportunity</Text>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Create a New Volunteer Opportunity</Text>
+      </View>
 
       <Text style={styles.label}>Provide the name of your volunteer opportunity*</Text>
       <TextInput style={styles.input} value={name} onChangeText={setName} />
@@ -168,32 +174,51 @@ const CreateVolunteerOpportunity = () => {
       <Text style={styles.label}>Provide the date and start time of this task*</Text>
       <View style={styles.pickerContainer}>
         <RNPickerSelect
-          style={pickerSelectStyles}
           onValueChange={(value) => setMonth(value)}
           items={months}
+          placeholder={{ label: 'Select month', value: null }}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
         />
         <RNPickerSelect
-          style={pickerSelectStyles}
           onValueChange={(value) => setDay(value)}
           items={days}
+          placeholder={{ label: 'Select day', value: null }}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
         />
         <RNPickerSelect
-          style={pickerSelectStyles}
           onValueChange={(value) => setHour(value)}
           items={hours}
+          placeholder={{ label: 'Select hour', value: null }}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
         />
         <RNPickerSelect
-          style={pickerSelectStyles}
           onValueChange={(value) => setMinute(value)}
           items={minutes}
+          placeholder={{ label: 'Select minute', value: null }}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
         />
       </View>
 
       <Text style={styles.label}>Provide the time duration of this task*</Text>
-      <TextInput style={styles.input} value={duration} onChangeText={setDuration} placeholder="e.g., 1 hr 30 min" />
+      <View style={styles.pickerContainer}>
+        <RNPickerSelect
+          onValueChange={(value) => setDuration(value)}
+          items={durations}
+          placeholder={{ label: 'Select duration', value: null }}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+        />
+      </View>
 
       <Text style={styles.label}>Provide the exact address of this opportunity*</Text>
       <AddressAutocomplete address={address} setAddress={setAddress} />
+
+      <TouchableOpacity style={styles.searchButton} onPress={() => verifyAddress(address)}>
+      </TouchableOpacity>
 
       <Text style={styles.label}>Provide a description of the volunteer opportunity*</Text>
       <TextInput style={styles.input} value={description} onChangeText={setDescription} multiline />
@@ -201,7 +226,9 @@ const CreateVolunteerOpportunity = () => {
       <Text style={styles.label}>Provide a contact phone number*</Text>
       <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" placeholder="555-555-5555" />
 
-      <Button title="Submit" onPress={handleSubmit} />
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -209,57 +236,80 @@ const CreateVolunteerOpportunity = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: '#fff',
   },
   header: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    backgroundColor: '#FA7F35',
+    padding: 15,
+    borderRadius: 0,
     marginBottom: 20,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'normal',
+    color: '#fff',
+    textAlign: 'left',
   },
   label: {
     fontSize: 16,
-    marginVertical: 5,
+    marginVertical: 10,
+    color: '#6D4731',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#ddd',
     borderWidth: 1,
-    marginBottom: 10,
+    marginBottom: 20,
     paddingHorizontal: 10,
+    borderRadius: 5,
+    backgroundColor: '#f5f5f5',
   },
   pickerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  itemText: {
-    fontSize: 15,
-    margin: 2,
+  submitButton: {
+    backgroundColor: '#FA7F35',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
-const pickerSelectStyles = StyleSheet.create({
+const pickerSelectStyles = {
   inputIOS: {
-    width: 80,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 4,
+    fontSize: 16,
+    paddingVertical: 12,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
     color: 'black',
     paddingRight: 30, // to ensure the text is never behind the icon
+    marginVertical: 10,
+    backgroundColor: '#f5f5f5',
   },
   inputAndroid: {
-    width: 80,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 4,
+    fontSize: 16,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'gray',
+    borderRadius: 8,
     color: 'black',
     paddingRight: 30, // to ensure the text is never behind the icon
+    marginVertical: 10,
+    backgroundColor: '#f5f5f5',
   },
-});
+  placeholder: {
+    color: 'gray',
+  },
+};
 
 export default CreateVolunteerOpportunity;

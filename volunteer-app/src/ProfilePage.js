@@ -4,6 +4,7 @@ import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 const ProfilePage = ({ navigation, route }) => {
   const { org_name } = route.params;
+  const{email} = route.params;
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -20,7 +21,7 @@ const ProfilePage = ({ navigation, route }) => {
           <FontAwesome name="edit" size={20} color="white" />
         </TouchableOpacity>
         <Text style={styles.name}>{org_name}</Text>
-        <Text style={styles.contactInfo}>amy@gmail.com | +01 234 567 89</Text>
+        <Text style={styles.contactInfo}>organization@gmail.com|555-555-5555</Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account and System</Text>

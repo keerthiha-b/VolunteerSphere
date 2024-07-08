@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#ffcba4',
+    backgroundColor: '#ffff',
   },
   profileGear: {
     marginBottom: 10,
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   optionButton: {
-    backgroundColor: '#f2994a',
+    backgroundColor: '#FA7F35',
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
