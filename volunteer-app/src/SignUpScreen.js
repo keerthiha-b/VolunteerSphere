@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Switch } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const SignUpScreen = () => {
+  const navigation = useNavigation();
   const [isOrg, setIsOrg] = useState(false);
   const [orgName, setOrgName] = useState('');
   const [username, setUsername] = useState('');
@@ -14,7 +16,7 @@ const SignUpScreen = () => {
   const [matchError, setMatchError] = useState('');
 
   const sendSignUpToBackend = async () => {
-    if (!validatePasswordAndEmail() || !confirmMatch()) {
+    if (!validatePasswordAndEmail(password, email) || !confirmMatch()) {
       return; // Prevent submission if errors exist
     }
 
@@ -41,6 +43,7 @@ const SignUpScreen = () => {
 
       if (response.ok) {
         console.log('Object added successfully');
+        navigation.navigate('Success'); // Navigate on success
       } else {
         console.error('Error adding object');
       }
@@ -49,11 +52,10 @@ const SignUpScreen = () => {
     }
   }
 
-  const validatePasswordAndEmail = () => {
+  const validatePasswordAndEmail = (currentPassword, currentEmail) => {
     let errors = [];
 
-    // Validation logic
-    if (email === '') {
+    if (currentEmail === '') {
       errors.push('Email is required');
     }
     if (isOrg && orgName === '') {
@@ -68,22 +70,22 @@ const SignUpScreen = () => {
     if (username === '') {
       errors.push('Username is required');
     }
-    if (password === '') {
+    if (currentPassword === '') {
       errors.push('Password is required');
     } else {
-      if (password.length <= 8) {
+      if (currentPassword.length < 8) {
         errors.push('Password must be length of at least 8');
       }
-      if (!/[A-Z]/.test(password)) {
+      if (!/[A-Z]/.test(currentPassword)) {
         errors.push('Password must contain at least one uppercase letter');
       }
-      if (!/[a-z]/.test(password)) {
+      if (!/[a-z]/.test(currentPassword)) {
         errors.push('Password must contain at least one lowercase letter');
       }
-      if (!/[0-9]/.test(password)) {
+      if (!/[0-9]/.test(currentPassword)) {
         errors.push('Password must contain at least one number');
       }
-      if (!/[$%&#]/.test(password)) {
+      if (!/[$%&#]/.test(currentPassword)) {
         errors.push('Password must contain at least one special character (one of $ % & #)');
       }
     }
@@ -91,7 +93,6 @@ const SignUpScreen = () => {
     setValidationErrors(errors);
     console.log(validationErrors);
 
-    // Return if the number of errors is zero
     return errors.length === 0;
   }
 
@@ -120,30 +121,22 @@ const SignUpScreen = () => {
           style={styles.input}
           placeholder="What is the name of your organization?"
           value={orgName}
-          onChangeText={(e) => {
-            setMatchError('');
-            setOrgName(e)
-          }}
+          onChangeText={setOrgName}
         />
       )}
       <TextInput
         style={styles.input}
         placeholder="Enter a username for this account"
         value={username}
-        onChangeText={(e) => {
-          setMatchError('');
-          setUsername(e);
-          validatePasswordAndEmail()
-        }}
+        onChangeText={setUsername}
       />
       <TextInput
         style={styles.input}
         placeholder="Enter an email"
         value={email}
         onChangeText={(e) => {
-          setMatchError('');
           setEmail(e);
-          validatePasswordAndEmail()
+          validatePasswordAndEmail(password, e);
         }}
       />
       <TextInput
@@ -152,9 +145,8 @@ const SignUpScreen = () => {
         secureTextEntry
         value={password}
         onChangeText={(e) => {
-          setMatchError('');
           setPassword(e);
-          validatePasswordAndEmail()
+          validatePasswordAndEmail(e, email);
         }}
       />
       <TextInput
@@ -162,11 +154,7 @@ const SignUpScreen = () => {
         placeholder="Confirm password"
         secureTextEntry
         value={confirmPassword}
-        onChangeText={(e) => {
-          setMatchError('');
-          setConfirmPassword(e);
-          validatePasswordAndEmail()
-        }}
+        onChangeText={setConfirmPassword}
       />
       {!isOrg && (
         <>
@@ -174,21 +162,13 @@ const SignUpScreen = () => {
             style={styles.input}
             placeholder="Provide a first name"
             value={firstName}
-            onChangeText={(e) => {
-              setMatchError('');
-              setFirstName(e);
-              validatePasswordAndEmail()
-            }}
+            onChangeText={setFirstName}
           />
           <TextInput
             style={styles.input}
             placeholder="Provide a last name"
             value={lastName}
-            onChangeText={(e) => {
-              setMatchError('');
-              setLastName(e);
-              validatePasswordAndEmail()
-            }}
+            onChangeText={setLastName}
           />
         </>
       )}
@@ -204,7 +184,8 @@ const SignUpScreen = () => {
       )}
       <Button
         title="Sign Up"
-        onPress={sendSignUpToBackend} // Here you will later add the function to handle the Firebase signup
+        color="#FA7F35" // Dark orange color
+        onPress={sendSignUpToBackend}
       />
     </View>
   );
@@ -215,7 +196,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#ffcba4',
+    backgroundColor: '#ffff',
   },
   title: {
     fontSize: 24,
@@ -235,7 +216,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   errorContainer: {
-    backgroundColor: '#ffcba4',
+    backgroundColor: '#ffff',
     borderRadius: 5,
     padding: 10,
     marginVertical: 10,

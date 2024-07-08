@@ -11,6 +11,7 @@ import CreateVolunteerOpportunity from './src/CreateVolunteerOpportunity'; // Im
 import VolunteerOpportunities from './src/VolunteerOpportunities';
 import OrgLandingPage from './src/LandingPageOrg';
 import ProfilePage from './src/ProfilePage';
+import SuccessScreen from './src/Success';
 // Import other screens here as needed
 
 const Stack = createNativeStackNavigator();
@@ -27,6 +28,7 @@ function App() {
         <Stack.Screen name="CreateVolunteerOpportunity" component={CreateVolunteerOpportunity} options={{ headerShown: true, title: 'Create Volunteer Opportunity' }} />
         <Stack.Screen name="VolunteerOpportunities" component={VolunteerOpportunities} options={{ headerShown: true, title: 'VolunteerOpportunities' }} />
         <Stack.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
+        <Stack.Screen name="Success" component={SuccessScreen} />
 
       </Stack.Navigator>
     </NavigationContainer>

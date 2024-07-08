@@ -24,8 +24,8 @@ const loginUser = async (req, res) => {
         let name = '';
         let email = '';
         if (org_account) {
-            name = `${organization_name}`;
-            email = `${email}`;
+            name = org_account;
+            // email = org_account.email;
         }
         
         let message = 'Logged in successfully';
@@ -34,7 +34,7 @@ const loginUser = async (req, res) => {
         res.status(200).json({ 
             message, 
             name, 
-            email,
+            // email,
          });
 
     } catch (error) {

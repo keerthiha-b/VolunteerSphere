@@ -25,7 +25,7 @@ const LoginScreen = ({ navigation }) => {
       if (response.ok) {
         console.log(data.message);
         console.log(data.email);
-        navigation.navigate('OrgLandingPage', { org_name: data.organization_name } ); // Navigate to the next screen
+        navigation.navigate('OrgLandingPage', {org_name:username}); // Navigate to the next screen
       } else {
         console.error('Login Error:', data.errorMsg);
         Alert.alert("Login Failed", data.errorMsg);
@@ -54,6 +54,7 @@ const LoginScreen = ({ navigation }) => {
       />
       <Button
         title="Log In"
+        color="#FA7F35" // Dark orange color
         onPress={attemptLogin}
       />
     </View>
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#ffcba4',
+    backgroundColor: '#ffff',
   },
   title: {
     fontSize: 24,
