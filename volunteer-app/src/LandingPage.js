@@ -23,7 +23,7 @@ const LandingPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffcba4',
+    backgroundColor: '#F8B187',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20
