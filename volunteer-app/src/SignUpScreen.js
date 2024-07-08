@@ -73,7 +73,7 @@ const SignUpScreen = () => {
     if (currentPassword === '') {
       errors.push('Password is required');
     } else {
-      if (currentPassword.length <= 8) {
+      if (currentPassword.length < 8) {
         errors.push('Password must be length of at least 8');
       }
       if (!/[A-Z]/.test(currentPassword)) {
