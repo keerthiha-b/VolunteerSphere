@@ -7,7 +7,9 @@ const loginUser = async (req, res) => {
         const { username, password } = req.body;
 
         // Attempt to find a user or organization by the username
-        const account = await User.findOne({ username }) || await Organization.findOne({ username });
+        const user_account = await User.findOne({ username });
+        const org_account = await Organization.findOne({ username });
+        const account = user_account || org_account;
 
         if (!account) {
             return res.status(401).json({ errorMsg: "Account not found or not verified" });
@@ -19,8 +21,22 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ errorMsg: "Password is incorrect" });
         }
 
-        // Login successful, return a success message
-        res.status(200).json({ message: 'Logged in successfully' });
+        let name = '';
+        let email = '';
+        if (org_account) {
+            name = `${organization_name}`;
+            email = `${email}`;
+        }
+        
+        let message = 'Logged in successfully';
+
+        // Login successful, return a success message along with organization_name if available
+        res.status(200).json({ 
+            message, 
+            name, 
+            email,
+         });
+
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ errorMsg: 'Error logging in user', details: error.message });
