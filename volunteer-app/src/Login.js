@@ -23,8 +23,9 @@ const LoginScreen = ({ navigation }) => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Logged in successfully:', data.message);
-        navigation.navigate('OrgLandingPage'); // Navigate to the next screen
+        console.log(data.message);
+        console.log(data.email);
+        navigation.navigate('OrgLandingPage', { org_name: data.organization_name } ); // Navigate to the next screen
       } else {
         console.error('Login Error:', data.errorMsg);
         Alert.alert("Login Failed", data.errorMsg);

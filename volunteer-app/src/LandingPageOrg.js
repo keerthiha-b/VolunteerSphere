@@ -2,14 +2,17 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const OrgLandingPage = ({ navigation }) => {
+const OrgLandingPage = ({ navigation, route }) => {
+
+  const { org_name } = route.params;
+
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile')}>
+      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { org_name })}>
             <Text>⚙️</Text>
       </TouchableOpacity>
 
-      <Text style={styles.greeting}>Welcome back, {name} </Text>
+      <Text style={styles.greeting}>Welcome back, { org_name } </Text>
       <Text style={styles.title}>What would you like to do?</Text>
       
       <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CreateVolunteerOpportunity')}>

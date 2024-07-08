@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
-const ProfilePage = ({ navigation }) => {
+const ProfilePage = ({ navigation, route }) => {
+  const { org_name } = route.params;
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('OrgLandingPage')}>
+        <TouchableOpacity onPress={() => navigation.navigate('OrgLandingPage', { org_name })}>
           <MaterialIcons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -18,7 +19,7 @@ const ProfilePage = ({ navigation }) => {
         <TouchableOpacity style={styles.editIcon}>
           <FontAwesome name="edit" size={20} color="white" />
         </TouchableOpacity>
-        <Text style={styles.name}>Amy</Text>
+        <Text style={styles.name}>{org_name}</Text>
         <Text style={styles.contactInfo}>amy@gmail.com | +01 234 567 89</Text>
       </View>
       <View style={styles.section}>
