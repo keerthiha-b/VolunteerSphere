@@ -36,11 +36,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2D0C57',
+    color: '#ffff',
     marginBottom: 40,
   },
   button: {
-    backgroundColor: '#F2994A',
+    backgroundColor: '#FA7F35',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 20,
