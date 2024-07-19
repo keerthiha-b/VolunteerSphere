@@ -24,17 +24,21 @@ const loginUser = async (req, res) => {
         let name = '';
         let email = '';
         if (org_account) {
-            name = org_account;
-            // email = org_account.email;
+            name = org_account.username;
+            email = org_account.email;
+        }
+        else if (user_account) {
+          name = user_account.username;
+          email = user_account.email;
         }
         
         let message = 'Logged in successfully';
 
         // Login successful, return a success message along with organization_name if available
         res.status(200).json({ 
-            message, 
-            name, 
-            // email,
+            message: message, 
+            name: name, 
+            email: email
          });
 
     } catch (error) {

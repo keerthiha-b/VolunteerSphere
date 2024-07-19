@@ -33,7 +33,7 @@ const SignUpScreen = () => {
     console.log(JSON.stringify(newUser));
 
     try {
-      const response = await fetch('http://localhost:3001/new-user', {
+      const response = await fetch('http://192.168.2.247:3001/new-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
