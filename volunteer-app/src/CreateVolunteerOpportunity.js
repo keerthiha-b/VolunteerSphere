@@ -138,7 +138,7 @@ const CreateVolunteerOpportunity = () => {
 
     try {
       console.log('Submitting activity:', activity);
-      const response = await axios.post('http://localhost:3001/activities', activity);
+      const response = await axios.post('https://volunteersphere.onrender.com/activities', activity);
       console.log('Response:', response);
       if (response.status === 200 || response.status === 201) {
         Alert.alert('Success', 'Activity submitted successfully!');
