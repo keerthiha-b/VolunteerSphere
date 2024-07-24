@@ -13,7 +13,7 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch('http://192.168.2.247:3001/login-user', {
+      const response = await fetch('http://localhost:3001/login-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -29,6 +29,8 @@ const LoginScreen = ({ navigation }) => {
 
         save("name", data.name);
         console.log("value for name: " + getValueFor("name"));
+        save("email", data.email);
+        console.log("value for email: " + getValueFor("email"));
 
         navigation.navigate('OrgLandingPage'); // Navigate to the next screen
       } else {
