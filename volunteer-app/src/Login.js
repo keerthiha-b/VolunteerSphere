@@ -13,7 +13,7 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/login-user', {
+      const response = await fetch('https://volunteersphere.onrender.com/login-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

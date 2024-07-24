@@ -5,7 +5,7 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && node server.js ",
-    "client": "npm install && expo start --ios",
+    "client": "npm install && expo start ",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"

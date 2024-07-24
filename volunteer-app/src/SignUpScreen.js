@@ -33,7 +33,7 @@ const SignUpScreen = () => {
     console.log(JSON.stringify(newUser));
 
     try {
-      const response = await fetch('http://localhost:3001/new-user', {
+      const response = await fetch('https://volunteersphere.onrender.com/new-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

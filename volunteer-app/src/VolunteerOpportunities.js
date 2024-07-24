@@ -7,7 +7,7 @@ const VolunteerOpportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/activities')
+    axios.get('https://volunteersphere.onrender.com/activities')
       .then(response => {
         setOpportunities(response.data);
       })
