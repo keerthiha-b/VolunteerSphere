@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Button, Alert } from 'react-native';
+import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
@@ -24,8 +25,14 @@ const LoginScreen = ({ navigation }) => {
 
       if (response.ok) {
         console.log(data.message);
-        console.log(data.email);
-        navigation.navigate('OrgLandingPage', {org_name:username}); // Navigate to the next screen
+        console.log("logged in email" + data.email);
+
+        save("name", data.name);
+        console.log("value for name: " + getValueFor("name"));
+        save("email", data.email);
+        console.log("value for email: " + getValueFor("email"));
+
+        navigation.navigate('OrgLandingPage'); // Navigate to the next screen
       } else {
         console.error('Login Error:', data.errorMsg);
         Alert.alert("Login Failed", data.errorMsg);

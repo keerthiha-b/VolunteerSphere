@@ -1,9 +1,11 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
 
-const OrgLandingPage = ({ navigation, route }) => {
-  const { org_name } = route.params;
+const OrgLandingPage = ({ navigation }) => {
+  console.log(getValueFor("name"));
+  const org_name = getValueFor("name");
 
   return (
     <SafeAreaView style={styles.container}>

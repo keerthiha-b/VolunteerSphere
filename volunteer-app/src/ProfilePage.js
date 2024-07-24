@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { save, getValueFor } from './utils/secureStoreUtil';
 
-const ProfilePage = ({ navigation, route }) => {
-  const { org_name } = route.params;
-  const{email} = route.params;
+const ProfilePage = ({ navigation }) => {
+  const org_name = getValueFor("name");
+  const org_email = getValueFor("email");
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -21,7 +22,7 @@ const ProfilePage = ({ navigation, route }) => {
           <FontAwesome name="edit" size={20} color="white" />
         </TouchableOpacity>
         <Text style={styles.name}>{org_name}</Text>
-        <Text style={styles.contactInfo}>organization@gmail.com|555-555-5555</Text>
+        <Text style={styles.contactInfo}>{org_email}|555-555-5555</Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account and System</Text>
