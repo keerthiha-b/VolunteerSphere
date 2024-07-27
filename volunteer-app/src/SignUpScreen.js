@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, Switch } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, Switch, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const SignUpScreen = () => {
@@ -20,13 +20,16 @@ const SignUpScreen = () => {
       return; // Prevent submission if errors exist
     }
 
+    // Determine userType based on the toggle state
+    const userType = isOrg ? 'org' : 'user'; // 'org' for organization, 'user' for users
+
     const newUser = {
-      isOrg: isOrg,
-      orgName: orgName,
+      userType: userType,  // Include userType based on the toggle
+      orgName: isOrg ? orgName : undefined,  // Only include orgName if signing up as an organization
       username: username,
       password: password,
-      firstName: firstName,
-      lastName: lastName,
+      firstName: isOrg ? undefined : firstName,  // Only include firstName if not an organization
+      lastName: isOrg ? undefined : lastName,    // Only include lastName if not an organization
       email: email
     };
 
@@ -46,9 +49,11 @@ const SignUpScreen = () => {
         navigation.navigate('Success'); // Navigate on success
       } else {
         console.error('Error adding object');
+        Alert.alert("Registration Failed", "An error occurred while registering. Please try again.");
       }
     } catch (error) {
       console.error('Error:', error);
+      Alert.alert("Network Error", "Unable to connect. Please try again later.");
     }
   }
 

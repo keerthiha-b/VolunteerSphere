@@ -27,12 +27,19 @@ const LoginScreen = ({ navigation }) => {
         console.log(data.message);
         console.log("logged in email" + data.email);
 
-        save("name", data.name);
+        save("name", `${data.first_name} ${data.last_name}`);
         console.log("value for name: " + getValueFor("name"));
         save("email", data.email);
         console.log("value for email: " + getValueFor("email"));
 
-        navigation.navigate('OrgLandingPage'); // Navigate to the next screen
+        // Check user type and navigate accordingly
+        if (data.userType === 'organization') {
+          navigation.navigate('LandingPageOrg'); // Navigate to the organization landing page
+        } else if (data.userType === 'user') {
+          navigation.navigate('StudentLandingPage'); // Navigate to the student landing page
+        } else {
+          Alert.alert("Login Error", "Unknown user type.");
+        }
       } else {
         console.error('Login Error:', data.errorMsg);
         Alert.alert("Login Failed", data.errorMsg);
