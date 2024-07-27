@@ -10,6 +10,7 @@ import LoginPage from './src/Login';
 import CreateVolunteerOpportunity from './src/CreateVolunteerOpportunity'; // Import the new component
 import VolunteerOpportunities from './src/VolunteerOpportunities';
 import OrgLandingPage from './src/LandingPageOrg';
+import StudentLandingPage from './src/StudentLandingPage';
 import ProfilePage from './src/ProfilePage';
 import SuccessScreen from './src/Success';
 // Import other screens here as needed
@@ -25,6 +26,7 @@ function App() {
         <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginPage} options={{ headerShown: false }} />
         <Stack.Screen name="OrgLandingPage" component={OrgLandingPage} options={{ headerShown: true, title: 'Organization Dashboard' }} /> 
+        <Stack.Screen name="StudentLandingPage" component={StudentLandingPage} options={{ headerShown: true, title: ' Dashboard' }} /> 
         <Stack.Screen name="CreateVolunteerOpportunity" component={CreateVolunteerOpportunity} options={{ headerShown: true, title: 'Create Volunteer Opportunity' }} />
         <Stack.Screen name="VolunteerOpportunities" component={VolunteerOpportunities} options={{ headerShown: true, title: 'VolunteerOpportunities' }} />
         <Stack.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
