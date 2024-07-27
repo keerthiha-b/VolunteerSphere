@@ -25,12 +25,10 @@ const SignUpScreen = () => {
 
     const newUser = {
       userType,
-      orgName: isOrg ? orgName : undefined,
       username,
       password,
-      firstName: isOrg ? undefined : firstName,
-      lastName: isOrg ? undefined : lastName,
-      email
+      email,
+      ...(isOrg ? { orgName } : { firstName, lastName })
     };
 
     try {
@@ -42,14 +40,24 @@ const SignUpScreen = () => {
         body: JSON.stringify(newUser)
       });
 
-      if (response.ok) {
-        console.log('User/Organization created successfully');
-        await save("userType", userType); // Save userType
-        navigation.navigate('Success'); // Navigate on success
+      // Ensure the response is properly handled
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json(); // Attempt to parse JSON response
+        console.log('Received data:', data); // Log the received data
+
+        if (response.ok) {
+          console.log('User/Organization created successfully');
+          await save("userType", userType); // Save userType
+          navigation.navigate('Success'); // Navigate on success
+        } else {
+          console.error('Error adding user/organization:', data.errorMsg);
+          Alert.alert("Registration Failed", data.errorMsg);
+        }
       } else {
-        const data = await response.json();
-        console.error('Error adding user/organization:', data.errorMsg);
-        Alert.alert("Registration Failed", data.errorMsg);
+        const errorText = await response.text(); // Read the text error response
+        console.error(`Non-JSON response: ${errorText}`); // Handle non-JSON response
+        Alert.alert("Server Error", `Received a non-JSON response from the server: ${errorText}`);
       }
     } catch (error) {
       console.error('Network Error:', error);
@@ -57,7 +65,57 @@ const SignUpScreen = () => {
     }
   }
 
-  // (The rest of the component remains the same)
+  const validatePasswordAndEmail = (currentPassword, currentEmail) => {
+    let errors = [];
+
+    if (currentEmail === '') {
+      errors.push('Email is required');
+    }
+    if (isOrg && orgName === '') {
+      errors.push('Organization name is required');
+    }
+    if (!isOrg && firstName === '') {
+      errors.push('Your first name is required');
+    }
+    if (!isOrg && lastName === '') {
+      errors.push('Your last name is required');
+    }
+    if (username === '') {
+      errors.push('Username is required');
+    }
+    if (currentPassword === '') {
+      errors.push('Password is required');
+    } else {
+      if (currentPassword.length < 8) {
+        errors.push('Password must be at least 8 characters long');
+      }
+      if (!/[A-Z]/.test(currentPassword)) {
+        errors.push('Password must contain at least one uppercase letter');
+      }
+      if (!/[a-z]/.test(currentPassword)) {
+        errors.push('Password must contain at least one lowercase letter');
+      }
+      if (!/[0-9]/.test(currentPassword)) {
+        errors.push('Password must contain at least one number');
+      }
+      if (!/[$%&#]/.test(currentPassword)) {
+        errors.push('Password must contain at least one special character (one of $ % & #)');
+      }
+    }
+
+    setValidationErrors(errors);
+    return errors.length === 0;
+  }
+
+  const confirmMatch = () => {
+    if (password !== confirmPassword) {
+      setMatchError('Passwords do not match');
+      return false;
+    } else {
+      setMatchError('');
+      return true;
+    }
+  }
 
   return (
     <View style={styles.container}>

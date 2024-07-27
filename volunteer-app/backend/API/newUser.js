@@ -10,45 +10,44 @@ app.use(express.json());
 
 const newUser = async (req, res) => {
   try {
-    const passedUser = req.body;
-    const isOrg = passedUser.isOrg;
+    const { username, password, firstName, lastName, email, userType, orgName } = req.body;
 
     // Log the incoming request
-    console.log('Received new user registration request:', passedUser);
+    console.log('Received new user registration request:', req.body);
 
     // Hash the password
     const generatedSalt = bcryptjs.genSaltSync(10);
-    const hashedPassword = bcryptjs.hashSync(passedUser.password, generatedSalt);
+    const hashedPassword = bcryptjs.hashSync(password, generatedSalt);
 
-    if (!isOrg) {
-      const newUser = new User({
-        username: passedUser.username,
+    let newUser;
+    if (userType === 'user') {
+      newUser = new User({
+        username,
         password: hashedPassword,
-        first_name: passedUser.firstName,
-        last_name: passedUser.lastName,
-        email: passedUser.email,
-        userType: 'user'
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        userType
       });
-
-      await newUser.save();
-      console.log('New user registered successfully:', newUser);
+    } else if (userType === 'org') {
+      newUser = new Organization({
+        username,
+        password: hashedPassword,
+        organization_name: orgName,
+        email,
+        userType
+      });
     } else {
-      const newOrg = new Organization({
-        username: passedUser.username,
-        password: hashedPassword,
-        organization_name: passedUser.orgName,
-        email: passedUser.email,
-        userType: 'org'
-      });
-
-      await newOrg.save();
-      console.log('New organization registered successfully:', newOrg);
+      return res.status(400).json({ errorMsg: "Invalid user type" });
     }
 
-    res.status(201).send('User/Organization added successfully');
+    await newUser.save();
+    console.log('New user/organization registered successfully:', newUser);
+    res.status(201).json({ message: 'User/Organization added successfully' });
+
   } catch (error) {
     console.error('Error adding user/organization:', error);
-    res.status(500).send('Error adding user/organization: ' + error.message);
+    res.status(500).json({ errorMsg: 'Error adding user/organization: ' + error.message });
   }
 };
 
