@@ -4,6 +4,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import AddressAutocomplete from './AddressAutocomplete';
+import { getValueFor } from './utils/secureStoreUtil'; // Import the secure store utility
 
 const CreateVolunteerOpportunity = () => {
   const navigation = useNavigation();
@@ -14,8 +15,16 @@ const CreateVolunteerOpportunity = () => {
   const [minute, setMinute] = useState('');
   const [duration, setDuration] = useState('');
   const [address, setAddress] = useState('');
-  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  const categories = [
+    { label: 'Environment', value: 'Environment' },
+    { label: 'Education', value: 'Education' },
+    { label: 'Health', value: 'Health' },
+    { label: 'Community Service', value: 'Community Service' },
+    { label: 'Animal Welfare', value: 'Animal Welfare' },
+  ];
 
   const months = [
     { label: 'January', value: 0 },
@@ -82,8 +91,8 @@ const CreateVolunteerOpportunity = () => {
       return false;
     }
 
-    if (!description) {
-      Alert.alert('Error', 'Please provide a description of the volunteer opportunity.');
+    if (!category) {
+      Alert.alert('Error', 'Please select a category for the opportunity.');
       return false;
     }
 
@@ -127,13 +136,23 @@ const CreateVolunteerOpportunity = () => {
     date.setHours(hour);
     date.setMinutes(minute);
 
+    const userId = await getValueFor('userId'); // Retrieve userId from secure store
+    const userType = 'org'; // Retrieve userType from secure store
+
+    if (!userId || !userType) {
+      Alert.alert('Error', 'User ID or User Type is missing. Please log in again.');
+      return;
+    }
+
     const activity = {
       name,
       date: date.toISOString(),
       duration,
       address,
-      description,
+      category,
       phoneNumber,
+      userId, // Include userId
+      userType, // Include userType
     };
 
     try {
@@ -150,7 +169,7 @@ const CreateVolunteerOpportunity = () => {
         setMinute('');
         setDuration('');
         setAddress('');
-        setDescription('');
+        setCategory('');
         setPhoneNumber('');
         navigation.navigate('VolunteerOpportunities');
       } else {
@@ -220,8 +239,16 @@ const CreateVolunteerOpportunity = () => {
       <TouchableOpacity style={styles.searchButton} onPress={() => verifyAddress(address)}>
       </TouchableOpacity>
 
-      <Text style={styles.label}>Provide a description of the volunteer opportunity*</Text>
-      <TextInput style={styles.input} value={description} onChangeText={setDescription} multiline />
+      <Text style={styles.label}>Select a category for the volunteer opportunity*</Text>
+      <View style={styles.pickerContainer}>
+        <RNPickerSelect
+          onValueChange={(value) => setCategory(value)}
+          items={categories}
+          placeholder={{ label: 'Select category', value: null }}
+          style={pickerSelectStyles}
+          useNativeAndroidPickerStyle={false}
+        />
+      </View>
 
       <Text style={styles.label}>Provide a contact phone number*</Text>
       <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" placeholder="555-555-5555" />
@@ -265,9 +292,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   pickerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 20,
   },
   submitButton: {

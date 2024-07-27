@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const activitySchema = new mongoose.Schema({
   name: {
     type: String,
@@ -17,13 +16,23 @@ const activitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  description: {
+  category: {
     type: String,
     required: true,
   },
   phoneNumber: {
     type: String,
     required: true,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization', // Reference to the Organization model
+    required: true,
+  },
+  userType: {
+    type: String,
+    required: true,
+    enum: ['org']
   },
 }, { collection: 'activities' });
 
