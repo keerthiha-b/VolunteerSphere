@@ -22,20 +22,20 @@ const LoginScreen = ({ navigation }) => {
       });
 
       const data = await response.json();
+      console.log('Received data:', data); // Log the received data
 
       if (response.ok) {
         console.log(data.message);
-        console.log("logged in email" + data.email);
+        console.log("Logged in email: " + data.email);
 
-        save("name", `${data.first_name} ${data.last_name}`);
-        console.log("value for name: " + getValueFor("name"));
-        save("email", data.email);
-        console.log("value for email: " + getValueFor("email"));
+        await save("name", data.name);
+        await save("email", data.email);
+        const userType = await getValueFor("userType"); // Retrieve userType
 
         // Check user type and navigate accordingly
-        if (data.userType === 'organization') {
-          navigation.navigate('LandingPageOrg'); // Navigate to the organization landing page
-        } else if (data.userType === 'user') {
+        if (userType === 'org') {
+          navigation.navigate('OrgLandingPage'); // Navigate to the organization landing page
+        } else if (userType === 'user') {
           navigation.navigate('StudentLandingPage'); // Navigate to the student landing page
         } else {
           Alert.alert("Login Error", "Unknown user type.");
@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
       />
       <Button
         title="Log In"
-        color="#FA7F35" // Dark orange color
+        color="#FA7F35"
         onPress={attemptLogin}
       />
     </View>
