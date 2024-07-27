@@ -22,6 +22,7 @@ const LoginScreen = ({ navigation }) => {
       });
 
       const data = await response.json();
+      console.log('Received data:', data); // Log the received data
 
       if (response.ok) {
         console.log(data.message);
@@ -34,7 +35,7 @@ const LoginScreen = ({ navigation }) => {
 
         // Check user type and navigate accordingly
         if (data.userType === 'org') {
-          navigation.navigate('LandingPageOrg'); // Navigate to the organization landing page
+          navigation.navigate('OrgLandingPage'); // Navigate to the organization landing page
         } else if (data.userType === 'user') {
           navigation.navigate('StudentLandingPage'); // Navigate to the student landing page
         } else {
