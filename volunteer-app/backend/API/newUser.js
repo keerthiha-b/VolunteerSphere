@@ -2,55 +2,59 @@ const User = require('../Schema/User');
 const Organization = require('../Schema/Organization');
 const express = require('express');
 const cors = require('cors');
-
-// Bcrypt for hashing
 const bcryptjs = require('bcryptjs');
 
-// Middleware
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API call to create new object
 const newUser = async (req, res) => {
-    try {
-      // Using the passed from front-end object
-      const passedUser = req.body;
-      const isOrg = passedUser.isOrg;
-  
-      // Hashing the password
-      var generatedSalt = bcryptjs.genSaltSync(10);
-      var hashedPassword = bcryptjs.hashSync(passedUser.password, generatedSalt);
-  
-      if(!isOrg) {
-        const newUser = new User({
-          username: passedUser.username,
-          password: hashedPassword,
-          first_name: passedUser.firstName,
-          last_name: passedUser.lastName,
-          email: passedUser.email
-        })
+  try {
+    const { username, password, firstName, lastName, email, userType, orgName } = req.body;
 
-        await newUser.save();
-      }
-      else 
-      {
-        const newOrg = new Organization({
-          username: passedUser.username,
-          password: hashedPassword,
-          organization_name: passedUser.orgName,
-          email: passedUser.email
-        })
+    // Log the incoming request
+    console.log('Received new user registration request:', req.body);
 
-        await newOrg.save();
-      }
-      // sendEmailVerification({passedEmail: passedUser.email}, res);
-      res.status(200).send('Email sent added successfully');
-  
-  
-    } catch (error) {
-      res.status(500).send('Error adding User: ' + error.message);
+    // Hash the password
+    const generatedSalt = bcryptjs.genSaltSync(10);
+    const hashedPassword = bcryptjs.hashSync(password, generatedSalt);
+
+    let newUser;
+    if (userType === 'user') {
+      newUser = new User({
+        username,
+        password: hashedPassword,
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        userType
+      });
+    } else if (userType === 'org') {
+      newUser = new Organization({
+        username,
+        password: hashedPassword,
+        organization_name: orgName,
+        email,
+        userType
+      });
+    } else {
+      return res.status(400).json({ errorMsg: "Invalid user type" });
     }
-  };
-  
-  module.exports = newUser;
+
+    await newUser.save();
+    console.log('New user/organization registered successfully:', newUser);
+    res.status(201).json({ message: 'User/Organization added successfully' });
+
+  } catch (error) {
+    console.error('Error adding user/organization:', error);
+    res.status(500).json({ errorMsg: 'Error adding user/organization: ' + error.message });
+  }
+};
+
+app.post('/new-user', newUser);
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
+
+module.exports = newUser;

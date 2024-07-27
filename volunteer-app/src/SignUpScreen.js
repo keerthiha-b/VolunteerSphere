@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Button, Switch } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, Switch, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { save } from './utils/secureStoreUtil'; // Import save function from secureStoreUtil
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -20,17 +21,15 @@ const SignUpScreen = () => {
       return; // Prevent submission if errors exist
     }
 
-    const newUser = {
-      isOrg: isOrg,
-      orgName: orgName,
-      username: username,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-      email: email
-    };
+    const userType = isOrg ? 'org' : 'user';
 
-    console.log(JSON.stringify(newUser));
+    const newUser = {
+      userType,
+      username,
+      password,
+      email,
+      ...(isOrg ? { orgName } : { firstName, lastName })
+    };
 
     try {
       const response = await fetch('https://volunteersphere.onrender.com/new-user', {
@@ -41,14 +40,28 @@ const SignUpScreen = () => {
         body: JSON.stringify(newUser)
       });
 
-      if (response.ok) {
-        console.log('Object added successfully');
-        navigation.navigate('Success'); // Navigate on success
+      // Ensure the response is properly handled
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json(); // Attempt to parse JSON response
+        console.log('Received data:', data); // Log the received data
+
+        if (response.ok) {
+          console.log('User/Organization created successfully');
+          await save("userType", userType); // Save userType
+          navigation.navigate('Success'); // Navigate on success
+        } else {
+          console.error('Error adding user/organization:', data.errorMsg);
+          Alert.alert("Registration Failed", data.errorMsg);
+        }
       } else {
-        console.error('Error adding object');
+        const errorText = await response.text(); // Read the text error response
+        console.error(`Non-JSON response: ${errorText}`); // Handle non-JSON response
+        Alert.alert("Server Error", `Received a non-JSON response from the server: ${errorText}`);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Network Error:', error);
+      Alert.alert("Network Error", "Unable to connect. Please try again later.");
     }
   }
 
@@ -74,7 +87,7 @@ const SignUpScreen = () => {
       errors.push('Password is required');
     } else {
       if (currentPassword.length < 8) {
-        errors.push('Password must be length of at least 8');
+        errors.push('Password must be at least 8 characters long');
       }
       if (!/[A-Z]/.test(currentPassword)) {
         errors.push('Password must contain at least one uppercase letter');
@@ -91,14 +104,12 @@ const SignUpScreen = () => {
     }
 
     setValidationErrors(errors);
-    console.log(validationErrors);
-
     return errors.length === 0;
   }
 
   const confirmMatch = () => {
     if (password !== confirmPassword) {
-      setMatchError('Unable to sign up, passwords don\'t match');
+      setMatchError('Passwords do not match');
       return false;
     } else {
       setMatchError('');
@@ -119,20 +130,20 @@ const SignUpScreen = () => {
       {isOrg && (
         <TextInput
           style={styles.input}
-          placeholder="What is the name of your organization?"
+          placeholder="Organization Name"
           value={orgName}
           onChangeText={setOrgName}
         />
       )}
       <TextInput
         style={styles.input}
-        placeholder="Enter a username for this account"
+        placeholder="Username"
         value={username}
         onChangeText={setUsername}
       />
       <TextInput
         style={styles.input}
-        placeholder="Enter an email"
+        placeholder="Email"
         value={email}
         onChangeText={(e) => {
           setEmail(e);
@@ -141,7 +152,7 @@ const SignUpScreen = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Enter a password for this account"
+        placeholder="Password"
         secureTextEntry
         value={password}
         onChangeText={(e) => {
@@ -151,7 +162,7 @@ const SignUpScreen = () => {
       />
       <TextInput
         style={styles.input}
-        placeholder="Confirm password"
+        placeholder="Confirm Password"
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
@@ -160,13 +171,13 @@ const SignUpScreen = () => {
         <>
           <TextInput
             style={styles.input}
-            placeholder="Provide a first name"
+            placeholder="First Name"
             value={firstName}
             onChangeText={setFirstName}
           />
           <TextInput
             style={styles.input}
-            placeholder="Provide a last name"
+            placeholder="Last Name"
             value={lastName}
             onChangeText={setLastName}
           />
@@ -184,7 +195,7 @@ const SignUpScreen = () => {
       )}
       <Button
         title="Sign Up"
-        color="#FA7F35" // Dark orange color
+        color="#FA7F35"
         onPress={sendSignUpToBackend}
       />
     </View>
