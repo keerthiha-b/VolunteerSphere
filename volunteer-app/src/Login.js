@@ -25,15 +25,15 @@ const LoginScreen = ({ navigation }) => {
 
       if (response.ok) {
         console.log(data.message);
-        console.log("logged in email" + data.email);
+        console.log("Logged in email: " + data.email);
 
-        save("name", `${data.first_name} ${data.last_name}`);
-        console.log("value for name: " + getValueFor("name"));
+        save("name", data.name);
+        console.log("Value for name: " + await getValueFor("name"));
         save("email", data.email);
-        console.log("value for email: " + getValueFor("email"));
+        console.log("Value for email: " + await getValueFor("email"));
 
         // Check user type and navigate accordingly
-        if (data.userType === 'organization') {
+        if (data.userType === 'org') {
           navigation.navigate('LandingPageOrg'); // Navigate to the organization landing page
         } else if (data.userType === 'user') {
           navigation.navigate('StudentLandingPage'); // Navigate to the student landing page
