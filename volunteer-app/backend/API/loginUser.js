@@ -21,10 +21,13 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ errorMsg: "Password is incorrect" });
         }
 
-        // Prepare the response based on account type
+        // Determine user type
         const userType = user_account ? 'user' : 'org';
         const name = userType === 'user' ? `${account.first_name} ${account.last_name}` : account.organization_name;
         const email = account.email;
+
+        // Log the response for debugging
+        console.log('Response:', { message: 'Logged in successfully', userType, name, email });
 
         // Login successful, return a success message along with userType, name, and email
         res.status(200).json({ 
