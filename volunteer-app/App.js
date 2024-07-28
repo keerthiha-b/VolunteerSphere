@@ -13,6 +13,7 @@ import OrgLandingPage from './src/LandingPageOrg';
 import StudentLandingPage from './src/StudentLandingPage'; // Ensure correct path and naming
 import ProfilePage from './src/ProfilePage';
 import SuccessScreen from './src/Success';
+import SignUpVolunteerOpportunity from './src/SignUpVolunteerOpportunity';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ function App() {
         <Stack.Screen name="VolunteerOpportunities" component={VolunteerOpportunities} options={{ headerShown: true, title: 'Volunteer Opportunities' }} />
         <Stack.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
         <Stack.Screen name="Success" component={SuccessScreen} />
+        <Stack.Screen name="SignUpVolunteerOpportunity" component={SignUpVolunteerOpportunity} />
       </Stack.Navigator>
     </NavigationContainer>
   );
