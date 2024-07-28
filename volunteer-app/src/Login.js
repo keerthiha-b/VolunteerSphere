@@ -31,7 +31,9 @@ const LoginScreen = ({ navigation }) => {
         await save("name", data.name);
         await save("email", data.email);
         await save("userType", data.userType);
-        const userType = getValueFor("userType") // Retrieve userType
+        await save("userId", data.userId); 
+
+        const userType = await getValueFor("userType"); // Retrieve userType
 
         // Check user type and navigate accordingly
         if (userType === 'org') {
