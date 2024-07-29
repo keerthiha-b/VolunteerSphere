@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-
+import MapboxWebView from './MapboxWebView';
 const StudentLandingPage = ({ navigation }) => {
   return (
     <View style={styles.container}>
