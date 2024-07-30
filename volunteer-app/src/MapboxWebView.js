@@ -28,10 +28,10 @@ const MapboxWebView = () => {
         </div>
         <div id='map'></div>
         <script>
-          mapboxgl.accessToken = 'ADD THE TOKEN HERE';
+          mapboxgl.accessToken = 'ACCESS TOKEN';
           var map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',
+            style: 'mapbox://styles/vaibss/clz7oloxi000e01p98yn24o0i',
             center: [-98.585522, 56.130366], // Center coordinates for Canada
             zoom: 3 // Zoom level adjusted to show a broad area
           });
