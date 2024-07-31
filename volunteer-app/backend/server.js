@@ -6,6 +6,9 @@ const Activity = require('./Schema/Activity');
 const activityrouter = require('./API/activityrelated')
 const cors = require('cors');
 
+// Progress API
+const getProgress = require('./API/getProgress');
+
 const app = express();
 const PORT = process.env.PORT || 3001; 
 const MONGO_DB_URI = process.env.MONGO_DB_URI || "mongodb+srv://Volunteer1:Admin$trator@volunteersphere.5bhk4hh.mongodb.net/?retryWrites=true&w=majority&appName=VolunteerSphere";
@@ -25,6 +28,8 @@ app.post('/new-user', newUser);
 app.post('/login-user', loginUser);
 app.use('/activities',activityrouter);
 
+// PROGRESS
+app.post('/get-progress', getProgress);
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
