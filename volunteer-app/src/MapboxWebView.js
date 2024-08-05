@@ -1,9 +1,32 @@
-import React from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Dimensions, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
-const mapboxAccessToken = process.env.MAPBOX_ACCESS_TOKEN;
+import * as Location from 'expo-location';
 
 const MapboxWebView = () => {
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission to access location was denied');
+        return;
+      }
+
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+
+      // Print out the current location
+      console.log('Current location:', currentLocation);
+      Alert.alert('Current location', `Latitude: ${currentLocation.coords.latitude}, Longitude: ${currentLocation.coords.longitude}`);
+    })();
+  }, []);
+
+  if (!location) {
+    return null; // Or a loading spinner
+  }
+
   const htmlContent = `
     <html>
       <head>
@@ -28,13 +51,42 @@ const MapboxWebView = () => {
         </div>
         <div id='map'></div>
         <script>
-          mapboxgl.accessToken = 'ACCESS TOKEN';
+          mapboxgl.accessToken = 'pk.eyJ1IjoidmFpYnNzIiwiYSI6ImNsejZiZHJicDFmYzcyanEyMDRjbjNra3YifQ.M1EUlJH4NvEwGMHcGNf9gQ';
           var map = new mapboxgl.Map({
             container: 'map',
-            style: 'mapbox://styles/vaibss/clz7oloxi000e01p98yn24o0i',
-            center: [-98.585522, 56.130366], // Center coordinates for Canada
-            zoom: 3 // Zoom level adjusted to show a broad area
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [${location.coords.longitude}, ${location.coords.latitude}], // Center coordinates for current location
+            zoom: 12 // Zoom level
           });
+
+          // Add geolocate control to the map.
+          var geolocate = new mapboxgl.GeolocateControl({
+            positionOptions: {enableHighAccuracy: true},
+            trackUserLocation: true,
+            showUserHeading: true,
+          });
+
+          map.addControl(geolocate);
+
+          map.on('load', function() {
+            // Ensure the geolocate control is visible and tracking
+            geolocate.trigger();
+            console.log('Map loaded and geolocate control triggered');
+          });
+
+          geolocate.on('geolocate', function(e) {
+            // Center the map on the user's location when geolocated
+            map.flyTo({
+              center: [e.coords.longitude, e.coords.latitude],
+              essential: true // this animation is considered essential with respect to prefers-reduced-motion
+            });
+            console.log('Geolocate event: ', e);
+          });
+
+          geolocate.on('error', function(error) {
+            console.error('Geolocate error: ', error);
+          });
+
           function searchLocations() {
             var input = document.getElementById('searchInput').value;
             fetch('https://api.mapbox.com/geocoding/v5/mapbox.places/' + encodeURIComponent(input) + '.json?access_token=' + mapboxgl.accessToken)
@@ -59,6 +111,16 @@ const MapboxWebView = () => {
       originWhitelist={['*']}
       source={{ html: htmlContent }}
       style={styles.container}
+      javaScriptEnabled={true}
+      domStorageEnabled={true}
+      geolocationEnabled={true}
+      onMessage={(event) => {
+        alert('Message from WebView: ' + event.nativeEvent.data);
+      }}
+      onError={(syntheticEvent) => {
+        const { nativeEvent } = syntheticEvent;
+        alert('WebView error: ' + nativeEvent);
+      }}
     />
   );
 };
