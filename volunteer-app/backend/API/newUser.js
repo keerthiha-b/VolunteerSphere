@@ -27,7 +27,10 @@ const newUser = async (req, res) => {
         first_name: firstName,
         last_name: lastName,
         email,
-        userType
+        userType,
+        level: 0,
+        points: 0,
+        maxPoints: 1000
       });
     } else if (userType === 'org') {
       newUser = new Organization({
@@ -41,6 +44,8 @@ const newUser = async (req, res) => {
       return res.status(400).json({ errorMsg: "Invalid user type" });
     }
 
+    console.log("hey");
+    console.log(newUser);
     await newUser.save();
     console.log('New user/organization registered successfully:', newUser);
     res.status(201).json({ message: 'User/Organization added successfully' });
