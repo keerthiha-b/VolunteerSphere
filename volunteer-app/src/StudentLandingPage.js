@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, Text, FlatList, Button, StyleSheet } from 'react-native';
+import { View, Image, TouchableOpacity, Text, FlatList, Button, StyleSheet} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapboxWebView from './MapboxWebView';
 import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
@@ -10,7 +10,6 @@ import character from './images/PlayerChar.png';
 import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
 import missionIcon from './images/buttonicons/MissionsIcon.png';
 import axios from 'axios';
-import Posting from './StudentAvailablePosting'; 
 
 const StudentLandingPage = ({ navigation }) => {
   const [username, setUsername] = useState('user');
@@ -74,6 +73,7 @@ const StudentLandingPage = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name })}>
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
@@ -104,7 +104,13 @@ const StudentLandingPage = ({ navigation }) => {
         <TouchableOpacity style={styles.optionButton}>
           <Text style={styles.optionButtonText}>Check your awards</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('TempVolOppPage')}>
+          <Text style={styles.optionButtonText}>View & Sign Up for Volunteer (Temp)</Text>
+        </TouchableOpacity>
       </View> 
+
+      </SafeAreaView>
       
       <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true}/>
     
@@ -122,14 +128,9 @@ const StudentLandingPage = ({ navigation }) => {
             style={styles.missionsIconStyle}
           />
         </TouchableOpacity>
-        <Text style={styles.title}>Volunteer Opportunities</Text>
-        <FlatList
-            data={opportunities}
-            keyExtractor={item => item._id.toString()} 
-            renderItem={({ item }) => <Posting opportunity={item} navigation={navigation} />}
-        />
     </View> 
-    </SafeAreaView>
+
+  </SafeAreaView>
   );
 };
 

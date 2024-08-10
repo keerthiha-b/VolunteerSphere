@@ -21,6 +21,7 @@
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
     "expo": "~51.0.14",
     "expo-secure-store": "~13.0.2",
     "expo-status-bar": "~1.12.1",

@@ -14,6 +14,8 @@ import ProfilePage from './src/ProfilePage';
 import SuccessScreen from './src/Success';
 import SignUpVolunteerOpportunity from './src/SignUpVolunteerOpportunity';
 import MapboxWebView from './src/MapboxWebView'; 
+import Temp from './src/Temp_ViewVolunteerOpportunities'; 
+
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +34,8 @@ function App() {
         <Stack.Screen name="Success" component={SuccessScreen} />
         <Stack.Screen name="SignUpVolunteerOpportunity" component={SignUpVolunteerOpportunity} />
         <Stack.Screen name="MapPage" component={MapboxWebView} options={{ headerShown: true, title: 'Map' }} /> 
+        <Stack.Screen name="TempVolOppPage" component={Temp} options={{ headerShown: false}} /> 
+
       </Stack.Navigator>
     </NavigationContainer>
   );
