@@ -1,4 +1,4 @@
-const UserToActivity = require('../Schema/UserToActivity')
+const UserToActivity = require('../Schema/UserToActivity');
 const express = require('express');
 const cors = require('cors');
 
@@ -6,23 +6,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const removeUserToActivity = async (req, res) => {
+const deleteUserToActivity = async (req, res) => {
   try {
     const { userId, opportunityId } = req.body;
 
     // Log the incoming request
-    console.log('Received remove user request:', req.body);
+    console.log('Received request to remove user from opportunity:', req.body);
 
-    // Find and remove the document
-    const removeResult = await UserToActivity.findOneAndDelete({ userId, opportunityId });
+    // Delete the entry based on userId and opportunityId
+    const result = await UserToActivity.deleteOne({ userId, opportunityId });
 
-    if (removeResult) {
-      console.log('Successfully removed user from opportunity', removeResult);
-      res.status(201).json({ message: 'Successfully removed user from opportunity' });
-    } else {
-      console.log('No record found to remove');
-      res.status(404).json({ message: 'No record found to remove' });
+    if (result.deletedCount === 0) {
+      console.log('No matching record found for deletion');
+      res.status(400).json({ errorMsg: 'No matching record found to delete' });
     }
+
+    console.log('Successfully removed user from opportunity');
+    res.status(200).json({ message: 'Successfully removed user from opportunity' });
 
   } catch (error) {
     console.error('Error removing user from opportunity:', error);
@@ -30,4 +30,4 @@ const removeUserToActivity = async (req, res) => {
   }
 };
 
-module.exports = removeUserToActivity;
+module.exports = deleteUserToActivity;
