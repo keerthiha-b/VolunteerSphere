@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const newUser = require('./API/newUser');
 const loginUser = require('./API/loginUser');
 const Activity = require('./Schema/Activity');
-const activityrouter = require('./API/activityrelated')
+const newUserToActivity = require('./API/newUserToActivity');
+const activityrouter = require('./API/activityrelated');
 const cors = require('cors');
 
 const app = express();
@@ -25,6 +26,7 @@ app.post('/new-user', newUser);
 app.post('/login-user', loginUser);
 app.use('/activities',activityrouter);
 
-
+// SIGN-UP FOR ACTIVITY / OPPORTUNITY
+app.post('/sign-up-opportunity', newUserToActivity);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
