@@ -4,12 +4,12 @@ import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { save, getValueFor } from './utils/secureStoreUtil';
 
 const ProfilePage = ({ navigation }) => {
-  const org_name = getValueFor("name");
-  const org_email = getValueFor("email");
+  const name = getValueFor("name");
+  const email = getValueFor("email");
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('OrgLandingPage', { org_name })}>
+        <TouchableOpacity onPress={() => navigation.navigate('OrgLandingPage')}>
           <MaterialIcons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
       </View>
@@ -21,8 +21,8 @@ const ProfilePage = ({ navigation }) => {
         <TouchableOpacity style={styles.editIcon}>
           <FontAwesome name="edit" size={20} color="white" />
         </TouchableOpacity>
-        <Text style={styles.name}>{org_name}</Text>
-        <Text style={styles.contactInfo}>{org_email}|555-555-5555</Text>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.contactInfo}>{email}|555-555-5555</Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Account and System</Text>

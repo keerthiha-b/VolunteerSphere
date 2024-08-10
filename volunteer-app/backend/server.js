@@ -10,6 +10,9 @@ const removeUserToActivity = require('./API/removeUserToActivity');
 const activityrouter = require('./API/activityrelated');
 const cors = require('cors');
 
+// Progress API
+const getProgress = require('./API/getProgress');
+
 const app = express();
 const PORT = process.env.PORT || 3001; 
 const MONGO_DB_URI = process.env.MONGO_DB_URI || "mongodb+srv://Volunteer1:Admin$trator@volunteersphere.5bhk4hh.mongodb.net/?retryWrites=true&w=majority&appName=VolunteerSphere";
@@ -32,5 +35,8 @@ app.use('/activities',activityrouter);
 // SIGN-UP FOR ACTIVITY / OPPORTUNITY
 app.post('/sign-up-opportunity', newUserToActivity);
 app.post('/remove-signed-up-opportunity', removeUserToActivity);
+// PROGRESS
+app.post('/get-progress', getProgress);
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
