@@ -31,6 +31,6 @@ app.use('/activities',activityrouter);
 
 // SIGN-UP FOR ACTIVITY / OPPORTUNITY
 app.post('/sign-up-opportunity', newUserToActivity);
-app.post('/remove-signed-up-opportunity')
+app.post('/remove-signed-up-opportunity', removeUserToActivity);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

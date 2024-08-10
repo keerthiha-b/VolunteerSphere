@@ -14,6 +14,8 @@ const SignUpVolunteerOpportunity = ({ navigation, route }) => {
         opportunityId: opportunity._id
     }
 
+    console.log(body);
+
     try {
       const response = await fetch('https://volunteersphere.onrender.com/sign-up-opportunity', {
         method: 'POST',
@@ -48,6 +50,8 @@ const SignUpVolunteerOpportunity = ({ navigation, route }) => {
         opportunityId: opportunity._id
     }
 
+    console.log(body);
+
     try {
       const response = await fetch('https://volunteersphere.onrender.com/remove-signed-up-opportunity', {
         method: 'POST',
@@ -61,15 +65,16 @@ const SignUpVolunteerOpportunity = ({ navigation, route }) => {
       console.log('Received data:', data); // Log the received data
 
       if (response.ok) {
-        Alert.alert("Successfully removed from opportunity " + opportunity.name, data.errorMsg);
+        Alert.alert("Successfully removed sign up for opportunity " + opportunity.name, data.errorMsg);
 
        
       } else {
-        console.error('Sign up opportunity Error:', data.errorMsg);
-        Alert.alert("Sign up opportunity failed", data.errorMsg);
+        console.error('Removing sign up opportunity Error:', data.errorMsg);
+        Alert.alert("Removing sign up opportunity failed", data.errorMsg);
       }
     } catch (error) {
       console.error('Network Error:', error);
+      console.error('Error stack trace:', error.stack);
       Alert.alert("Network Error", "Unable to connect. Please try again later.");
     }
   }

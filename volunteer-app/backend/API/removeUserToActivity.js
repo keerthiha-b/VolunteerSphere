@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const deleteUserToActivity = async (req, res) => {
+const removeUserToActivity = async (req, res) => {
   try {
     const { userId, opportunityId } = req.body;
 
@@ -14,11 +14,11 @@ const deleteUserToActivity = async (req, res) => {
     console.log('Received request to remove user from opportunity:', req.body);
 
     // Delete the entry based on userId and opportunityId
-    const result = await UserToActivity.deleteOne({ userId, opportunityId });
+    const result = await UserToActivity.deleteOne({ userId: userId, opportunityId: opportunityId });
 
     if (result.deletedCount === 0) {
       console.log('No matching record found for deletion');
-      res.status(400).json({ errorMsg: 'No matching record found to delete' });
+      return res.status(400).json({ errorMsg: 'No matching record found to delete' });
     }
 
     console.log('Successfully removed user from opportunity');
@@ -30,4 +30,4 @@ const deleteUserToActivity = async (req, res) => {
   }
 };
 
-module.exports = deleteUserToActivity;
+module.exports = removeUserToActivity;
