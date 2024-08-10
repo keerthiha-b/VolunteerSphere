@@ -32,7 +32,7 @@ function App() {
         <Stack.Screen name="VolunteerOpportunities" component={VolunteerOpportunities} options={{ headerShown: true, title: 'Volunteer Opportunities' }} />
         <Stack.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
         <Stack.Screen name="Success" component={SuccessScreen} />
-        <Stack.Screen name="SignUpVolunteerOpportunity" component={SignUpVolunteerOpportunity} />
+        <Stack.Screen name="SignUpVolunteerOpportunity" component={SignUpVolunteerOpportunity} options={{ headerShown: true, title: ''}} />
         <Stack.Screen name="MapPage" component={MapboxWebView} options={{ headerShown: true, title: 'Map' }} /> 
         <Stack.Screen name="TempVolOppPage" component={Temp} options={{ headerShown: false}} /> 
 
