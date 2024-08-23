@@ -12,7 +12,8 @@ import OrgLandingPage from './src/LandingPageOrg';
 import StudentLandingPage from './src/StudentLandingPage';
 import ProfilePage from './src/ProfilePage';
 import SuccessScreen from './src/Success';
-import MapboxWebView from './src/MapboxWebView'; 
+import MapScreen from './src/MapScreen'; 
+
 
 const Stack = createNativeStackNavigator();
 
@@ -29,7 +30,8 @@ function App() {
         <Stack.Screen name="VolunteerOpportunities" component={VolunteerOpportunities} options={{ headerShown: true, title: 'Volunteer Opportunities' }} />
         <Stack.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
         <Stack.Screen name="Success" component={SuccessScreen} />
-        <Stack.Screen name="MapPage" component={MapboxWebView} options={{ headerShown: true, title: 'Map' }} /> 
+        <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, title: 'Map' }} />
+       
       </Stack.Navigator>
     </NavigationContainer>
   );

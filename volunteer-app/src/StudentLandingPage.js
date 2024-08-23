@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, Text, Button, StyleSheet } from 'react-native';
+import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import MapboxWebView from './MapboxWebView';
 import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
 import { ProgressBar, MD3Colors } from 'react-native-paper';
 
@@ -9,26 +8,33 @@ import { ProgressBar, MD3Colors } from 'react-native-paper';
 import character from './images/PlayerChar.png';
 import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
 import missionIcon from './images/buttonicons/MissionsIcon.png';
+import MapScreen from './MapScreen';
 
 const StudentLandingPage = ({ navigation }) => {
   const [username, setUsername] = useState('user');
   const [id, setId] = useState(0);
-  const [progress, setProgress] = useState({level: 1, points: 0, maxPoints: 1000});
+  const [progress, setProgress] = useState({ level: 1, points: 0, maxPoints: 1000 });
 
-  const name = getValueFor("name");
+  // Function to initialize user data
+  const initializeUserData = async () => {
+    const storedName = await getValueFor("name");
+    const storedId = await getValueFor("userId");
+    setUsername(storedName);
+    setId(storedId);
+  };
 
   // ON BOOT
   useEffect(() => {
-    setUsername(getValueFor("name"));
-    setId(getValueFor("userId"));
+    initializeUserData();
   }, []);
 
   useEffect(() => {
-    getProgress();
-  }, [username])
+    if (username) {
+      getProgress();
+    }
+  }, [username]);
 
   const getProgress = async () => {
-    console.log(id);
     try {
       const response = await fetch('https://volunteersphere.onrender.com/get-progress', {
         method: 'POST',
@@ -37,24 +43,25 @@ const StudentLandingPage = ({ navigation }) => {
         },
         body: JSON.stringify({ id })
       });
-     
+
       const data = await response.json();
       console.log('Received progress data:', data); // Log the received data
 
       if (response.ok) {
         setProgress(data);
-
       } else {
         console.error('Error getting progress:', data.errorMsg);
+        Alert.alert('Error', 'Could not fetch progress data');
       }
     } catch (error) {
       console.error('Network Error:', error);
+      Alert.alert('Network Error', 'Could not fetch progress data');
     }
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name })}>
+      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name: username })}>
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
 
@@ -69,7 +76,7 @@ const StudentLandingPage = ({ navigation }) => {
 
       <Text style={styles.title}>What would you like to do?</Text>
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('MapPage')}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('MapScreen')}>
           <Text style={styles.optionButtonText}>Find new opportunities</Text>
         </TouchableOpacity>
 
@@ -86,7 +93,7 @@ const StudentLandingPage = ({ navigation }) => {
         </TouchableOpacity>
       </View> 
       
-      <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true}/>
+      <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />
     
       <View style={styles.smallOptionsContainer}>
         <TouchableOpacity style={styles.smallOptionButton}>
@@ -144,40 +151,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  notification: {
-    backgroundColor: '#f0f0f0',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  notificationText: {
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  approveButton: {
-    backgroundColor: '#28a745',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginRight: 5,
-    alignItems: 'center',
-  },
-  rejectButton: {
-    backgroundColor: '#dc3545',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 5,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -212,10 +185,6 @@ const styles = StyleSheet.create({
     borderRadius: 50, // Make the edges rounded
     overflow: 'hidden', // Ensure that the progress bar stays within rounded corners
     backgroundColor: '#EEEEEE', 
-  },
-  progressBarText: {
-    fontSize: 24,
-    color: '#EEEEEE'
   },
   smallOptionsContainer: {
     flexDirection: 'row',
