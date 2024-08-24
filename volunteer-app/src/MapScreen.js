@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -8,9 +9,7 @@ import { GOOGLE_MAPS_API_KEY } from '@env';
 
 // Import images
 const images = {
-  education: require('./images/education.jpg'),
-  healthcare: require('./images/healthcare.jpg'),
-  cleaning: require('./images/cleaning.jpg'),
+  Health: require('./images/Health.jpg'),
 };
 
 const MapScreen = () => {
@@ -137,7 +136,7 @@ const MapScreen = () => {
             onSubmitEditing={handleSearch}
           />
 
-          {/* Filter Buttons (Add styling and functionality as needed) */}
+          {/* Filter Buttons */}
           <View style={styles.filterContainer}>
             <TouchableOpacity style={styles.filterButton}>
               <Text style={styles.filterButtonText}>Distance Away</Text>
@@ -172,19 +171,27 @@ const MapScreen = () => {
                     title={activity.name}
                   >
                     <Callout tooltip>
-                      <View style={styles.callout}>
-                        {/* Display the image based on the category */}
-                        <Image
-                          source={images[activity.category.toLowerCase()]} // Ensure category matches the key in the images object
-                          style={styles.activityImage}
-                        />
-                        <Text style={styles.calloutTitle}>{activity.name || 'No Name'}</Text>
-                        <Text>{activity.category || 'No Category'}</Text>
-                        <Text>{activity.duration || 'No Duration'}</Text>
-                        <Text>{activity.address || 'No Address'}</Text>
-                        <TouchableOpacity style={styles.signupButton} onPress={() => Alert.alert('Sign Up', `Sign up for ${activity.name}`)}>
-                          <Text style={styles.signupButtonText}>Sign Up</Text>
-                        </TouchableOpacity>
+                      <View style={styles.calloutContainer}>
+                        <View style={styles.callout}>
+                          {/* Display the image based on the category */}
+                          {images[activity.category] ? (
+                            <Image
+                              source={'./images/Health.jpg'}
+                              style={styles.activityImage}
+                            />
+                          ) : (
+                            <Image
+                              source={require('./images/PlayerChar.png')} // Default image if not found
+                              style={styles.activityImage}
+                            />
+                          )}
+                          <Text style={styles.calloutTitle}>{activity.name || 'No Name'}</Text>
+                          <Text>{activity.category || 'No Organization Name'}</Text>
+                          <Text>{activity.duration || 'No Duration'}</Text>
+                          <TouchableOpacity style={styles.signupButton} onPress={() => Alert.alert('Sign Up', `Sign up for ${activity.name}`)}>
+                            <Text style={styles.signupButtonText}>Sign Up</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     </Callout>
                   </Marker>
@@ -237,14 +244,26 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  calloutContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 10,
+  },
   callout: {
     width: 200,
-    padding: 10,
+    backgroundColor: 'white', // Ensure a solid white background
+    borderRadius: 10,
+    shadowColor: '#000', // Shadow color for the callout
+    shadowOffset: { width: 0, height: 2 }, // Offset for shadow
+    shadowOpacity: 0.3, // Opacity of the shadow
+    shadowRadius: 3, // Blur radius for shadow
+    elevation: 5, // Elevation for Android shadow
   },
   calloutTitle: {
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 5,
+    color: '#000', // Ensure text is visible by setting color explicitly
   },
   signupButton: {
     backgroundColor: '#FA7F35', // Orange color for the signup button
@@ -260,6 +279,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginBottom: 5,
+    borderRadius: 5, // Add border radius for rounded corners
+    resizeMode: 'contain', 
   },
 });
 
