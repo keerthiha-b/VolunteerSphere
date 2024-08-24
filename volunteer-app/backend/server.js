@@ -2,8 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const newUser = require('./API/newUser');
 const loginUser = require('./API/loginUser');
-const Activity = require('./Schema/Activity');
-const activityrouter = require('./API/activityrelated')
+const activityRouter = require('./API/activityrelated'); // Activity-related routes
+const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const cors = require('cors');
 
 // Progress API
@@ -26,10 +26,15 @@ app.post('/new-user', newUser);
 
 // LOG-IN - API call to log in a user
 app.post('/login-user', loginUser);
-app.use('/activities',activityrouter);
+
+// Activity-related endpoints
+app.use('/activities', activityRouter);
+
+// Map-related endpoints
+app.use('/api/map', mapRouter); // Add this line to use the new map-related route
 
 // PROGRESS
 app.post('/get-progress', getProgress);
 
-
+// Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
