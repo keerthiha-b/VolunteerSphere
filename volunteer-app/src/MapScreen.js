@@ -3,7 +3,7 @@ import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import MapView from 'react-native-maps';
 import * as Location from 'expo-location';
 
-const GOOGLE_API_KEY = 'AIzaSyAWO8MPlCpzIlQl7gd9d1Ur0rCqGAiWGx0'; // Replace with your actual API key
+const GOOGLE_API_KEY = 'Put the tokens'; // Replace with your actual API key
 
 const MapScreen = () => {
   const [userLocation, setUserLocation] = useState(null);
