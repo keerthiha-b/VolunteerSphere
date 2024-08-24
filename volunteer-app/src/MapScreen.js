@@ -3,7 +3,7 @@ import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 
-const GOOGLE_API_KEY = 'AIzaSyD7bYds8MLnP-uUSKQwkpgmYHY6N3rEPmE'; // Replace with your actual API key
+const GOOGLE_API_KEY = 'Put the tokens'; // Replace with your actual API key
 
 const MapScreen = () => {
   const [activities, setActivities] = useState([]); // State to store fetched activities
