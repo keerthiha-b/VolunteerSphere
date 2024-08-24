@@ -21,7 +21,7 @@
       },
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAWO8MPlCpzIlQl7gd9d1Ur0rCqGAiWGx0"
+          "apiKey": "PUT THE TOKENS"
         }
       },
       "package": "com.focusfocus.volunteerapp"
