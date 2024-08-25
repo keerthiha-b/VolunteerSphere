@@ -18,13 +18,24 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "PUT THE TOKENS"
+        }
+      },
+      "package": "com.focusfocus.volunteerapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a9e307ac-f72c-4a82-a782-e17d2e8acbda"
+      }
+    }
   }
 }

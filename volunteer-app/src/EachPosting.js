@@ -2,20 +2,20 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 // Import the images
-import volunteer from '../assets/volunteer.png';
-import volunteer1 from '../assets/volunteer1.png';
-import volunteer2 from '../assets/volunteer2.png';
+// import volunteer from './images/volunteer.png';
+// import volunteer1 from './images/volunteer1.png';
+// import volunteer2 from './images/volunteer2.png';
 
 // Array of imported images
-const images = [volunteer, volunteer1, volunteer2];
+// const images = [volunteer, volunteer1, volunteer2];
 
 const EachPosting= ({ opportunity }) => {
   // Select a random image
-  const randomImage = images[Math.floor(Math.random() * images.length)];
+  //const randomImage = images[Math.floor(Math.random() * images.length)];
 
   return (
     <View style={styles.card}>
-      <Image source={randomImage} style={styles.image} />
+      {/* <Image source={randomImage} style={styles.image} /> */}
       <Text style={styles.title}>{opportunity.name}</Text>
       <Text style={styles.details}>{opportunity.duration} of volunteering</Text>
       <View style={styles.buttonContainer}>
