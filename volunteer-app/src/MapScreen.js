@@ -173,7 +173,7 @@ const MapScreen = ({ navigation }) => {
             provider={MapView.PROVIDER_GOOGLE}
             region={mapRegion}
             showsUserLocation={true}
-            followsUserLocation={true}
+            followsUserLocation={false}
           >
             {activities.filter(activity => filter === 'all' || activity.category.toLowerCase() === filter).map(activity => (
               <Marker
