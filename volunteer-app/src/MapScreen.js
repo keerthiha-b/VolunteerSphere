@@ -11,7 +11,7 @@ const images = {
   health: require('./images/Health.jpg'), // Assuming you've got more and renamed them all to lowercase
 };
 
-const MapScreen = () => {
+const MapScreen = ({ navigation }) => {
   const [activities, setActivities] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [mapRegion, setMapRegion] = useState(null);
@@ -83,26 +83,10 @@ const MapScreen = () => {
     }
   };
 
-  // const adjustCoordinates = (activities) => {
-  //   const adjustmentFactor = 0.00010; // Adjust as needed
-  //   let seenCoordinates = {};
-
-  //   return activities.map(activity => {
-  //     const key = `${activity.latitude.toFixed(4)}-${activity.longitude.toFixed(4)}`;
-  //     if (!seenCoordinates[key]) {
-  //       seenCoordinates[key] = 0;
-  //     } else {
-  //       seenCoordinates[key]++;
-  //       activity.latitude += seenCoordinates[key] * adjustmentFactor * Math.cos(seenCoordinates[key] * 100);
-  //       activity.longitude += seenCoordinates[key] * adjustmentFactor * Math.sin(seenCoordinates[key] * 100);
-  //     }
-  //     return activity;
-  //   });
-  // };
   const adjustCoordinates = (activities) => {
     const adjustmentFactor = 0.0010; // Distance factor to spread markers
     const clusters = {};
-  
+
     activities.forEach(activity => {
       const key = `${activity.latitude.toFixed(4)}-${activity.longitude.toFixed(4)}`;
       if (!clusters[key]) {
@@ -115,9 +99,9 @@ const MapScreen = () => {
         clusters[key].items.push(activity);
       }
     });
-  
+
     const adjustedActivities = [];
-  
+
     Object.keys(clusters).forEach(key => {
       const cluster = clusters[key];
       if (cluster.items.length === 1) {
@@ -138,10 +122,9 @@ const MapScreen = () => {
         });
       }
     });
-  
+
     return adjustedActivities;
   };
-  
 
   const handleSearch = async () => {
     if (searchQuery) {
@@ -202,14 +185,14 @@ const MapScreen = () => {
                 pinColor="#FA7F35"
                 title={activity.name}
               >
-                <Callout tooltip>
+                <Callout tooltip onPress={() => navigation.navigate('ActivityDetail', { activity: activity })}>
                   <View style={styles.calloutContainer}>
                     <Image source={images[activity.category.toLowerCase()] || images.health} style={styles.activityImage} />
                     <Text style={styles.calloutTitle}>{activity.name}</Text>
                     <Text>{activity.category || 'No Category'}</Text>
                     <Text>{activity.duration || 'No Duration'}</Text>
-                    <TouchableOpacity style={styles.signupButton} onPress={() => Alert.alert('Sign Up', `Sign up for ${activity.name}`)}>
-                      <Text style={styles.signupButtonText}>Sign Up</Text>
+                    <TouchableOpacity style={styles.signupButton}>
+                      <Text style={styles.signupButtonText}>Learn More</Text>
                     </TouchableOpacity>
                   </View>
                 </Callout>
@@ -263,16 +246,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 10,
-  },
-  callout: {
-    width: 200,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
   },
   calloutTitle: {
     fontWeight: 'bold',
