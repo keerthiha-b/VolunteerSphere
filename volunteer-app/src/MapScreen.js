@@ -47,7 +47,6 @@ const MapScreen = () => {
     try {
       const response = await fetch('https://volunteersphere.onrender.com/api/map/activities');
       const data = await response.json();
-      console.log("Fetched activities:", data); // Log the raw data received
 
       if (Array.isArray(data)) {
         const geocodedActivities = await Promise.all(
@@ -57,7 +56,6 @@ const MapScreen = () => {
               return { ...activity, ...coordinates };
             }
             return activity;
-           
           })
         );
         setActivities(adjustCoordinates(geocodedActivities));
@@ -75,6 +73,7 @@ const MapScreen = () => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
     const response = await fetch(url);
     const data = await response.json();
+
     if (data.status === 'OK') {
       const { lat, lng } = data.results[0].geometry.location;
       return { latitude: lat, longitude: lng };
@@ -84,40 +83,86 @@ const MapScreen = () => {
     }
   };
 
-  const adjustCoordinates = (activities) => {
-    const adjustmentFactor = 0.00002; // Adjust as needed
-    let seenCoordinates = {};
+  // const adjustCoordinates = (activities) => {
+  //   const adjustmentFactor = 0.00010; // Adjust as needed
+  //   let seenCoordinates = {};
 
-    return activities.map(activity => {
+  //   return activities.map(activity => {
+  //     const key = `${activity.latitude.toFixed(4)}-${activity.longitude.toFixed(4)}`;
+  //     if (!seenCoordinates[key]) {
+  //       seenCoordinates[key] = 0;
+  //     } else {
+  //       seenCoordinates[key]++;
+  //       activity.latitude += seenCoordinates[key] * adjustmentFactor * Math.cos(seenCoordinates[key] * 100);
+  //       activity.longitude += seenCoordinates[key] * adjustmentFactor * Math.sin(seenCoordinates[key] * 100);
+  //     }
+  //     return activity;
+  //   });
+  // };
+  const adjustCoordinates = (activities) => {
+    const adjustmentFactor = 0.0010; // Distance factor to spread markers
+    const clusters = {};
+  
+    activities.forEach(activity => {
       const key = `${activity.latitude.toFixed(4)}-${activity.longitude.toFixed(4)}`;
-      if (!seenCoordinates[key]) {
-        seenCoordinates[key] = 0;
+      if (!clusters[key]) {
+        clusters[key] = {
+          latitude: activity.latitude,
+          longitude: activity.longitude,
+          items: [activity]
+        };
       } else {
-        seenCoordinates[key]++;
-        const angle = 360 * seenCoordinates[key];
-        const radius = adjustmentFactor * seenCoordinates[key];
-        activity.latitude += radius * Math.cos(angle);
-        activity.longitude += radius * Math.sin(angle);
+        clusters[key].items.push(activity);
       }
-      return activity;
     });
+  
+    const adjustedActivities = [];
+  
+    Object.keys(clusters).forEach(key => {
+      const cluster = clusters[key];
+      if (cluster.items.length === 1) {
+        adjustedActivities.push(cluster.items[0]);
+      } else {
+        // Spread items around the central point
+        const total = cluster.items.length;
+        const angleStep = (2 * Math.PI) / total;
+        cluster.items.forEach((item, index) => {
+          const angle = angleStep * index;
+          const adjustedLatitude = cluster.latitude + adjustmentFactor * Math.cos(angle);
+          const adjustedLongitude = cluster.longitude + adjustmentFactor * Math.sin(angle);
+          adjustedActivities.push({
+            ...item,
+            latitude: adjustedLatitude,
+            longitude: adjustedLongitude
+          });
+        });
+      }
+    });
+  
+    return adjustedActivities;
   };
+  
 
   const handleSearch = async () => {
     if (searchQuery) {
       const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(searchQuery)}&key=${GOOGLE_MAPS_API_KEY}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.status === 'OK') {
-        const { lat, lng } = data.results[0].geometry.location;
-        setMapRegion({
-          latitude: lat,
-          longitude: lng,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
-      } else {
-        Alert.alert('Location not found', 'Please try a different address.');
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.status === 'OK') {
+          const { lat, lng } = data.results[0].geometry.location;
+          setMapRegion({
+            latitude: lat,
+            longitude: lng,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          });
+        } else {
+          Alert.alert('Location not found', 'Please try a different address.');
+        }
+      } catch (error) {
+        console.error('Error fetching location:', error);
+        Alert.alert('Error', 'Failed to fetch the location.');
       }
     }
   };
@@ -133,19 +178,13 @@ const MapScreen = () => {
             onChangeText={setSearchQuery}
             onSubmitEditing={handleSearch}
           />
-
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.filterContainer}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
             {['All', 'Environment', 'Education', 'Health', 'Community Service', 'Animal Welfare'].map(category => (
               <TouchableOpacity key={category} style={styles.filterButton} onPress={() => setFilter(category.toLowerCase())}>
                 <Text style={styles.filterButtonText}>{category}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-
           <MapView
             style={styles.map}
             provider={MapView.PROVIDER_GOOGLE}
@@ -153,7 +192,7 @@ const MapScreen = () => {
             showsUserLocation={true}
             followsUserLocation={true}
           >
-            {activities.filter(activity => filter === 'all' || activity.category.toLowerCase() === filter).map((activity) => (
+            {activities.filter(activity => filter === 'all' || activity.category.toLowerCase() === filter).map(activity => (
               <Marker
                 key={activity._id}
                 coordinate={{
@@ -165,7 +204,7 @@ const MapScreen = () => {
               >
                 <Callout tooltip>
                   <View style={styles.calloutContainer}>
-                    <Image source={images[activity.category] || images.health} style={styles.activityImage} />
+                    <Image source={images[activity.category.toLowerCase()] || images.health} style={styles.activityImage} />
                     <Text style={styles.calloutTitle}>{activity.name}</Text>
                     <Text>{activity.category || 'No Category'}</Text>
                     <Text>{activity.duration || 'No Duration'}</Text>
@@ -203,14 +242,14 @@ const styles = StyleSheet.create({
     top: 60,
     left: 10,
     right: 10,
-    height: 50,
+    flexDirection: 'row',
     zIndex: 1,
   },
   filterButton: {
     backgroundColor: '#FA7F35',
     padding: 10,
     borderRadius: 20,
-    marginLeft: 10,
+    marginHorizontal: 5,
   },
   filterButtonText: {
     color: 'white',
@@ -218,6 +257,7 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
+    marginTop: 110, // Make sure there is enough space for the filter bar
   },
   calloutContainer: {
     backgroundColor: 'white',
@@ -255,7 +295,7 @@ const styles = StyleSheet.create({
     height: 50,
     marginBottom: 5,
     borderRadius: 5,
-    resizeMode: 'contain',  // Ensure image fits within the bounds
+    resizeMode: 'contain',
   },
 });
 

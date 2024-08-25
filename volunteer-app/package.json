@@ -34,6 +34,7 @@
     "react-native-dotenv": "^3.4.11",
     "react-native-elements": "^3.4.3",
     "react-native-maps": "1.14.0",
+    "react-native-maps-super-cluster": "^1.6.0",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^5.12.5",
     "react-native-picker-select": "^9.1.3",
