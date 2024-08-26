@@ -7,8 +7,9 @@ const LeaderboardPage = ({ route }) => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  console.log('Route Params:', route.params);
   useEffect(() => {
+    console.log('Passed userId:', userId); 
     const fetchLeaderboard = async () => {
       try {
         const response = await axios.get(`https://volunteersphere.onrender.com/leaderboard`, { params: { userId } });

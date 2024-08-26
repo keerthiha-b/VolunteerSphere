@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../Schema/User');
 
 // Endpoint to get leaderboard data
-router.get('/leaderboard', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { userId } = req.query; // Assuming userId is passed as a query param
 
