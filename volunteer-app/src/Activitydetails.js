@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 
 // Import images for each category
 const images = {
@@ -8,24 +8,46 @@ const images = {
   education: require('./images/education.jpg'),
   'community service': require('./images/community.jpg'),
   'animal welfare': require('./images/animalwelfare.png'),
-  // Add more categories and corresponding images as needed
 };
 
-const ActivityDetailScreen = ({ route }) => {
-  const { activity } = route.params;
+const ActivityDetailScreen = ({ route, navigation }) => {
+  const { activity, userId } = route.params; // Make sure userId is available
 
-  // Determine the image based on the category
-  const activityImage = images[activity.category.toLowerCase()] || images['default'];
+  const handleSignup = () => {
+    const apiUrl = 'http://your-server-ip:3000/signup'; // Make sure the IP and port are correct
+
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: userId, // Assuming you have the userId from a user context or login
+        opportunityId: activity.id,
+      })
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      Alert.alert("Success", data.message || "You have successfully signed up!");
+      navigation.navigate('Signupactivity'); // Navigate to a success screen if needed
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      Alert.alert("Error", "Unable to sign up. Please try again later.");
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <Image source={activityImage} style={styles.image} />
+      <Image source={images[activity.category.toLowerCase()] || images['default']} style={styles.image} />
       <Text style={styles.title}>{activity.name}</Text>
       <Text>Category: {activity.category}</Text>
       <Text>Duration: {activity.duration}</Text>
       <Text>Date: {activity.date}</Text>
       <Text>Address: {activity.address}</Text>
-      {/* Add more fields as necessary */}
+      <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
+        <Text style={styles.signupButtonText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -48,7 +70,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: 'cover',
   },
-  // Add more styles as needed
+  signupButton: {
+    backgroundColor: 'orange',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  signupButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
 export default ActivityDetailScreen;
