@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Image, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
-
-// Import API key securely from the environment variables
 import { GOOGLE_MAPS_API_KEY } from '@env';
 
-// Import images
+// Import images for each category
 const images = {
-  health: require('./images/Health.jpg'), // Assuming you've got more and renamed them all to lowercase
+  health: require('./images/Health.jpg'),
+  environment: require('./images/cleaning.jpg'),
+  education: require('./images/education.jpg'),
+  'community service': require('./images/community.jpg'),
+  'animal welfare': require('./images/animalwelfare.png'),
 };
 
 const MapScreen = ({ navigation }) => {
@@ -16,7 +18,9 @@ const MapScreen = ({ navigation }) => {
   const [userLocation, setUserLocation] = useState(null);
   const [mapRegion, setMapRegion] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState('all'); // State to keep track of the selected category filter
+  const [filter, setFilter] = useState('all');
+
+  const mapRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -58,7 +62,17 @@ const MapScreen = ({ navigation }) => {
             return activity;
           })
         );
-        setActivities(adjustCoordinates(geocodedActivities));
+
+        // Get current date
+        const currentDate = new Date();
+
+        // Filter activities by date to exclude past activities
+        const filteredActivities = geocodedActivities.filter(activity => {
+          const activityDate = new Date(activity.date); // Convert activity date from string to Date object
+          return activityDate >= currentDate;  // Only include activities with date >= current date
+        });
+
+        setActivities(adjustCoordinates(filteredActivities));
       } else {
         console.error('Data fetched is not an array:', data);
         Alert.alert('Error', 'Unexpected data format.');
@@ -134,12 +148,18 @@ const MapScreen = ({ navigation }) => {
         const data = await response.json();
         if (data.status === 'OK') {
           const { lat, lng } = data.results[0].geometry.location;
-          setMapRegion({
+          const newRegion = {
             latitude: lat,
             longitude: lng,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
-          });
+          };
+          setMapRegion(newRegion);
+          
+          // Animate to the new region
+          if (mapRef.current) {
+            mapRef.current.animateToRegion(newRegion, 1000); // The second parameter is the duration of the animation in ms
+          }
         } else {
           Alert.alert('Location not found', 'Please try a different address.');
         }
@@ -169,11 +189,12 @@ const MapScreen = ({ navigation }) => {
             ))}
           </ScrollView>
           <MapView
+            ref={mapRef} // Add the ref here
             style={styles.map}
             provider={MapView.PROVIDER_GOOGLE}
             region={mapRegion}
             showsUserLocation={true}
-            followsUserLocation={false}
+            followsUserLocation={true}
           >
             {activities.filter(activity => filter === 'all' || activity.category.toLowerCase() === filter).map(activity => (
               <Marker
@@ -240,7 +261,7 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
-    marginTop: 110, // Make sure there is enough space for the filter bar
+    marginTop: 110, 
   },
   calloutContainer: {
     backgroundColor: 'white',
