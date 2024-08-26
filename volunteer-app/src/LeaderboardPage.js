@@ -6,6 +6,7 @@ const LeaderboardPage = ({ route }) => {
   const { userId } = route.params; 
   const [leaderboard, setLeaderboard] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -15,8 +16,10 @@ const LeaderboardPage = ({ route }) => {
         if (response.data.currentUser) {
           setCurrentUser(response.data.currentUser);
         }
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
+        setIsLoading(false);
       }
     };
 
@@ -32,6 +35,22 @@ const LeaderboardPage = ({ route }) => {
     );
   };
 
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>Loading leaderboard...</Text>
+      </View>
+    );
+  }
+
+  if (leaderboard.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.loadingText}>No leaderboard data available.</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Leaderboard</Text>
@@ -40,7 +59,8 @@ const LeaderboardPage = ({ route }) => {
       <View style={styles.topThreeContainer}>
         {leaderboard.slice(0, 3).map((user, index) => (
           <View key={index} style={styles.topUser}>
-            <Image source={{ uri: 'path/to/user/image' }} style={styles.profileImage} />
+            {/* Replace with actual user image URLs if available, otherwise use a default placeholder */}
+            <Image source={{ uri: user.profileImageUrl || 'https://via.placeholder.com/50' }} style={styles.profileImage} />
             <Text style={styles.topUsername}>{user.username}</Text>
             <Text style={styles.rankNumber}>{index + 1}</Text>
           </View>
@@ -51,7 +71,7 @@ const LeaderboardPage = ({ route }) => {
       <FlatList
         data={leaderboard.slice(3, 5)}
         renderItem={renderLeaderboardItem}
-        keyExtractor={(item) => item._id.toString()}
+        keyExtractor={(item, index) => item._id ? item._id.toString() : index.toString()} // Use `_id` or fallback to index
       />
 
       {/* Display current user if not in top 5 */}
@@ -110,6 +130,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     backgroundColor: '#f0f0f0',
+  },
+  loadingText: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 
