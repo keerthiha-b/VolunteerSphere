@@ -2,20 +2,30 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 // Import the images
-// import volunteer from './images/volunteer.png';
-// import volunteer1 from './images/volunteer1.png';
-// import volunteer2 from './images/volunteer2.png';
+import healthImage from './images/Health.jpg';
+import environmentImage from './images/cleaning.jpg';
+import educationImage from './images/education.jpg';
+import communityServiceImage from './images/community.jpg';
+import animalWelfareImage from './images/animalwelfare.png';
 
-// Array of imported images
-// const images = [volunteer, volunteer1, volunteer2];
+// Map categories to corresponding images
+const categoryImages = {
+  Health: healthImage,
+  Environment: environmentImage,
+  Education: educationImage,
+  'Community Service': communityServiceImage,
+  'Animal Welfare': animalWelfareImage,
+  // Add more categories and corresponding images as needed
+};
 
-const EachPosting= ({ opportunity }) => {
-  // Select a random image
-  //const randomImage = images[Math.floor(Math.random() * images.length)];
+const EachPosting = ({ opportunity }) => {
+  // Select the image based on the category of the opportunity
+  const selectedImage = categoryImages[opportunity.category] || healthImage; // Default to healthImage if category not found
 
   return (
     <View style={styles.card}>
-      {/* <Image source={randomImage} style={styles.image} /> */}
+      {/* Display the selected image */}
+      <Image source={selectedImage} style={styles.image} />
       <Text style={styles.title}>{opportunity.name}</Text>
       <Text style={styles.details}>{opportunity.duration} of volunteering</Text>
       <View style={styles.buttonContainer}>
@@ -23,10 +33,10 @@ const EachPosting= ({ opportunity }) => {
           <Text style={styles.buttonText}>View Sign-Ups</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.editButton}>
-          <Text>📝</Text>
+          <Text style={styles.buttonText}>📝</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.deleteButton}>
-          <Text>🗑️</Text>
+          <Text style={styles.buttonText}>🗑️</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -50,17 +60,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 150,
     borderRadius: 5,
-    marginBottom: 8
+    marginBottom: 8,
   },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5
+    marginBottom: 5,
   },
   details: {
     fontSize: 14,
     color: 'grey',
-    marginBottom: 10
+    marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -68,26 +78,26 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    backgroundColor: 'orange' ,
+    backgroundColor: 'orange',
     padding: 10,
     alignItems: 'center',
-    borderRadius: 5
+    borderRadius: 5,
   },
   editButton: {
     marginLeft: 5,
     padding: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   deleteButton: {
     marginLeft: 5,
     padding: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   buttonText: {
     color: 'white',
-  }
+  },
 });
 
 export default EachPosting;
