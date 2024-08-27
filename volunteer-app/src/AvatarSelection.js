@@ -45,7 +45,7 @@ const AvatarSelection = ({ navigation }) => {
 
   useEffect(() => {
     if (username) {
-      getProgress();
+      // getProgress();
       getAvatar();
     }
   }, [username]);
