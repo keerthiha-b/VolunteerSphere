@@ -59,6 +59,7 @@ const ActivityDetailScreen = ({ route, navigation }) => {
           activityName: activity.name,
           date: activity.date,
           time: activity.duration,
+          location: activity.address
         });
       } else if (response.status === 409) { // Handle duplicate sign-up attempts
         Alert.alert('Conflict', response.data.message || 'You are already signed up for this activity.');

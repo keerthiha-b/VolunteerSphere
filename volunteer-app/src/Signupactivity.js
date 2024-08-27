@@ -2,11 +2,25 @@ import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
 const Signupactivity = ({ route, navigation }) => {
-  const { activityName, date, time } = route.params;
+  const { activityName, date, time, location } = route.params;
 
-  if (!activityName || !date || !time) {
+  if (!activityName || !date || !time || !location) {
     return <Text>Error: Missing activity details</Text>; // Handle this scenario appropriately
   }
+
+  // Convert the ISO date string to a readable format
+  const formattedDate = new Date(date).toLocaleDateString('en-US', {
+    weekday: 'long', // "Monday"
+    year: 'numeric', // "2024"
+    month: 'long', // "November"
+    day: 'numeric', // "8"
+  });
+
+  // Convert the ISO date string to a readable time format
+  const formattedTime = new Date(date).toLocaleTimeString('en-US', {
+    hour: '2-digit', // "01"
+    minute: '2-digit', // "30"
+  });
 
   return (
     <View style={styles.container}>
@@ -19,10 +33,13 @@ const Signupactivity = ({ route, navigation }) => {
       {/* Details Section */}
       <View style={styles.detailsContainer}>
         <Text style={styles.detailItem}>
-          <Text style={styles.icon}>🗓️</Text> Date: {date}
+          <Text style={styles.icon}>🗓️</Text> Date: {formattedDate}
         </Text>
         <Text style={styles.detailItem}>
-          <Text style={styles.icon}>⏰</Text> Time: {time}
+          <Text style={styles.icon}>⏰</Text> Time: {formattedTime}
+        </Text>
+        <Text style={styles.detailItem}>
+          <Text style={styles.icon}>📍</Text> Location: {location}
         </Text>
       </View>
 
@@ -35,7 +52,7 @@ const Signupactivity = ({ route, navigation }) => {
         <Button
           title="Back to Home"
           onPress={() => navigation.navigate('StudentLandingPage')} // Adjust as per your navigation needs
-          color="#228B22" // Customize the button color
+          color="orange" // Customize the button color
         />
       </View>
     </View>
@@ -53,7 +70,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#228B22', // Forest green
+    color: 'black', // Black color for title
     marginBottom: 10,
   },
   message: {
@@ -65,7 +82,7 @@ const styles = StyleSheet.create({
   activityName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FF4500', // Orange red
+    color: 'black', // Black for activity name
     marginBottom: 20,
     textAlign: 'center',
   },
