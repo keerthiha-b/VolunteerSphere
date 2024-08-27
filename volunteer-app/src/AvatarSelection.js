@@ -143,7 +143,7 @@ const AvatarSelection = ({ navigation }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id, avatarName })
+        body: JSON.stringify({ id: id, avatar: avatarName })
       });
 
       if (!response.ok) {

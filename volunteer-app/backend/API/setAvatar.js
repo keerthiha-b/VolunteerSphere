@@ -3,7 +3,10 @@ const User = require("../Schema/User");
 
 const setAvatar = async (req, res) => {
   try {
-    const { id, avatar } = req.body;
+    const passedInfo = req.body;
+
+    const id = passedInfo.id;
+    const avatar = passedInfo.avatar;
 
     console.log(id);
     console.log(avatar);
