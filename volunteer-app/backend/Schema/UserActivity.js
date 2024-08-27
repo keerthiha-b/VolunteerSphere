@@ -1,8 +1,8 @@
-// Schema/UserToActivity.js
+// Schema/UserActivity.js
 
 const mongoose = require('mongoose');
 
-const UserToActivitySchema = new mongoose.Schema({
+const UserActivitySchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User', // Reference to the User model
@@ -20,8 +20,8 @@ const UserToActivitySchema = new mongoose.Schema({
 }, { collection: 'userToActivity' });
 
 // Create a compound index on userId and opportunityId to ensure uniqueness
-userToActivitySchema.index({ userId: 1, opportunityId: 1 }, { unique: true });
+UserActivitySchema.index({ userId: 1, opportunityId: 1 }, { unique: true });
 
-const UserToActivity = mongoose.model('UserToActivity', UserToActivitySchema);
+const UserActivity = mongoose.model('UserActivity', UserActivitySchema);
 
-module.exports = UserToActivity;
+module.exports = UserActivity;

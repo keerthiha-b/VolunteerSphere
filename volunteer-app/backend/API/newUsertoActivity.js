@@ -1,7 +1,7 @@
 // API/newUserToActivity.js
 
 const mongoose = require('mongoose');
-const UserToActivity = require('../Schema/UserToActivity'); // Correct path with exact casing
+const UserActivity = require('../Schema/UserActivity'); // Updated path with exact casing
 const User = require('../Schema/User'); // Correct path to the User model
 const Activity = require('../Schema/Activity'); // Correct path to the Activity model
 
@@ -40,7 +40,7 @@ const newUserToActivity = async (req, res) => {
     const { date, time } = activity; // Extract the date and time from the activity document
 
     // Check if the user is already signed up for an activity at the same date and time
-    const overlappingSignup = await UserToActivity.findOne({
+    const overlappingSignup = await UserActivity.findOne({
       userId: mongoose.Types.ObjectId(userId),
     }).populate({
       path: 'opportunityId',
@@ -53,8 +53,8 @@ const newUserToActivity = async (req, res) => {
       return res.status(409).json({ message: 'User is already signed up for another activity at the same date and time' });
     }
 
-    // Create new instance of UserToActivity with userId, opportunityId, and username
-    const newUserToActivityEntry = new UserToActivity({
+    // Create new instance of UserActivity with userId, opportunityId, and username
+    const newUserToActivityEntry = new UserActivity({
       userId: mongoose.Types.ObjectId(userId),
       opportunityId: mongoose.Types.ObjectId(opportunityId),
       username: username, // Store the username in the document
