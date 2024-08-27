@@ -1,38 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Image, TouchableOpacity, Text, Alert, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ProgressBar } from 'react-native-paper';
 import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
-import { ProgressBar, MD3Colors } from 'react-native-paper';
 
-// IMAGES
 import character from './images/PlayerChar.png';
 import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
 import missionIcon from './images/buttonicons/MissionsIcon.png';
-import MapScreen from './MapScreen';
 
 const StudentLandingPage = ({ navigation }) => {
-  const [username, setUsername] = useState('user');
-  const [id, setId] = useState(0);
+  const [username, setUsername] = useState('');
+  const [id, setId] = useState('');
   const [progress, setProgress] = useState({ level: 1, points: 0, maxPoints: 1000 });
 
   // Function to initialize user data
   const initializeUserData = async () => {
-    const storedName = await getValueFor("name");
-    const storedId = await getValueFor("userId");
-    setUsername(storedName);
-    setId(storedId);
+    try {
+      const storedName = await getValueFor("name");
+      const storedId = await getValueFor("userId");
+      
+      if (storedName && storedId) {
+        setUsername(storedName);
+        setId(storedId);
+      } else {
+        Alert.alert('Error', 'Failed to load user data');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      Alert.alert('Error', 'Failed to load user data');
+    }
   };
 
-  // ON BOOT
+  // Fetch user data on component mount
   useEffect(() => {
     initializeUserData();
   }, []);
 
+  // Fetch progress data when ID is set
   useEffect(() => {
-    if (username) {
+    // Check if the ID is valid and not empty or '0'
+    if (id && id !== '0') {
       getProgress();
     }
-  }, [username]);
+  }, [id]);
 
   const getProgress = async () => {
     try {
@@ -45,13 +55,12 @@ const StudentLandingPage = ({ navigation }) => {
       });
 
       const data = await response.json();
-      console.log('Received progress data:', data); // Log the received data
 
       if (response.ok) {
         setProgress(data);
       } else {
         console.error('Error getting progress:', data.errorMsg);
-        Alert.alert('Error', 'Could not fetch progress data');
+        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data');
       }
     } catch (error) {
       console.error('Network Error:', error);
@@ -65,14 +74,11 @@ const StudentLandingPage = ({ navigation }) => {
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
 
-      <SafeAreaView style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
-        <Image
-          source={character} // Update this path to the location of your image file
-          style={styles.playerChar}
-        />
+      <SafeAreaView style={styles.centeredImageContainer}>
+        <Image source={character} style={styles.playerChar} />
       </SafeAreaView>
       
-      <Text style={styles.greeting}>Welcome back, {username} </Text>
+      <Text style={styles.greeting}>Welcome back, {username || 'User'} </Text>
 
       <Text style={styles.title}>What would you like to do?</Text>
       <View style={styles.optionsContainer}>
@@ -80,7 +86,7 @@ const StudentLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Find new opportunities</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('AvatarSelection')}>
+        <TouchableOpacity style={styles.optionButton}>
           <Text style={styles.optionButtonText}>Manage your sign ups</Text>
         </TouchableOpacity>
 
@@ -97,17 +103,11 @@ const StudentLandingPage = ({ navigation }) => {
     
       <View style={styles.smallOptionsContainer}>
         <TouchableOpacity style={styles.smallOptionButton}>
-          <Image
-            source={leaderboardIcon} // Update this path to the location of your image file
-            style={styles.leaderboardIconStyle}
-          />
+          <Image source={leaderboardIcon} style={styles.leaderboardIconStyle} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.smallOptionButton}>
-          <Image
-            source={missionIcon} // Update this path to the location of your image file
-            style={styles.missionsIconStyle}
-          />
+          <Image source={missionIcon} style={styles.missionsIconStyle} />
         </TouchableOpacity>
       </View> 
     </SafeAreaView>
@@ -126,9 +126,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   centeredImageContainer: {
-    flex: 1, // Make the container fill the available space
-    justifyContent: 'center', // Center items vertically
-    alignItems: 'center', // Center items horizontally
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 75
   },
   playerChar: {
@@ -182,8 +182,8 @@ const styles = StyleSheet.create({
     bottom: 20,
     height: 50, 
     width: 200,
-    borderRadius: 50, // Make the edges rounded
-    overflow: 'hidden', // Ensure that the progress bar stays within rounded corners
+    borderRadius: 50,
+    overflow: 'hidden',
     backgroundColor: '#EEEEEE', 
   },
   smallOptionsContainer: {
