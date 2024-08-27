@@ -1,4 +1,4 @@
-const UserToActivity = require('../Schema/UserToActivity')
+const UserToActivity = require('../Schema/UsertoActivity')
 const express = require('express');
 const cors = require('cors');
 

@@ -11,11 +11,10 @@ const images = {
 };
 
 const ActivityDetailScreen = ({ route, navigation }) => {
-  const { activity, userId } = route.params; // Make sure userId is available
+  const { activity, userId } = route.params;
 
   const handleSignup = () => {
-    const apiUrl = 'http://your-server-ip:3000/signup'; // Make sure the IP and port are correct
-
+    const apiUrl = 'https://volunteersphere.onrender.com/signup'; 
     fetch(apiUrl, {
       method: 'POST',
       headers: {
