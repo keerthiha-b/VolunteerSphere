@@ -65,7 +65,7 @@ const StudentLandingPage = ({ navigation }) => {
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
 
-      <SafeAreaView style={styles.centeredImageContainer}>
+      <SafeAreaView style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
         <Image
           source={character} // Update this path to the location of your image file
           style={styles.playerChar}
@@ -80,7 +80,7 @@ const StudentLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Find new opportunities</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('AvatarSelection')}>
           <Text style={styles.optionButtonText}>Manage your sign ups</Text>
         </TouchableOpacity>
 

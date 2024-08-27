@@ -13,7 +13,8 @@ import StudentLandingPage from './src/StudentLandingPage';
 import ProfilePage from './src/ProfilePage';
 import SuccessScreen from './src/Success';
 import MapScreen from './src/MapScreen'; 
-import ActivityDetails from './src/Activitydetails'
+import ActivityDetails from './src/Activitydetails';
+import AvatarSelection from './src/AvatarSelection';
 
 
 const Stack = createNativeStackNavigator();
@@ -30,7 +31,7 @@ function App() {
         <Stack.Screen name="CreateVolunteerOpportunity" component={CreateVolunteerOpportunity} options={{ headerShown: true, title: 'Create Volunteer Opportunity' }} />
         <Stack.Screen name="VolunteerOpportunities" component={VolunteerOpportunities} options={{ headerShown: true, title: 'Volunteer Opportunities' }} />
         <Stack.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
-        <Stack.Screen name="Success" component={SuccessScreen} />
+        <Stack.Screen name="AvatarSelection" component={AvatarSelection} options={{ headerShown: true, title: 'Customize your avatar' }} />
         <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, title: 'Map' }} />
         <Stack.Screen name="ActivityDetail" component={ActivityDetails} options={{ title: 'Activity Details' }} />
       </Stack.Navigator>

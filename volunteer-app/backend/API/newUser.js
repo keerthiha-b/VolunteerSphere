@@ -28,6 +28,7 @@ const newUser = async (req, res) => {
         last_name: lastName,
         email,
         userType,
+        avatar: "Default.png",
         level: 0,
         points: 0,
         maxPoints: 1000
