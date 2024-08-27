@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 
-// Import images for each category
 const images = {
   health: require('./images/Health.jpg'),
   environment: require('./images/cleaning.jpg'),
@@ -15,15 +14,20 @@ const ActivityDetailScreen = ({ route, navigation }) => {
 
   const handleSignup = () => {
     const apiUrl = 'https://volunteersphere.onrender.com/signup'; 
+
+    const payload = {
+      userId: userId, // Make sure this is not undefined
+      opportunityId: activity.id, // Make sure this is not undefined
+    };
+
+    console.log("Sending payload:", payload); // Log the payload being sent
+
     fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        userId: userId, // Assuming you have the userId from a user context or login
-        opportunityId: activity.id,
-      })
+      body: JSON.stringify(payload),
     })
     .then((response) => response.json())
     .then((data) => {

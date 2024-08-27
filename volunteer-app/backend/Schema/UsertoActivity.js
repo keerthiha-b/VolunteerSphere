@@ -10,7 +10,6 @@ const userToActivitySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Activity', // Reference to the Activity model
     required: true,
-    unique: true // Since we only want users to sign up to an activity once
   }
 }, { collection: 'userToActivity' });
 
