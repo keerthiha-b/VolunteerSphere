@@ -9,6 +9,10 @@ const cors = require('cors');
 // Progress API
 const getProgress = require('./API/getProgress');
 
+// Avatar API
+const getAvatar = require('./API/getAvatar');
+const setAvatar = require('./API/setAvatar');
+
 const app = express();
 const PORT = process.env.PORT || 3001; 
 const MONGO_DB_URI = process.env.MONGO_DB_URI || "mongodb+srv://Volunteer1:Admin$trator@volunteersphere.5bhk4hh.mongodb.net/?retryWrites=true&w=majority&appName=VolunteerSphere";
@@ -35,6 +39,10 @@ app.use('/api/map', mapRouter); // Add this line to use the new map-related rout
 
 // PROGRESS
 app.post('/get-progress', getProgress);
+
+// AVATARS
+app.post('/get-avatar', getAvatar);
+app.post('/get-progress', setAvatar);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

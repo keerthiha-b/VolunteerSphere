@@ -132,15 +132,15 @@ const AvatarSelection = ({ navigation }) => {
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
 
-      <SafeAreaView style={styles.centeredImageContainer} onPress={() => setCurrAvatar("Default.png")}>
+      <TouchableOpacity style={styles.centeredImageContainer} onPress={() => setAvatar("Default.png")}>
         <Image
           source={avatarDictionary[currAvatar]} // Update this path to the location of your image file
           style={styles.playerChar}
         />
-      </SafeAreaView>
+      </TouchableOpacity>
 
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton} onPress={() => setCurrAvatar("Construction.png")}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Construction.png")}>
             <Image
             source={Construction} // Update this path to the location of your image file
             style={styles.playerChar}
@@ -154,28 +154,28 @@ const AvatarSelection = ({ navigation }) => {
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setCurrAvatar("Goggles.png")}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Goggles.png")}>
             <Image
                 source={Goggles} // Update this path to the location of your image file
                 style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setCurrAvatar("Headphones.png")}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Headphones.png")}>
             <Image
                 source={Headphones} // Update this path to the location of your image file
                 style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setCurrAvatar("Nurse.png")}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Nurse.png")}>
             <Image
                 source={Nurse} // Update this path to the location of your image file
                 style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setCurrAvatar("Pilot.png")}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Pilot.png")}>
             <Image
                 source={Pilot} // Update this path to the location of your image file
                 style={styles.playerChar}
