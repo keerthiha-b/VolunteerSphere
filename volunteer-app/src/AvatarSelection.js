@@ -31,7 +31,6 @@ const AvatarSelection = ({ navigation }) => {
   }
 
   // Function to initialize user data
-  // Function to initialize user data
   const initializeUserData = async () => {
     try {
       const storedName = await getValueFor("name");

@@ -3,9 +3,7 @@ const User = require("../Schema/User");
 
 const setAvatar = async (req, res) => {
   try {
-    const { obtId, avatar } = req.body;
-
-    const id = String(obtId);
+    const { id, avatar } = req.body;
 
     // Validate the id format
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -13,8 +11,8 @@ const setAvatar = async (req, res) => {
     }
 
     // Attempt to update the user's avatar directly
-    const result = await User.updateOne(
-      { _id: id },          // Filter: find the user by ID
+    const result = await User.findByIdAndUpdate(
+      id,          // Filter: find the user by ID
       { $set: { avatar } }  // Update: set the avatar field
     );
 

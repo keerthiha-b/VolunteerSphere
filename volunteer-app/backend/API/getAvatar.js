@@ -3,9 +3,7 @@ const User = require("../Schema/User");
 
 const getAvatar = async (req, res) => {
   try {
-    const { obtId } = req.body;
-
-    const id = String(obtId);
+    const { id } = req.body;
 
     // Validate the id format
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -13,7 +11,7 @@ const getAvatar = async (req, res) => {
     }
 
     // Attempt to find a user by the ObjectId
-    const user = await User.findOne({ _id: id });
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).json({ errorMsg: "Cannot find Avatar?" });
