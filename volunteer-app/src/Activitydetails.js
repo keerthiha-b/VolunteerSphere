@@ -55,7 +55,7 @@ const ActivityDetailScreen = ({ route, navigation }) => {
 
       if (response.status === 201) {
         Alert.alert("Success", response.data.message || "You have successfully signed up!");
-        navigation.navigate('Signupactivity', {
+        navigation.navigate('ActivitySignup', {
           activityName: activity.name,
           date: activity.date,
           time: activity.duration,

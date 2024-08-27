@@ -26,7 +26,7 @@ const newUserToActivity = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const { username } = user; // Extract the username from the user document
+    const { first_name, last_name } = user; // Extract first name and last name from the user document
 
     console.log('Fetching activity details for opportunityId:', opportunityId);
     const activity = await Activity.findById(new mongoose.Types.ObjectId(opportunityId));
@@ -37,22 +37,37 @@ const newUserToActivity = async (req, res) => {
 
     const { date, time } = activity; // Extract the date and time from the activity document
 
-    console.log('Checking for overlapping signups for userId:', userId, ' and opportunityId:', opportunityId);
-    const overlappingSignup = await UserActivity.findOne({
+    // Check if the user is already signed up for the same activity
+    const existingSignup = await UserActivity.findOne({
       userId: new mongoose.Types.ObjectId(userId),
       opportunityId: new mongoose.Types.ObjectId(opportunityId)
     });
 
-    if (overlappingSignup) {
+    if (existingSignup) {
       console.log('User is already signed up for this activity:', req.body);
       return res.status(409).json({ message: 'User is already signed up for this activity' });
+    }
+
+    console.log('Checking for overlapping signups...');
+    const overlappingSignup = await UserActivity.findOne({
+      userId: new mongoose.Types.ObjectId(userId)
+    }).populate({
+      path: 'opportunityId',
+      match: { date: date, time: time }, // Check for activities with the same date and time
+      select: '_id'
+    });
+
+    if (overlappingSignup) {
+      console.log('User is already signed up for another activity at the same date and time:', req.body);
+      return res.status(409).json({ message: 'User is already signed up for another activity at the same date and time' });
     }
 
     console.log('Creating new UserActivity entry...');
     const newUserToActivityEntry = new UserActivity({
       userId: new mongoose.Types.ObjectId(userId),
       opportunityId: new mongoose.Types.ObjectId(opportunityId),
-      username: username, // Store the username in the document
+      firstName: first_name,  // Store the first name in the document
+      lastName: last_name     // Store the last name in the document
     });
 
     console.log('Saving new UserActivity entry to the database...');

@@ -1,5 +1,3 @@
-// Schema/UserActivity.js
-
 const mongoose = require('mongoose');
 
 const UserActivitySchema = new mongoose.Schema({
@@ -13,10 +11,14 @@ const UserActivitySchema = new mongoose.Schema({
     ref: 'Activity', // Reference to the Activity model
     required: true,
   },
-  username: {
+  firstName: {  // Added field for first name
     type: String,
     required: true,
   },
+  lastName: {   // Added field for last name
+    type: String,
+    required: true,
+  }
 }, { collection: 'userToActivity' });
 
 // Create a compound index on userId and opportunityId to ensure uniqueness
