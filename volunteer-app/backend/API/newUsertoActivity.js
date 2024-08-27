@@ -45,21 +45,19 @@ const newUserToActivity = async (req, res) => {
 
     if (existingSignup) {
       console.log('User is already signed up for this activity:', req.body);
-      return res.status(409).json({ message: 'User is already signed up for this activity' });
+      return res.status(200).json({ message: 'You have already signed up for this activity.' });
     }
 
     console.log('Checking for overlapping signups...');
     const overlappingSignup = await UserActivity.findOne({
-      userId: new mongoose.Types.ObjectId(userId)
-    }).populate({
-      path: 'opportunityId',
-      match: { date: date, time: time }, // Check for activities with the same date and time
-      select: '_id'
+      userId: new mongoose.Types.ObjectId(userId),
+      'opportunityId.date': date,
+      'opportunityId.time': time
     });
 
     if (overlappingSignup) {
       console.log('User is already signed up for another activity at the same date and time:', req.body);
-      return res.status(409).json({ message: 'User is already signed up for another activity at the same date and time' });
+      return res.status(200).json({ message: 'You have another activity scheduled for this time.' });
     }
 
     console.log('Creating new UserActivity entry...');
@@ -74,14 +72,9 @@ const newUserToActivity = async (req, res) => {
     await newUserToActivityEntry.save();
 
     console.log('Successfully signed user up for opportunity', newUserToActivityEntry);
-    res.status(201).json({ message: 'Successfully signed user up for opportunity' });
+    res.status(201).json({ message: 'Successfully signed up for the opportunity!' });
 
   } catch (error) {
-    if (error.code === 11000) { // MongoDB duplicate key error code
-      console.error('User already signed up for this activity:', error);
-      return res.status(409).json({ message: 'User is already signed up for this activity' });
-    }
-
     console.error('Unexpected Error signing user up for opportunity:', error);
     res.status(500).json({ errorMsg: 'Error signing user up for opportunity: ' + error.message });
   }
