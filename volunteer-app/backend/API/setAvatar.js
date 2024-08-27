@@ -3,7 +3,9 @@ const User = require("../Schema/User");
 
 const setAvatar = async (req, res) => {
   try {
-    const { id, avatar } = req.body;
+    const { obtId, avatar } = req.body;
+
+    const id = String(obtId);
 
     // Validate the id format
     if (!mongoose.Types.ObjectId.isValid(id)) {

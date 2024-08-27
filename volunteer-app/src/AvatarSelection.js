@@ -76,6 +76,7 @@ const AvatarSelection = ({ navigation }) => {
   };
 
   const getAvatar = async () => {
+    
     try {
       const response = await fetch('https://volunteersphere.onrender.com/get-avatar', {
         method: 'POST',
@@ -102,7 +103,7 @@ const AvatarSelection = ({ navigation }) => {
 
   const setAvatar = async (avatarName) => {
     console.log('Setting avatar:', avatarName);
-
+    console.log('Id', id);
     try {
       const response = await fetch('https://volunteersphere.onrender.com/set-avatar', {
         method: 'POST',

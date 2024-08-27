@@ -3,7 +3,9 @@ const User = require("../Schema/User");
 
 const getProgress = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { obtId } = req.body;
+
+    const id = String(obtId);
 
     // Validate the id format
     if (!id || typeof id !== 'string' || !mongoose.Types.ObjectId.isValid(id)) {
