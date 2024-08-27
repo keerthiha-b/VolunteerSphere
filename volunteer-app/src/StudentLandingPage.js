@@ -16,23 +16,39 @@ const StudentLandingPage = ({ navigation }) => {
   const [progress, setProgress] = useState({ level: 1, points: 0, maxPoints: 1000 });
 
   // Function to initialize user data
-  const initializeUserData = async () => {
-    const storedName = await getValueFor("name");
-    const storedId = await getValueFor("userId");
-    setUsername(storedName);
-    setId(storedId);
-  };
+  useEffect(() => {
+    const initializeUserData = async () => {
+      const storedName = await getValueFor("name");
+      const storedId = await getValueFor("userId");
+      if (storedName) setUsername(storedName);
+      if (storedId) setId(storedId);
+      else console.error('Error: userId not found');
+    };
+  initializeUserData();
+}, []);
 
   // ON BOOT
-  useEffect(() => {
-    initializeUserData();
-  }, []);
+  // useEffect(() => {
+  //   initializeUserData();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (username) {
+  //     getProgress();
+  //   }
+  // }, [username]);
+
+  // useEffect(() => {
+  //   if (id && id !== "0") {
+  //     getProgress();  // Ensure the correct userId is passed here
+  //   }
+  // }, [id]);
 
   useEffect(() => {
-    if (username) {
+    if (id) {
       getProgress();
     }
-  }, [username]);
+  }, [id]);
 
   const getProgress = async () => {
     try {
@@ -96,7 +112,7 @@ const StudentLandingPage = ({ navigation }) => {
       <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />
     
       <View style={styles.smallOptionsContainer}>
-        <TouchableOpacity style={styles.smallOptionButton}>
+        <TouchableOpacity style={styles.smallOptionButton} onPress={() => navigation.navigate('Leaderboard', { userId: id })}>
           <Image
             source={leaderboardIcon} // Update this path to the location of your image file
             style={styles.leaderboardIconStyle}
