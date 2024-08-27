@@ -5,6 +5,8 @@ const getAvatar = async (req, res) => {
   try {
     const { id } = req.body;
 
+    console.log(id);
+
     // Validate the id format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ errorMsg: "Invalid User ID" });

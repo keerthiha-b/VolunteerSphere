@@ -104,6 +104,8 @@ const AvatarSelection = ({ navigation }) => {
         return;
       }
 
+      console.log(id);
+
       const response = await fetch('https://volunteersphere.onrender.com/get-avatar', {
         method: 'POST',
         headers: {
@@ -122,7 +124,7 @@ const AvatarSelection = ({ navigation }) => {
       const data = await response.json();
       console.log('Received progress data:', data); // Log the received data
 
-      setCurrAvatar(data);
+      setCurrAvatar(data.avatar);
     } catch (error) {
       console.error('Network Error:', error);
       Alert.alert('Network Error', 'Could not fetch progress data.');

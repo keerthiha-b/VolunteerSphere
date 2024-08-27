@@ -5,6 +5,9 @@ const setAvatar = async (req, res) => {
   try {
     const { id, avatar } = req.body;
 
+    console.log(id);
+    console.log(avatar);
+
     // Validate the id format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ errorMsg: "Invalid ID format" });
