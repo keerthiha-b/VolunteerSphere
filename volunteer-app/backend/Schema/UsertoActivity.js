@@ -1,3 +1,5 @@
+// Schema/UserToActivity.js
+
 const mongoose = require('mongoose');
 
 const userToActivitySchema = new mongoose.Schema({

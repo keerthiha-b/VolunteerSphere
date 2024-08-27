@@ -1,7 +1,9 @@
+// API/newUserToActivity.js
+
 const mongoose = require('mongoose');
-const UserToActivity = require('../Schema/UserToActivity'); // Ensure the path is correct
-const User = require('../Schema/User'); // Import User model to fetch user details
-const Activity = require('../Schema/Activity'); // Import Activity model to fetch activity details
+const UserToActivity = require('../Schema/UserToActivity'); // Correct path to the model
+const User = require('../Schema/User'); // Correct path to the User model
+const Activity = require('../Schema/Activity'); // Correct path to the Activity model
 
 const newUserToActivity = async (req, res) => {
   try {
