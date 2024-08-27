@@ -101,6 +101,8 @@ const AvatarSelection = ({ navigation }) => {
   };
 
   const setAvatar = async (avatarName) => {
+    console.log('Setting avatar:', avatarName);
+
     try {
       const response = await fetch('https://volunteersphere.onrender.com/set-avatar', {
         method: 'POST',
@@ -147,7 +149,7 @@ const AvatarSelection = ({ navigation }) => {
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setCurrAvatar("FireFighter.png")}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("FireFighter.png")}>
             <Image
                 source={FireFighter} // Update this path to the location of your image file
                 style={styles.playerChar}
