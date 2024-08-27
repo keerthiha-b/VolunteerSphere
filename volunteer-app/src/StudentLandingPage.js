@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, Text, Alert, StyleSheet } from 'react-native';
+import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ProgressBar } from 'react-native-paper';
 import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
+import { ProgressBar } from 'react-native-paper';
 
+// IMAGES
 import character from './images/PlayerChar.png';
 import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
 import missionIcon from './images/buttonicons/MissionsIcon.png';
+import MapScreen from './MapScreen';
 
 const StudentLandingPage = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [id, setId] = useState('');
+  const [username, setUsername] = useState('user');
+  const [id, setId] = useState(null);
   const [progress, setProgress] = useState({ level: 1, points: 0, maxPoints: 1000 });
 
   // Function to initialize user data
@@ -18,53 +20,64 @@ const StudentLandingPage = ({ navigation }) => {
     try {
       const storedName = await getValueFor("name");
       const storedId = await getValueFor("userId");
-      
-      if (storedName && storedId) {
-        setUsername(storedName);
+
+      if (storedName) setUsername(storedName);
+
+      // Validate that storedId is a valid 24-character hex string
+      if (storedId && /^[0-9a-fA-F]{24}$/.test(storedId)) {
         setId(storedId);
       } else {
-        Alert.alert('Error', 'Failed to load user data');
+        console.error('Invalid ID format:', storedId);
+        Alert.alert('Error', 'Invalid user ID format. Please log in again.');
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
-      Alert.alert('Error', 'Failed to load user data');
+      console.error('Error initializing user data:', error);
+      Alert.alert('Error', 'Failed to initialize user data.');
     }
   };
 
-  // Fetch user data on component mount
+  // ON BOOT
   useEffect(() => {
     initializeUserData();
   }, []);
 
   // Fetch progress data when ID is set
   useEffect(() => {
-    // Check if the ID is valid and not empty or '0'
-    if (id && id !== '0') {
+    if (id) {
+      console.log(`Attempting to fetch progress for user ID: ${id}`); // Added log
       getProgress();
     }
   }, [id]);
 
   const getProgress = async () => {
     try {
+      if (!id) {
+        console.error('User ID is not available for fetching progress.');
+        return;
+      }
+
       const response = await fetch('https://volunteersphere.onrender.com/get-progress', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id })
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setProgress(data);
-      } else {
+      if (!response.ok) {
+        const data = await response.json();
         console.error('Error getting progress:', data.errorMsg);
-        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data');
+        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data.');
+        return;
       }
+
+      const data = await response.json();
+      console.log('Received progress data:', data); // Log the received data
+
+      setProgress(data);
     } catch (error) {
       console.error('Network Error:', error);
-      Alert.alert('Network Error', 'Could not fetch progress data');
+      Alert.alert('Network Error', 'Could not fetch progress data.');
     }
   };
 
@@ -74,11 +87,14 @@ const StudentLandingPage = ({ navigation }) => {
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
 
-      <SafeAreaView style={styles.centeredImageContainer}>
-        <Image source={character} style={styles.playerChar} />
+      <SafeAreaView style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
+        <Image
+          source={character} // Update this path to the location of your image file
+          style={styles.playerChar}
+        />
       </SafeAreaView>
       
-      <Text style={styles.greeting}>Welcome back, {username || 'User'} </Text>
+      <Text style={styles.greeting}>Welcome back, {username} </Text>
 
       <Text style={styles.title}>What would you like to do?</Text>
       <View style={styles.optionsContainer}>
@@ -86,7 +102,7 @@ const StudentLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Find new opportunities</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('AvatarSelection')}>
           <Text style={styles.optionButtonText}>Manage your sign ups</Text>
         </TouchableOpacity>
 
@@ -103,11 +119,17 @@ const StudentLandingPage = ({ navigation }) => {
     
       <View style={styles.smallOptionsContainer}>
         <TouchableOpacity style={styles.smallOptionButton}>
-          <Image source={leaderboardIcon} style={styles.leaderboardIconStyle} />
+          <Image
+            source={leaderboardIcon} // Update this path to the location of your image file
+            style={styles.leaderboardIconStyle}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.smallOptionButton}>
-          <Image source={missionIcon} style={styles.missionsIconStyle} />
+          <Image
+            source={missionIcon} // Update this path to the location of your image file
+            style={styles.missionsIconStyle}
+          />
         </TouchableOpacity>
       </View> 
     </SafeAreaView>
@@ -126,9 +148,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   centeredImageContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1, // Make the container fill the available space
+    justifyContent: 'center', // Center items vertically
+    alignItems: 'center', // Center items horizontally
     marginBottom: 75
   },
   playerChar: {
@@ -182,8 +204,8 @@ const styles = StyleSheet.create({
     bottom: 20,
     height: 50, 
     width: 200,
-    borderRadius: 50,
-    overflow: 'hidden',
+    borderRadius: 50, // Make the edges rounded
+    overflow: 'hidden', // Ensure that the progress bar stays within rounded corners
     backgroundColor: '#EEEEEE', 
   },
   smallOptionsContainer: {
