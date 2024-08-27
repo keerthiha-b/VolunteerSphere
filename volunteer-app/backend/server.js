@@ -42,7 +42,7 @@ app.post('/get-progress', getProgress);
 
 // AVATARS
 app.post('/get-avatar', getAvatar);
-app.post('/get-progress', setAvatar);
+app.post('/set-avatar', setAvatar);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
