@@ -8,8 +8,8 @@ const getAvatar = async (req, res) => {
     const id = String(obtId);
 
     // Validate the id format
-    if (!id || typeof id !== 'string' || !mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ errorMsg: "Invalid ID format. ID must be a valid ObjectId string." });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ errorMsg: "Invalid User ID" });
     }
 
     // Attempt to find a user by the ObjectId

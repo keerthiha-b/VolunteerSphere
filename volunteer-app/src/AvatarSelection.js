@@ -31,11 +31,25 @@ const AvatarSelection = ({ navigation }) => {
   }
 
   // Function to initialize user data
+  // Function to initialize user data
   const initializeUserData = async () => {
-    const storedName = await getValueFor("name");
-    const storedId = await getValueFor("userId");
-    setUsername(storedName);
-    setId(storedId);
+    try {
+      const storedName = await getValueFor("name");
+      const storedId = await getValueFor("userId");
+
+      if (storedName) setUsername(storedName);
+
+      // Validate that storedId is a valid 24-character hex string
+      if (storedId && /^[0-9a-fA-F]{24}$/.test(storedId)) {
+        setId(storedId);
+      } else {
+        console.error('Invalid ID format:', storedId);
+        Alert.alert('Error', 'Invalid user ID format. Please log in again.');
+      }
+    } catch (error) {
+      console.error('Error initializing user data:', error);
+      Alert.alert('Error', 'Failed to initialize user data.');
+    }
   };
 
   // ON BOOT
@@ -43,89 +57,107 @@ const AvatarSelection = ({ navigation }) => {
     initializeUserData();
   }, []);
 
+  // Fetch progress data when ID is set
   useEffect(() => {
-    if (username) {
-      // getProgress();
+    if (id) {
+      console.log(`Attempting to fetch progress for user ID: ${id}`); // Added log
       getAvatar();
+      getProgress();
     }
-  }, [username]);
+  }, [id]);
 
   const getProgress = async () => {
     try {
+      if (!id) {
+        console.error('User ID is not available for fetching progress.');
+        return;
+      }
+
       const response = await fetch('https://volunteersphere.onrender.com/get-progress', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id })
       });
 
+      if (!response.ok) {
+        const data = await response.json();
+        console.error('Error getting progress:', data.errorMsg);
+        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data.');
+        return;
+      }
+
       const data = await response.json();
       console.log('Received progress data:', data); // Log the received data
 
-      if (response.ok) {
-        setProgress(data);
-      } else {
-        console.error('Error getting progress:', data.errorMsg);
-        Alert.alert('Error', 'Could not fetch progress data');
-      }
+      setProgress(data);
     } catch (error) {
       console.error('Network Error:', error);
-      Alert.alert('Network Error', 'Could not fetch progress data');
+      Alert.alert('Network Error', 'Could not fetch progress data.');
     }
   };
 
   const getAvatar = async () => {
-    
     try {
+      if (!id) {
+        console.error('User ID is not available for fetching progress.');
+        return;
+      }
+
       const response = await fetch('https://volunteersphere.onrender.com/get-avatar', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id })
       });
 
+      if (!response.ok) {
+        const data = await response.json();
+        console.error('Error getting progress:', data.errorMsg);
+        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data.');
+        return;
+      }
+
       const data = await response.json();
       console.log('Received progress data:', data); // Log the received data
 
-      if (response.ok) {
-        setCurrAvatar(data.avatar);
-      } else {
-        console.error('Error getting progress:', data.errorMsg);
-        Alert.alert('Error', 'Could not fetch progress data');
-      }
+      setCurrAvatar(data);
     } catch (error) {
       console.error('Network Error:', error);
-      Alert.alert('Network Error', 'Could not fetch progress data');
+      Alert.alert('Network Error', 'Could not fetch progress data.');
     }
   };
 
   const setAvatar = async (avatarName) => {
-    console.log('Setting avatar:', avatarName);
-    console.log('Id', id);
     try {
+      if (!id) {
+        console.error('User ID is not available for fetching progress.');
+        return;
+      }
+
       const response = await fetch('https://volunteersphere.onrender.com/set-avatar', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id, avatarName })
       });
 
+      if (!response.ok) {
+        const data = await response.json();
+        console.error('Error getting progress:', data.errorMsg);
+        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data.');
+        return;
+      }
+
       const data = await response.json();
       console.log('Received progress data:', data); // Log the received data
-
-      if (response.ok) {
-        Alert.alert('Success', 'Successfully updated avatar');
-        setCurrAvatar(avatarName);
-      } else {
-        console.error('Error getting progress:', data.errorMsg);
-        Alert.alert('Error', 'Could not fetch progress data');
-      }
+      getAvatar();
     } catch (error) {
       console.error('Network Error:', error);
-      Alert.alert('Network Error', 'Could not fetch progress data');
+      Alert.alert('Network Error', 'Could not fetch progress data.');
     }
   };
 
