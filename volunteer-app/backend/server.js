@@ -42,3 +42,4 @@ app.post('/signup', newUserToActivity); // Corrected API handler usage
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
