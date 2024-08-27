@@ -28,7 +28,11 @@ const ActivityDetailScreen = ({ route, navigation }) => {
     .then((response) => response.json())
     .then((data) => {
       Alert.alert("Success", data.message || "You have successfully signed up!");
-      navigation.navigate('Signupactivity'); // Navigate to a success screen if needed
+      navigation.navigate('ActivitySignup', {
+        activityName: activity.name,
+        date: activity.date,
+        time: activity.duration,
+      });
     })
     .catch((error) => {
       console.error('Error:', error);

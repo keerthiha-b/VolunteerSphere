@@ -1,8 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 
-const SuccessScreen = ({ route, navigation }) => {
+const Signupactivity = ({ route, navigation }) => {
   const { activityName, date, time } = route.params;
+
+  if (!activityName || !date || !time) {
+    return <Text>Error: Missing activity details</Text>; // Handle this scenario appropriately
+  }
 
   return (
     <View style={styles.container}>
@@ -58,4 +62,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SuccessScreen;
+export default Signupactivity;
