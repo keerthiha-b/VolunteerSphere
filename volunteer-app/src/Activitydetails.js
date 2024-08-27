@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { getValueFor } from './utils/secureStoreUtil'; // Import secure storage utility
+import axios from 'axios';
 
 const images = {
   health: require('./images/Health.jpg'),
@@ -10,38 +12,61 @@ const images = {
 };
 
 const ActivityDetailScreen = ({ route, navigation }) => {
-  const { activity, userId } = route.params;
+  const { activity } = route.params; // Getting activity details from route params
+  const [userId, setUserId] = useState(null); // State to store fetched userId
 
-  const handleSignup = () => {
-    const apiUrl = 'https://volunteersphere.onrender.com/signup'; 
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await getValueFor('userId'); // Retrieve userId from secure storage
+        if (!storedUserId) {
+          throw new Error('User ID not found in secure storage.');
+        }
+        setUserId(storedUserId);
+        console.log('Fetched userId from secure storage:', storedUserId);
+      } catch (error) {
+        console.error('Error fetching userId:', error);
+        Alert.alert('Error', 'Unable to fetch user details. Please log in again.');
+      }
+    };
+
+    fetchUserId(); // Call the function to fetch userId on component mount
+  }, []);
+
+  const handleSignup = async () => {
+    if (!userId) {
+      Alert.alert('Error', 'User not authenticated. Please log in again.');
+      return;
+    }
+
+    const apiUrl = 'https://volunteersphere.onrender.com/signup';
 
     const payload = {
-      userId: userId, // Make sure this is not undefined
-      opportunityId: activity.id, // Make sure this is not undefined
+      userId: userId, // Use the fetched userId from secure storage
+      opportunityId: activity._id, // Use the activity ID from the route params
     };
 
     console.log("Sending payload:", payload); // Log the payload being sent
 
-    fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      Alert.alert("Success", data.message || "You have successfully signed up!");
-      navigation.navigate('ActivitySignup', {
-        activityName: activity.name,
-        date: activity.date,
-        time: activity.duration,
+    try {
+      const response = await axios.post(apiUrl, payload, {
+        headers: { 'Content-Type': 'application/json' }
       });
-    })
-    .catch((error) => {
-      console.error('Error:', error);
+
+      if (response.status === 201) {
+        Alert.alert("Success", response.data.message || "You have successfully signed up!");
+        navigation.navigate('Signupactivity', {
+          activityName: activity.name,
+          date: activity.date,
+          time: activity.duration,
+        });
+      } else {
+        Alert.alert('Error', response.data.message || 'Unable to sign up. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error signing up:', error);
       Alert.alert("Error", "Unable to sign up. Please try again later.");
-    });
+    }
   };
 
   return (
