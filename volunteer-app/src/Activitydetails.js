@@ -60,12 +60,16 @@ const ActivityDetailScreen = ({ route, navigation }) => {
           date: activity.date,
           time: activity.duration,
         });
+      } else if (response.status === 409) { // Handle duplicate sign-up attempts
+        Alert.alert('Conflict', response.data.message || 'You are already signed up for this activity.');
       } else {
         Alert.alert('Error', response.data.message || 'Unable to sign up. Please try again later.');
       }
     } catch (error) {
       console.error('Error signing up:', error);
-      Alert.alert("Error", "Unable to sign up. Please try again later.");
+      // Display a more specific error message if available
+      const errorMessage = error.response?.data?.errorMsg || "Unable to sign up. Please try again later.";
+      Alert.alert("Error", errorMessage);
     }
   };
 
