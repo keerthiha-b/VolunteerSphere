@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, Image } from 'react-native';
 import axios from 'axios';
+import { filter } from 'obscenity';
 
-// Import the static image for comments
-const commentsImage = require('./images/comments.jpg'); // Adjust the path according to your project structure
+const customWords = [
+  'stupid', 'idiot', 'dumb', 'crazy', 'hate', 'bad', 'horrible', 'terrible',
+  'awful', 'disgusting', 'boring', 'useless', 'nasty', 'silly', 'fool', 'ugly',
+  'damn', 'hell','suck'
+];
+
+filter.add(customWords);
 
 const LeaveComment = ({ route, navigation }) => {
   const { userToActivityId } = route.params;
@@ -15,9 +21,15 @@ const LeaveComment = ({ route, navigation }) => {
       return;
     }
 
+    // Check for inappropriate language using obscenity filter
+    if (filter.isObscene(comment)) {
+      Alert.alert('Warning', 'Please avoid using inappropriate language.');
+      return;
+    }
+
     try {
       const response = await axios.post(`https://volunteersphere.onrender.com/comments/${userToActivityId}`, { text: comment });
-      
+
       if (response.status === 201) {
         Alert.alert("Success", "Comment added successfully.");
         navigation.goBack(); // Navigate back to the previous screen
@@ -32,19 +44,18 @@ const LeaveComment = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add a Review</Text>
+      <Text style={styles.title}>Add a Comment</Text>
       <TextInput
         style={styles.input}
-        placeholder="Write your review here"
+        placeholder="Write your comment here"
         value={comment}
         onChangeText={setComment}
       />
       <TouchableOpacity style={styles.submitButton} onPress={handleAddComment}>
         <Text style={styles.submitButtonText}>Submit</Text>
       </TouchableOpacity>
-
-      {/* Display the static image for comments at the bottom */}
-      <Image source={commentsImage} style={styles.image} />
+      {/* Add your image below */}
+      <Image source={require('./images/comments.jpg')} style={styles.image} />
     </View>
   );
 };
@@ -54,22 +65,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#fff',
-    alignItems: 'center', // Center the contents horizontally
-  },
-  image: {
-    width: 400, // Adjust the width as needed
-    height: 400, // Adjust the height as needed
-    marginTop: 20,
-    resizeMode: 'contain',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
     height: 100,
-    width: '100%',
     borderColor: '#ddd',
     borderWidth: 1,
     marginBottom: 20,
@@ -81,12 +85,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 5,
     alignItems: 'center',
-    width: '100%', // Full width for better button appearance
   },
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  image: {
+    marginTop: 20,
+    alignSelf: 'center',
+    width: 400, // Adjust the size as needed
+    height: 400, // Adjust the size as needed
+    resizeMode: 'contain',
   },
 });
 
