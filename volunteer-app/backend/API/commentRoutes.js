@@ -1,3 +1,5 @@
+// commentRoutes.js
+
 const express = require('express');
 const mongoose = require('mongoose');
 const Comment = require('../Schema/Comments'); // Ensure the path and name are correct
@@ -6,7 +8,7 @@ const UserActivity = require('../Schema/UserActivity'); // Ensure the path and n
 const router = express.Router();
 
 // Fetch comments for a specific user activity
-router.get('/:userToActivityId/comments', async (req, res) => {
+router.get('/:userToActivityId', async (req, res) => {
   try {
     const { userToActivityId } = req.params;
 
@@ -28,7 +30,7 @@ router.get('/:userToActivityId/comments', async (req, res) => {
 });
 
 // Add a comment to a specific signup
-router.post('/:userToActivityId/comments', async (req, res) => {
+router.post('/:userToActivityId', async (req, res) => {
   try {
     const { userToActivityId } = req.params;
     const { text } = req.body;
