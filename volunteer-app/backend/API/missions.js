@@ -57,15 +57,12 @@ router.post('/missions/populate', async (req, res) => {
     // Check if missions already exist in the database
     const existingMissions = await Mission.countDocuments();
     if (existingMissions === 0) {
-      console.log('Inserting fixed missions into the database');
       await Mission.insertMany(fixedMissions);
       res.status(200).json({ message: "Missions inserted successfully!" });
     } else {
-      console.log('Missions already exist in the database');
       res.status(200).json({ message: "Missions already exist!" });
     }
   } catch (error) {
-    console.error('Error inserting missions:', error);
     res.status(500).json({ message: "Error inserting missions", error });
   }
 });
