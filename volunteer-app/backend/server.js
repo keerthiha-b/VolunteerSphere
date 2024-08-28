@@ -6,7 +6,7 @@ const activityRouter = require('./API/activityrelated'); // Activity-related rou
 const leaderboardRouter = require('./API/leaderboard'); 
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const cors = require('cors');
-const missionsApi = require('./API/missionsApi');
+const missionsApi = require('./API/missions');
 
 // Progress API
 const getProgress = require('./API/getProgress');
