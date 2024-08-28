@@ -2,43 +2,68 @@ const express = require('express');
 const router = express.Router();
 const Mission = require('../Schema/Mission');
 
-// POST /api/missions/populate - Insert 6 fixed missions into the database
+// POST /api/missions/populate - Insert missions with new schema into the database
 router.post('/missions/populate', async (req, res) => {
   try {
+    console.log('Populate endpoint hit');
+
     const fixedMissions = [
       {
         title: "Environmental Steward",
         category: "Environment",
         goal: 3,
+        progress: 0,
+        points: 100,
         goalType: "activity",
-        description: "Participate in activities that protect or restore the environment, such as tree planting or beach cleanups."
+        description: "Participate in activities that protect or restore the environment, such as tree planting or beach cleanups.",
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        completed: false
       },
       {
         title: "Community Helper",
         category: "Community Service",
         goal: 5,
+        progress: 0,
+        points: 150,
         goalType: "hours",
-        description: "Help out in your local community by volunteering for 5 hours."
+        description: "Help out in your local community by volunteering for 5 hours.",
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        completed: false
       },
       {
         title: "Healthy Living Advocate",
         category: "Health and Wellness",
         goal: 2,
+        progress: 0,
+        points: 120,
         goalType: "activity",
-        description: "Participate in activities that promote healthy living, such as fitness events, mental health workshops, or wellness initiatives."
+        description: "Participate in activities that promote healthy living, such as fitness events, mental health workshops, or wellness initiatives.",
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        completed: false
       },
       {
         title: "Educator for Change",
         category: "Education",
         goal: 2,
+        progress: 0,
+        points: 130,
         goalType: "activity",
-        description: "Promote education by attending or assisting in educational activities like tutoring, teaching workshops, or literacy programs."
+        description: "Promote education by attending or assisting in educational activities like tutoring, teaching workshops, or literacy programs.",
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        completed: false
       }
     ];
 
-    // Insert missions into the database
-    await Mission.insertMany(fixedMissions);
-    res.status(200).json({ message: "Missions inserted successfully!" });
+    // Check if missions already exist in the database
+    const existingMissions = await Mission.countDocuments();
+    if (existingMissions === 0) {
+      console.log('Inserting fixed missions into the database');
+      await Mission.insertMany(fixedMissions);
+      res.status(200).json({ message: "Missions inserted successfully!" });
+    } else {
+      console.log('Missions already exist in the database');
+      res.status(200).json({ message: "Missions already exist!" });
+    }
   } catch (error) {
     console.error('Error inserting missions:', error);
     res.status(500).json({ message: "Error inserting missions", error });

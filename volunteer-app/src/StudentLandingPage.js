@@ -75,6 +75,18 @@ const StudentLandingPage = ({ navigation }) => {
     }
   };
 
+  const handleMissionsClick = () => {
+    axios.post('https://volunteersphere.onrender.com/api/missions/populate')
+      .then(response => {
+        console.log(response.data.message);
+        Alert.alert('Success', response.data.message); // Show success message
+      })
+      .catch(error => {
+        console.error('Error inserting missions:', error);
+        Alert.alert('Error', 'Failed to insert missions'); // Show error message
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name: username })}>
@@ -119,11 +131,8 @@ const StudentLandingPage = ({ navigation }) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.smallOptionButton}>
-          <Image
-            source={missionIcon} // Update this path to the location of your image file
-            style={styles.missionsIconStyle}
-          />
+        <TouchableOpacity style={styles.smallOptionButton} onPress={handleMissionsClick}>
+          <Image source={missionIcon} style={styles.missionsIconStyle} />
         </TouchableOpacity>
       </View> 
     </SafeAreaView>
