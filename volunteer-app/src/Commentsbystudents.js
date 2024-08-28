@@ -48,7 +48,10 @@ const UserActivitiesScreen = ({ navigation }) => {
       const response = await axios.delete(`https://volunteersphere.onrender.com/user-activities/${userId}/${activityId}`);
       if (response.status === 200) {
         Alert.alert("Success", "You have successfully removed the activity.");
-        setSignedUpActivities(signedUpActivities.filter(activity => activity.opportunityId._id !== activityId));
+        // Update the state to remove the unenrolled activity from the list
+        setSignedUpActivities((prevActivities) => 
+          prevActivities.filter(activity => activity.opportunityId._id !== activityId)
+        );
       } else {
         Alert.alert('Error', 'Unable to remove the activity. Please try again later.');
       }
@@ -61,18 +64,34 @@ const UserActivitiesScreen = ({ navigation }) => {
   const renderActivityItem = ({ item }) => {
     const isPastActivity = new Date(item.opportunityId.date) < new Date();
     const activityImage = images[item.opportunityId.category.toLowerCase()] || images['default'];
-    
+
+    // Convert and format the date
+    const formattedDate = new Date(item.opportunityId.date).toLocaleDateString('en-US', {
+      weekday: 'long', // "Monday"
+      year: 'numeric', // "2024"
+      month: 'long',   // "August"
+      day: 'numeric'   // "24"
+    });
+
+    // Convert and format the time
+    const formattedTime = new Date(item.opportunityId.date).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
     return (
       <View style={styles.activityContainer}>
         <Image source={activityImage} style={styles.activityImage} />
         <Text style={styles.activityTitle}>{item.opportunityId.name}</Text>
         <Text style={styles.activityDetails}>{item.opportunityId.organization}</Text>
         <Text style={styles.activityDetails}>{item.opportunityId.duration} of volunteering</Text>
+        {/* Display the formatted date and time */}
+        <Text style={styles.activityDetails}>{formattedDate} at {formattedTime}</Text>
 
         {isPastActivity ? (
           <TouchableOpacity 
             style={styles.commentButton} 
-            onPress={() => navigation.navigate('LeaveComment', { userToActivityId: item._id })}>
+            onPress={() => navigation.navigate('Leave Comment', { userToActivityId: item._id })}>
             <Text style={styles.commentButtonText}>Leave comment on past signup</Text>
           </TouchableOpacity>
         ) : (
