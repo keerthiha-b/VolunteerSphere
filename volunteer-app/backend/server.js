@@ -6,7 +6,7 @@ const activityRouter = require('./API/activityrelated'); // Activity-related rou
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const cors = require('cors');
-
+const commentRoutes = require('./API/commentRoutes');
 // Progress API
 const getProgress = require('./API/getProgress');
 
@@ -33,6 +33,8 @@ app.use('/activities', activityRouter);
 
 // Map-related endpoints
 app.use('/api/map', mapRouter); // Add this line to use the new map-related route
+
+app.use('/user-activities', commentRoutes);
 
 // PROGRESS
 app.post('/get-progress', getProgress);

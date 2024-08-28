@@ -53,7 +53,7 @@ const UserActivitiesScreen = ({ navigation }) => {
 
   const renderActivityItem = ({ item }) => {
     const isPastActivity = new Date(item.opportunityId.date) < new Date();
-    const activityImage = images[item.opportunityId.category.toLowerCase()] || images['default']; // Default image if no match
+    const activityImage = images[item.opportunityId.category.toLowerCase()] || images['default'];
     
     return (
       <View style={styles.activityContainer}>
@@ -63,11 +63,15 @@ const UserActivitiesScreen = ({ navigation }) => {
         <Text style={styles.activityDetails}>{item.opportunityId.duration} of volunteering</Text>
 
         {isPastActivity ? (
-          <TouchableOpacity style={styles.commentButton} onPress={() => navigation.navigate('LeaveComment', { activityId: item.opportunityId._id })}>
+          <TouchableOpacity 
+            style={styles.commentButton} 
+            onPress={() => navigation.navigate('LeaveComment', { activityId: item.opportunityId._id })}>
             <Text style={styles.commentButtonText}>Leave comment on past signup</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.unenrollButton} onPress={() => handleRemoveActivity(item.opportunityId._id)}>
+          <TouchableOpacity 
+            style={styles.unenrollButton} 
+            onPress={() => handleRemoveActivity(item.opportunityId._id)}>
             <Text style={styles.unenrollButtonText}>Unenroll</Text>
           </TouchableOpacity>
         )}
@@ -97,7 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#ff8c00', // Same color as the header in your design
+    color: '#ff8c00', // Color to match your design
   },
   activityContainer: {
     backgroundColor: '#f9f9f9',
