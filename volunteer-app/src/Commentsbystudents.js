@@ -25,7 +25,7 @@ const UserActivitiesScreen = ({ navigation }) => {
         }
         setUserId(storedUserId);
 
-        const response = await axios.get(`https://volunteersphere.onrender.com/user-activities/${storedUserId}`);
+        const response = await axios.get(`https://volunteersphere.onrender.com/user-activities/${storedUserId}/comments`);
         setSignedUpActivities(response.data);
       } catch (error) {
         console.error('Error fetching signed-up activities:', error);
