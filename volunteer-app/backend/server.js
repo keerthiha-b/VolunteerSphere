@@ -6,6 +6,7 @@ const activityRouter = require('./API/activityrelated'); // Activity-related rou
 const leaderboardRouter = require('./API/leaderboard'); 
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const cors = require('cors');
+const missionsApi = require('./API/missionsApi');
 
 // Progress API
 const getProgress = require('./API/getProgress');
@@ -39,6 +40,9 @@ app.post('/get-progress', getProgress);
 
 //Leaderboard
 app.use('/leaderboard', leaderboardRouter);
+
+// missions
+app.use('/api', missionsApi);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
