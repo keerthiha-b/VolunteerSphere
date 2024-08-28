@@ -67,4 +67,15 @@ router.post('/missions/populate', async (req, res) => {
   }
 });
 
+// GET /api/missions - Fetch all missions from the database
+router.get('/missions', async (req, res) => {
+  try {
+    const missions = await Mission.find(); // Fetch all missions from the database
+    res.status(200).json(missions); // Send the missions as a JSON response
+  } catch (error) {
+    console.error('Error fetching missions:', error);
+    res.status(500).json({ message: 'Error fetching missions' });
+  }
+});
+
 module.exports = router;

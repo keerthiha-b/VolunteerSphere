@@ -80,6 +80,7 @@ const StudentLandingPage = ({ navigation }) => {
     axios.post('https://volunteersphere.onrender.com/api/missions/populate')
       .then(response => {
         console.log(response.data.message);
+        navigation.navigate('MissionsPage');
       })
       .catch(error => {
         console.error('Error inserting missions:', error);
