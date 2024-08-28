@@ -131,10 +131,15 @@ const AvatarSelection = ({ navigation }) => {
     }
   };
 
-  const setAvatar = async (avatarName) => {
+  const setAvatar = async (avatarName, minLevel) => {
     try {
       if (!id) {
         console.error('User ID is not available for fetching progress.');
+        return;
+      }
+      
+      if (progress.level < minLevel) {
+        Alert.alert('Attention', 'Cannot equip avatar - must be level ' + minLevel + ' to equip');
         return;
       }
 
@@ -162,6 +167,15 @@ const AvatarSelection = ({ navigation }) => {
     }
   };
 
+  const determineButtonStyle = (minLevel) => {
+    if (progress.level >= minLevel) {
+      return styles.optionButtonAvailable;
+    }
+    else {
+      return styles.optionButtonUnavailable;
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name: username })}>
@@ -176,42 +190,46 @@ const AvatarSelection = ({ navigation }) => {
       </TouchableOpacity>
 
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Construction.png")}>
+        <TouchableOpacity style={styles.optionButtonAvailable} onPress={() => setAvatar("Construction.png", 0)}>
             <Image
             source={Construction} // Update this path to the location of your image file
             style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("FireFighter.png")}>
+        <TouchableOpacity style={styles.optionButtonAvailable} onPress={() => setAvatar("FireFighter.png", 0)}>
             <Image
                 source={FireFighter} // Update this path to the location of your image file
                 style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Goggles.png")}>
+        <TouchableOpacity style={determineButtonStyle(1)} onPress={() => setAvatar("Goggles.png", 1)}>
+          {progress.level < 1 && <TouchableOpacity style={styles.diagonalLine}/>} 
             <Image
                 source={Goggles} // Update this path to the location of your image file
                 style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Headphones.png")}>
+        <TouchableOpacity style={determineButtonStyle(2)} onPress={() => setAvatar("Headphones.png", 2)}>
+         {progress.level < 2 && <TouchableOpacity style={styles.diagonalLine}/>}
             <Image
                 source={Headphones} // Update this path to the location of your image file
                 style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Nurse.png")}>
+        <TouchableOpacity style={determineButtonStyle(3)} onPress={() => setAvatar("Nurse.png", 3)}>
+          {progress.level < 3 && <TouchableOpacity style={styles.diagonalLine}/>}
             <Image
                 source={Nurse} // Update this path to the location of your image file
                 style={styles.playerChar}
             />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => setAvatar("Pilot.png")}>
+        <TouchableOpacity style={determineButtonStyle(4)} onPress={() => setAvatar("Pilot.png", 4)}>
+         {progress.level < 4 && <TouchableOpacity style={styles.diagonalLine}/>}
             <Image
                 source={Pilot} // Update this path to the location of your image file
                 style={styles.playerChar}
@@ -271,7 +289,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  optionButton: {
+  optionButtonAvailable: {
     backgroundColor: '#FA7F35',
     padding: 0,
     borderRadius: 10,
@@ -280,6 +298,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '48%',
     height: 100,
+  },
+  optionButtonUnavailable: {
+    backgroundColor: '#FA7F35',
+    borderColor: '#ba1e28',
+    borderWidth: 5,
+    padding: 0,
+    borderRadius: 10,
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '48%',
+    height: 100,
+  },
+  diagonalLine: {
+    position: 'absolute',
+    top: 42,
+    left: 15,
+    width: 135, // Ensure it covers the box diagonally
+    height: 5, // Thickness of the line
+    backgroundColor: '#ba1e28', // Line color
+    transform: [{ rotate: '45deg' }], // Rotate to create the diagonal
+    zIndex: 100
   },
   optionButtonText: {
     color: '#ffffff',

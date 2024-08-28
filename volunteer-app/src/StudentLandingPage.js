@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
@@ -10,10 +11,30 @@ import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
 import missionIcon from './images/buttonicons/MissionsIcon.png';
 import MapScreen from './MapScreen';
 
+// AVATAR IMAGES
+import Construction from './images/Avatars/Construction.png';
+import FireFighter from './images/Avatars/FireFighter.png';
+import Goggles from './images/Avatars/Goggles.png';
+import Headphones from './images/Avatars/Headphones.png';
+import Nurse from './images/Avatars/Nurse.png';
+import Pilot from './images/Avatars/Pilot.png';
+
 const StudentLandingPage = ({ navigation }) => {
   const [username, setUsername] = useState('user');
   const [id, setId] = useState(null);
   const [progress, setProgress] = useState({ level: 1, points: 0, maxPoints: 1000 });
+  const [currAvatar, setCurrAvatar] = useState('Default.png');
+
+  // avatar dictionary
+  const avatarDictionary = {
+    "Default.png": character,
+    "Construction.png": Construction,
+    "FireFighter.png": FireFighter,
+    "Goggles.png": Goggles,
+    "Headphones.png": Headphones,
+    "Nurse.png": Nurse,
+    "Pilot.png": Pilot
+  }
 
   // Function to initialize user data
   const initializeUserData = async () => {
@@ -26,6 +47,7 @@ const StudentLandingPage = ({ navigation }) => {
       // Validate that storedId is a valid 24-character hex string
       if (storedId && /^[0-9a-fA-F]{24}$/.test(storedId)) {
         setId(storedId);
+        getAvatar();    
       } else {
         console.error('Invalid ID format:', storedId);
         Alert.alert('Error', 'Invalid user ID format. Please log in again.');
@@ -36,15 +58,18 @@ const StudentLandingPage = ({ navigation }) => {
     }
   };
 
-  // ON BOOT
-  useEffect(() => {
-    initializeUserData();
-  }, []);
+  // ON BACK BUTTON
+  useFocusEffect(
+    useCallback(() => {
+      initializeUserData();
+    }, [])
+  );
 
   // Fetch progress data when ID is set
   useEffect(() => {
     if (id) {
       console.log(`Attempting to fetch progress for user ID: ${id}`); // Added log
+      getAvatar();
       getProgress();
     }
   }, [id]);
@@ -81,6 +106,40 @@ const StudentLandingPage = ({ navigation }) => {
     }
   };
 
+  const getAvatar = async () => {
+    try {
+      if (!id) {
+        console.error('User ID is not available for fetching progress.');
+        return;
+      }
+
+      console.log(id);
+
+      const response = await fetch('https://volunteersphere.onrender.com/get-avatar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        console.error('Error getting progress:', data.errorMsg);
+        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data.');
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Received progress data:', data); // Log the received data
+
+      setCurrAvatar(data.avatar);
+    } catch (error) {
+      console.error('Network Error:', error);
+      Alert.alert('Network Error', 'Could not fetch progress data.');
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name: username })}>
@@ -89,7 +148,7 @@ const StudentLandingPage = ({ navigation }) => {
 
       <SafeAreaView style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
         <Image
-          source={character} // Update this path to the location of your image file
+          source={avatarDictionary[currAvatar]} // Update this path to the location of your image file
           style={styles.playerChar}
         />
       </SafeAreaView>
