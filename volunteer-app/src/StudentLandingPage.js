@@ -3,6 +3,7 @@ import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
 import { ProgressBar, MD3Colors } from 'react-native-paper';
+import axios from 'axios';
 
 // IMAGES
 import character from './images/PlayerChar.png';
