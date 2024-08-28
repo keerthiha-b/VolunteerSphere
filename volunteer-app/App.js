@@ -15,6 +15,7 @@ import SuccessScreen from './src/Success';
 import MapScreen from './src/MapScreen'; 
 import ActivityDetails from './src/Activitydetails';
 import ActivitySignup from './src/Signupactivity';
+import UserActivitiesScreen from './src/Commentsbystudents';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,6 +36,7 @@ function App() {
         <Stack.Screen name="MapScreen" component={MapScreen} options={{ headerShown: true, title: 'Map' }} />
         <Stack.Screen name="ActivityDetail" component={ActivityDetails} options={{ title: 'Activity Details' }} />
         <Stack.Screen name="ActivitySignup" component={ActivitySignup} />
+        <Stack.Screen name="UserActivitiesScreen" component={UserActivitiesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
