@@ -8,7 +8,7 @@ const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API h
 const leaderboardRouter = require('./API/leaderboard'); 
 const cors = require('cors');
 const commentRoutes = require('./API/commentRoutes');
-const fetchSignedUpActivities = require('./API/fetchSignedUpActivities'); 
+const fetchSignedUpActivities = require('./API/fetchSignedUpActivities');
 // Progress API
 const getProgress = require('./API/getProgress');
 

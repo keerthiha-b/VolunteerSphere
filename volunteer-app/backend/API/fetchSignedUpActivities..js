@@ -1,3 +1,5 @@
+const express = require('express');
+const mongoose = require('mongoose');
 const UserActivity = require('../Schema/UserActivity'); // Ensure the path and name are correct
 
 const router = express.Router();
