@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Comment = require('./Schema/Comment');
+const Comment = require('./Schema/Comments');
 const UserActivity = require('./Schema/UserActivity'); // Ensure this schema points to 'userToActivity' collection
 
 const router = express.Router();
