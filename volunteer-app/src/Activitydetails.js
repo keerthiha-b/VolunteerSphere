@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { getValueFor } from './utils/secureStoreUtil'; // Import secure storage utility
 import axios from 'axios';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+// Import images for each category
 const images = {
   health: require('./images/Health.jpg'),
   environment: require('./images/cleaning.jpg'),
@@ -10,6 +12,24 @@ const images = {
   'community service': require('./images/community.jpg'),
   'animal welfare': require('./images/animalwelfare.png'),
 };
+
+const Tab = createMaterialTopTabNavigator();
+
+const CommunityTab = () => (
+  <View style={styles.tabContent}>
+    <Text>Community comments will be shown here.</Text>
+    {/* You can replace this text with actual comments list or community content */}
+  </View>
+);
+
+const DetailsTab = ({ activity }) => (
+  <View style={styles.tabContent}>
+    <Text>Category: {activity.category}</Text>
+    <Text>Duration: {activity.duration}</Text>
+    <Text>Date: {activity.date}</Text>
+    <Text>Address: {activity.address}</Text>
+  </View>
+);
 
 const ActivityDetailScreen = ({ route, navigation }) => {
   const { activity } = route.params; // Getting activity details from route params
@@ -68,7 +88,6 @@ const ActivityDetailScreen = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error('Error signing up:', error);
-      // Display a more specific error message if available
       const errorMessage = error.response?.data?.errorMsg || "Unable to sign up. Please try again later.";
       Alert.alert("Error", errorMessage);
     }
@@ -78,10 +97,16 @@ const ActivityDetailScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <Image source={images[activity.category.toLowerCase()] || images['default']} style={styles.image} />
       <Text style={styles.title}>{activity.name}</Text>
-      <Text>Category: {activity.category}</Text>
-      <Text>Duration: {activity.duration}</Text>
-      <Text>Date: {activity.date}</Text>
-      <Text>Address: {activity.address}</Text>
+      
+      {/* Tab Navigator to switch between Details and Community tabs */}
+      <Tab.Navigator>
+        <Tab.Screen name="Details">
+          {() => <DetailsTab activity={activity} />}
+        </Tab.Screen>
+        <Tab.Screen name="Community" component={CommunityTab} />
+      </Tab.Navigator>
+
+      {/* Signup Button below the tabs */}
       <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
         <Text style={styles.signupButtonText}>Sign Up</Text>
       </TouchableOpacity>
@@ -89,6 +114,7 @@ const ActivityDetailScreen = ({ route, navigation }) => {
   );
 };
 
+// Styling for the screen and components
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -99,20 +125,26 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   image: {
     width: '100%',
-    height: 300,
-    marginBottom: 20,
+    height: 200,
+    marginBottom: 10,
     borderRadius: 10,
     resizeMode: 'cover',
+  },
+  tabContent: {
+    flex: 1,
+    padding: 10,  // Reduced padding to make the tab content smaller
+    backgroundColor: '#f0f0f0',  // Optional: Add background to visually separate tab content
   },
   signupButton: {
     backgroundColor: 'orange',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 20,
+    marginVertical:50  // Adjusted margin to make the button closer to the tabs
   },
   signupButtonText: {
     color: '#ffffff',
