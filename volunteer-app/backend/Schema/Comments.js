@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const commentSchema = new mongoose.Schema({
   userToActivityId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'UserToActivity', // Reference to UserToActivity model
+    ref: 'UserActivity', // Reference to UserToActivity model
     required: true,
   },
   text: {
