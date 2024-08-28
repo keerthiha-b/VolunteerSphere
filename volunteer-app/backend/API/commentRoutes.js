@@ -6,12 +6,12 @@ const UserActivity = require('../Schema/UserActivity'); // Ensure this schema po
 const router = express.Router();
 
 // Fetch comments for a specific user activity
-router.get('/:userActivityId/comments', async (req, res) => {
+router.get('/:userToActivityId/comments', async (req, res) => {
   try {
     const { userActivityId } = req.params;
 
     // Find comments associated with the specific UserActivity entry
-    const comments = await Comment.find({ userToActivityId: mongoose.Types.ObjectId(userActivityId) });
+    const comments = await Comment.find({ userToActivityId: mongoose.Types.ObjectId(userToActivityId) });
 
     res.status(200).json(comments);
   } catch (error) {
@@ -21,7 +21,7 @@ router.get('/:userActivityId/comments', async (req, res) => {
 });
 
 // Add a comment to a specific signup
-router.post('/:userActivityId/comments', async (req, res) => {
+router.post('/:userToActivityId/comments', async (req, res) => {
   try {
     const { userActivityId } = req.params;
     const { text } = req.body;
