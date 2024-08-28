@@ -7,7 +7,7 @@ const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const cors = require('cors');
 const commentRoutes = require('./API/commentRoutes');
-const fetchSignedUpActivities = require('./API/fetchSignedUpActivities'); 
+const fetchSignedUpActivities = require('./API/fetchSignedUpActivities');
 // Progress API
 const getProgress = require('./API/getProgress');
 
