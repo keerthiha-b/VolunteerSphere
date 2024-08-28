@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Comment = require('../Schema/Comments'); // Adjust the path as necessary
-const UserActivity = require('../Schema/UserActivity'); // Adjust the path as necessary
+const Comment = require('../Schema/Comments'); // Ensure the path and name are correct
+const UserActivity = require('../Schema/UserActivity'); // Ensure the path and name are correct
 
 const router = express.Router();
 
@@ -12,8 +12,13 @@ router.get('/:userToActivityId/comments', async (req, res) => {
 
     console.log(`Fetching comments for userToActivityId: ${userToActivityId}`); // Debugging line
 
-    // Find comments associated with the specific UserActivity entry
-    const comments = await Comment.find({ userToActivityId: mongoose.Types.ObjectId(userToActivityId) });
+    // Validate if userToActivityId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userToActivityId)) {
+      return res.status(400).json({ errorMsg: 'Invalid userToActivityId format.' });
+    }
+
+    // Correctly use 'new' with ObjectId
+    const comments = await Comment.find({ userToActivityId: new mongoose.Types.ObjectId(userToActivityId) });
 
     res.status(200).json(comments);
   } catch (error) {
@@ -28,13 +33,21 @@ router.post('/:userToActivityId/comments', async (req, res) => {
     const { userToActivityId } = req.params;
     const { text } = req.body;
 
-    // Create a new comment
+    // Validate if userToActivityId is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(userToActivityId)) {
+      return res.status(400).json({ errorMsg: 'Invalid userToActivityId format.' });
+    }
+
+    if (!text) {
+      return res.status(400).json({ errorMsg: 'Comment text is required.' });
+    }
+
+    // Correctly use 'new' with ObjectId
     const newComment = new Comment({
-      userToActivityId: mongoose.Types.ObjectId(userToActivityId),
+      userToActivityId: new mongoose.Types.ObjectId(userToActivityId),
       text,
     });
 
-    // Save the comment to the database
     await newComment.save();
 
     res.status(201).json({ message: 'Comment added successfully', newComment });
