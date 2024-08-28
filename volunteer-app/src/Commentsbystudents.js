@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Image } from 'react-native';
-import { getValueFor } from './utils/secureStoreUtil'; 
+import { getValueFor } from './utils/secureStoreUtil'; // Ensure this path is correct
 import axios from 'axios';
 
 // Import images for each category
 const images = {
-  health: require('./images/Health.jpg'),
+  health: require('./images/Health.jpg'), // Ensure these paths are correct
   environment: require('./images/cleaning.jpg'),
   education: require('./images/education.jpg'),
   'community service': require('./images/community.jpg'),
@@ -25,8 +25,15 @@ const UserActivitiesScreen = ({ navigation }) => {
         }
         setUserId(storedUserId);
 
-        const response = await axios.get(`https://volunteersphere.onrender.com/user-activities/${storedUserId}/comments`);
-        setSignedUpActivities(response.data);
+        const response = await axios.get(`https://volunteersphere.onrender.com/user-activities/${storedUserId}`);
+        if (response.status === 200) {
+          console.log('API Response:', response.data);
+          setSignedUpActivities(response.data);
+        } else {
+          console.log('No activities found for this user.');
+          Alert.alert('Notice', 'No activities found for this user.');
+          setSignedUpActivities([]); // Set to empty array if no activities are found
+        }
       } catch (error) {
         console.error('Error fetching signed-up activities:', error);
         Alert.alert('Error', 'Unable to fetch your signed-up activities. Please try again later.');
@@ -65,7 +72,7 @@ const UserActivitiesScreen = ({ navigation }) => {
         {isPastActivity ? (
           <TouchableOpacity 
             style={styles.commentButton} 
-            onPress={() => navigation.navigate('LeaveComment', { activityId: item.opportunityId._id })}>
+            onPress={() => navigation.navigate('LeaveComment', { userToActivityId: item._id })}>
             <Text style={styles.commentButtonText}>Leave comment on past signup</Text>
           </TouchableOpacity>
         ) : (
@@ -84,7 +91,7 @@ const UserActivitiesScreen = ({ navigation }) => {
       <Text style={styles.title}>Manage Signups and Reviews</Text>
       <FlatList
         data={signedUpActivities}
-        keyExtractor={item => item.opportunityId._id.toString()}
+        keyExtractor={item => item._id.toString()}
         renderItem={renderActivityItem}
       />
     </View>
