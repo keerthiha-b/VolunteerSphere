@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 
 const LeaveComment = ({ route, navigation }) => {
@@ -36,7 +36,9 @@ const LeaveComment = ({ route, navigation }) => {
         value={comment}
         onChangeText={setComment}
       />
-      <Button title="Submit" onPress={handleAddComment} />
+      <TouchableOpacity style={styles.submitButton} onPress={handleAddComment}>
+        <Text style={styles.submitButtonText}>Submit</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -59,6 +61,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 10,
     textAlignVertical: 'top',
+  },
+  submitButton: {
+    backgroundColor: '#ff8c00', // Orange color for the "Submit" button
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

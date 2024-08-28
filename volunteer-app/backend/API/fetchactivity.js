@@ -31,4 +31,31 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
+// Unenroll a user from an activity
+router.delete('/:userId/:activityId', async (req, res) => {
+  try {
+    const { userId, activityId } = req.params;
+
+    // Validate the ObjectIds
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(activityId)) {
+      return res.status(400).json({ errorMsg: 'Invalid userId or activityId format.' });
+    }
+
+    // Find and delete the UserActivity document
+    const userActivity = await UserActivity.findOneAndDelete({
+      userId: new mongoose.Types.ObjectId(userId),
+      opportunityId: new mongoose.Types.ObjectId(activityId),
+    });
+
+    if (!userActivity) {
+      return res.status(404).json({ errorMsg: 'Activity not found or user is not enrolled.' });
+    }
+
+    res.status(200).json({ message: 'Successfully unenrolled from the activity.' });
+  } catch (error) {
+    console.error('Error unenrolling from activity:', error);
+    res.status(500).json({ errorMsg: 'Error unenrolling from activity: ' + error.message });
+  }
+});
+
 module.exports = router;
