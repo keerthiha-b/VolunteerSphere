@@ -9,6 +9,8 @@ const leaderboardRouter = require('./API/leaderboard');
 const cors = require('cors');
 const commentRoutes = require('./API/commentRoutes');
 const fetchSignedUpActivities = require('./API/fetchactivity');
+const missionsApi = require('./API/missions');
+
 // Progress API
 const getProgress = require('./API/getProgress');
 
@@ -46,6 +48,9 @@ app.post('/get-progress', getProgress);
 app.post('/signup', newUserToActivity); // Corrected API handler usage
 
 app.use('/leaderboard', leaderboardRouter);
+// missions
+app.use('/api', missionsApi);
+
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
