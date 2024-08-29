@@ -1,31 +1,90 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { getValueFor } from './utils/secureStoreUtil'; // Import secure storage utility
+import axios from 'axios';
 
-// Import images for each category
 const images = {
   health: require('./images/Health.jpg'),
   environment: require('./images/cleaning.jpg'),
   education: require('./images/education.jpg'),
   'community service': require('./images/community.jpg'),
   'animal welfare': require('./images/animalwelfare.png'),
-  // Add more categories and corresponding images as needed
 };
 
-const ActivityDetailScreen = ({ route }) => {
-  const { activity } = route.params;
+const ActivityDetailScreen = ({ route, navigation }) => {
+  const { activity } = route.params; // Getting activity details from route params
+  const [userId, setUserId] = useState(null); // State to store fetched userId
 
-  // Determine the image based on the category
-  const activityImage = images[activity.category.toLowerCase()] || images['default'];
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await getValueFor('userId'); // Retrieve userId from secure storage
+        if (!storedUserId) {
+          throw new Error('User ID not found in secure storage.');
+        }
+        setUserId(storedUserId);
+        console.log('Fetched userId from secure storage:', storedUserId);
+      } catch (error) {
+        console.error('Error fetching userId:', error);
+        Alert.alert('Error', 'Unable to fetch user details. Please log in again.');
+      }
+    };
+
+    fetchUserId(); // Call the function to fetch userId on component mount
+  }, []);
+
+  const handleSignup = async () => {
+    if (!userId) {
+      Alert.alert('Error', 'User not authenticated. Please log in again.');
+      return;
+    }
+
+    const apiUrl = 'https://volunteersphere.onrender.com/signup';
+
+    const payload = {
+      userId: userId, // Use the fetched userId from secure storage
+      opportunityId: activity._id, // Use the activity ID from the route params
+    };
+
+    console.log("Sending payload:", payload); // Log the payload being sent
+
+    try {
+      const response = await axios.post(apiUrl, payload, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (response.status === 201) {
+        Alert.alert("Success", response.data.message || "You have successfully signed up!");
+        navigation.navigate('ActivitySignup', {
+          activityName: activity.name,
+          date: activity.date,
+          time: activity.duration,
+          location: activity.address
+        });
+      } else if (response.status === 409) { // Handle duplicate sign-up attempts
+        Alert.alert('Conflict', response.data.message || 'You are already signed up for this activity.');
+      } else {
+        Alert.alert('Error', response.data.message || 'Unable to sign up. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error signing up:', error);
+      // Display a more specific error message if available
+      const errorMessage = error.response?.data?.errorMsg || "Unable to sign up. Please try again later.";
+      Alert.alert("Error", errorMessage);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Image source={activityImage} style={styles.image} />
+      <Image source={images[activity.category.toLowerCase()] || images['default']} style={styles.image} />
       <Text style={styles.title}>{activity.name}</Text>
       <Text>Category: {activity.category}</Text>
       <Text>Duration: {activity.duration}</Text>
       <Text>Date: {activity.date}</Text>
       <Text>Address: {activity.address}</Text>
-      {/* Add more fields as necessary */}
+      <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
+        <Text style={styles.signupButtonText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -48,7 +107,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     resizeMode: 'cover',
   },
-  // Add more styles as needed
+  signupButton: {
+    backgroundColor: 'orange',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  signupButtonText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
 });
 
 export default ActivityDetailScreen;

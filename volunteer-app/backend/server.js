@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const newUser = require('./API/newUser');
 const loginUser = require('./API/loginUser');
 const activityRouter = require('./API/activityrelated'); // Activity-related routes
-const leaderboardRouter = require('./API/leaderboard'); 
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
+const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const cors = require('cors');
 
 // Progress API
@@ -37,8 +37,9 @@ app.use('/api/map', mapRouter); // Add this line to use the new map-related rout
 // PROGRESS
 app.post('/get-progress', getProgress);
 
-//Leaderboard
-app.use('/leaderboard', leaderboardRouter);
+// Signup activity 
+app.post('/signup', newUserToActivity); // Corrected API handler usage
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

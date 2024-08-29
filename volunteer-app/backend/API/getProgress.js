@@ -1,6 +1,7 @@
 const User = require("../Schema/User");
 const cors = require('cors');
 const express = require('express');
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
@@ -10,26 +11,26 @@ const getProgress = async (req, res) => {
   try {
     const { id } = req.body;
 
-    // Attempt to find a user or organization by the username
-    const user = await User.findOne({ _id: id });
-
-    if (!user) {
-      return res.status(401).json({ errorMsg: "Cannot find progress?" });
+    // Validate that id is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ errorMsg: "Invalid User ID" });
     }
 
-    const level = user.level;
-    const points = user.points;
-    const maxPoints = user.maxPoints;
+    const user = await User.findById(id);
 
-    // retrieve successful, return a success message along with userType, name, email, and userId
+    if (!user) {
+      return res.status(404).json({ errorMsg: "User not found" });
+    }
+
     res.status(200).json({
-        level: user.level,
-        points: user.points,
-        maxPoints: user.maxPoints
+      level: user.level,
+      points: user.points,
+      maxPoints: user.maxPoints
     });
 
   } catch (error) {
     console.error('Error retrieving progress info:', error);
+    res.status(500).json({ errorMsg: "Internal Server Error" });
   }
 };
 
