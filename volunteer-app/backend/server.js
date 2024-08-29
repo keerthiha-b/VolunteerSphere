@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const newUser = require('./API/newUser');
 const loginUser = require('./API/loginUser');
 const activityRouter = require('./API/activityrelated'); // Activity-related routes
+const leaderboardRouter = require('./API/leaderboard'); 
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const cors = require('cors');
@@ -39,6 +40,8 @@ app.post('/get-progress', getProgress);
 
 // Signup activity 
 app.post('/signup', newUserToActivity); // Corrected API handler usage
+//Leaderboard
+app.use('/leaderboard', leaderboardRouter);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
