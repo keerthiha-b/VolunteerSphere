@@ -5,6 +5,7 @@ const loginUser = require('./API/loginUser');
 const activityRouter = require('./API/activityrelated'); // Activity-related routes
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
+const leaderboardRouter = require('./API/leaderboard'); 
 const cors = require('cors');
 
 // Progress API
@@ -40,6 +41,7 @@ app.post('/get-progress', getProgress);
 // Signup activity 
 app.post('/signup', newUserToActivity); // Corrected API handler usage
 
+app.use('/leaderboard', leaderboardRouter);
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
