@@ -102,10 +102,12 @@ const StudentLandingPage = ({ navigation }) => {
       <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />
     
       <View style={styles.smallOptionsContainer}>
-        <TouchableOpacity style={styles.smallOptionButton}>
-          <Image source={leaderboardIcon} style={styles.leaderboardIconStyle} />
+        <TouchableOpacity style={styles.smallOptionButton} onPress={() => navigation.navigate('Leaderboard', { userId: id })}>
+          <Image
+            source={leaderboardIcon} // Update this path to the location of your image file
+            style={styles.leaderboardIconStyle}
+          />
         </TouchableOpacity>
-
         <TouchableOpacity style={styles.smallOptionButton}>
           <Image source={missionIcon} style={styles.missionsIconStyle} />
         </TouchableOpacity>
