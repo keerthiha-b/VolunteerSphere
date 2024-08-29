@@ -12,3 +12,7 @@ export function getValueFor(key) {
       alert('No values stored under that key.');
   }
 }
+
+export function remove(key) {
+  SecureStore.deleteItemAsync(key);
+}

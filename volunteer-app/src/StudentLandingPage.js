@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
+import { save, getValueFor, remove } from './utils/secureStoreUtil'; // Adjust the path as needed
 import { ProgressBar } from 'react-native-paper';
 
 // IMAGES
@@ -50,13 +50,17 @@ const StudentLandingPage = ({ navigation }) => {
         getAvatar();    
       } else {
         console.error('Invalid ID format:', storedId);
-        Alert.alert('Error', 'Invalid user ID format. Please log in again.');
+        Alert.alert('Error', 'Invalid user ID format. Please log in  again.');
       }
     } catch (error) {
       console.error('Error initializing user data:', error);
       Alert.alert('Error', 'Failed to initialize user data.');
     }
   };
+
+  useEffect(() => {
+    initializeUserData();
+  }, [])
 
   // ON BACK BUTTON
   useFocusEffect(
@@ -109,7 +113,7 @@ const StudentLandingPage = ({ navigation }) => {
   const getAvatar = async () => {
     try {
       if (!id) {
-        console.error('User ID is not available for fetching progress.');
+        console.error('User ID is not available for fetching avatar.');
         return;
       }
 
@@ -139,6 +143,15 @@ const StudentLandingPage = ({ navigation }) => {
       Alert.alert('Network Error', 'Could not fetch progress data.');
     }
   };
+
+  const logOut = async () =>
+  {
+    await remove('name');
+    await remove('email');
+    await remove('userType');
+    await remove('userId');
+    navigation.navigate('LandingPage');
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -171,6 +184,10 @@ const StudentLandingPage = ({ navigation }) => {
 
         <TouchableOpacity style={styles.optionButton}>
           <Text style={styles.optionButtonText}>Check your awards</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.optionButton} onPress={() => logOut()}>
+          <Text style={styles.optionButtonText}>Log out</Text>
         </TouchableOpacity>
       </View> 
       
