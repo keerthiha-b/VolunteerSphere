@@ -1,35 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const MissionsPage = () => {
   const [missions, setMissions] = useState([]);
+  const [selectedTab, setSelectedTab] = useState('all');
 
   useEffect(() => {
     let isMounted = true; // Track if the component is still mounted
 
     const fetchMissions = async () => {
-      try {
-        const response = await axios.get('https://volunteersphere.onrender.com/api/missions');
-        console.log('Fetched missions data:', response.data);
-
-        if (isMounted && Array.isArray(response.data)) {
-          setMissions(response.data); // Set missions only if the component is mounted and data is an array
-        } else {
-          console.error('Unexpected data format, expected an array.');
+        try {
+          const response = await axios.get('https://volunteersphere.onrender.com/api/missions');
+  
+          if (isMounted && Array.isArray(response.data)) {
+            // Enhance missions with favorite status
+            const missionsWithFavorites = response.data.map(mission => ({
+              ...mission,
+              isFavorite: false  // Initialize all missions as not favorite
+            }));
+            setMissions(missionsWithFavorites);
+          } else {
+            console.error('Unexpected data format, expected an array.');
+          }
+        } catch (error) {
+          console.error('Error fetching missions:', error);
         }
-      } catch (error) {
-        console.error('Error fetching missions:', error);
-      }
-    };
+      };
+  
+      fetchMissions();
+  
+      return () => { isMounted = false; };
+    }, []);
 
-    fetchMissions();
-
-    return () => {
-      isMounted = false; // Cleanup when the component unmounts
-    };
-  }, []);
+  const toggleFavorite = (id) => {
+    // Toggle the favorite status
+    const updatedMissions = missions.map(mission =>
+      mission._id === id ? { ...mission, isFavorite: !mission.isFavorite } : mission
+    );
+    setMissions(updatedMissions);
+  };
 
   const getIconForCategory = (category) => {
     switch (category) {
@@ -46,37 +58,68 @@ const MissionsPage = () => {
     }
   };
 
+  const filterMissions = (tab) => {
+    switch (tab) {
+      case 'all': return missions;
+      case 'favs': return missions.filter(mission => mission.isFavorite);
+      case 'completed': return missions.filter(mission => mission.isCompleted);
+      default: return missions;
+    }
+  };
+
   const renderMissionItem = ({ item }) => {
-    // Ensure everything is properly handled and wrapped inside <Text> components
+    const progressPercent = Math.round((item.progress / item.goal) * 100);
     return (
       <View style={styles.missionCard}>
         <View style={styles.missionHeader}>
-          {getIconForCategory(item.category)} {/* Icon based on category */}
-          <Text style={styles.missionTitle}>{item.title}</Text> {/* Mission title */}
-          <Text style={styles.favoriteIcon}>❤️</Text> {/* Example favorite icon */}
+          {getIconForCategory(item.category)}
+          <Text style={styles.missionTitle}>{item.title}</Text>
+          <TouchableOpacity onPress={() => toggleFavorite(item._id)}>
+            <Icon name={item.isFavorite ? "favorite" : "favorite-border"} style={[styles.favoriteIcon, item.isFavorite && styles.favActive]} />
+          </TouchableOpacity>
         </View>
-        <Text>{item.description}</Text> {/* Mission description */}
+        <Text>{item.description}</Text>
+        <View style={styles.pointsGoalContainer}>
+          <Text style={styles.goal}>Goal: {item.goalType === 'hours' ? `${item.goal} hours` : `${item.goal} activities`}</Text>
+          <Text style={styles.points}>Points: {item.points.toString()}</Text>
+        </View>
         <View style={styles.progressContainer}>
-          <Text>{item.progress >= item.goal ? 'Completed' : `${Math.round((item.progress / item.goal) * 100)}%`}</Text> {/* Mission progress */}
           <ProgressBar
             progress={item.progress / item.goal}
-            color={item.progress >= item.goal ? '#4CAF50' : '#FA7F35'} // Green for completed, orange for progress
+            color={item.progress >= item.goal ? '#4CAF50' : '#FA7F35'}
             style={styles.progressBar}
           />
+          <Text style={styles.progressTextInsideBar}>
+            {progressPercent}%
+          </Text>
         </View>
-        <Text>Points: {item.points.toString()}</Text> {/* Ensure points is treated as a string */}
-        <Text>Goal: {item.goalType === 'hours' ? `${item.goal} hours` : `${item.goal} activities`}</Text> {/* Goal */}
-        <Text>Expires on: {new Date(item.expirationDate).toLocaleDateString()}</Text> {/* Expiration date */}
+        <View style={styles.expirationContainer}>
+          <Text style={styles.expiration}>Expires on: {new Date(item.expirationDate).toLocaleDateString()}</Text>
+        </View>
       </View>
     );
-  };  
+  }; 
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Missions</Text>
+      <View style={styles.tabContainer}>
+        {['all', 'favs', 'completed'].map(tab => (
+          <TouchableOpacity
+            key={tab}
+            style={[styles.tab, selectedTab === tab && styles.activeTab]}
+            onPress={() => setSelectedTab(tab)}
+          >
+            <Text style={[styles.tabText, selectedTab === tab && styles.activeTabText]}>
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
       <FlatList
-        data={missions}
+        data={filterMissions(selectedTab)}
         renderItem={renderMissionItem}
-        keyExtractor={(item) => item._id.toString()} // Ensure key is a string
+        keyExtractor={(item) => item._id.toString()}
       />
     </View>
   );
@@ -85,14 +128,53 @@ const MissionsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffff',
+  },
+  header: {
+    backgroundColor: '#FA7F35',
+    padding: 20,
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'left',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    backgroundColor: 'white',
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 10,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: 'black',
+  },
+  tabText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  activeTabText: {
+    fontWeight: 'bold',
+  },
+  favActive: {
+    color: 'orange', 
   },
   missionCard: {
     backgroundColor: '#f8f8f8',
-    borderRadius: 10,
+    borderRadius: 20,
+    marginTop: 10,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 20,
+    marginHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
   },
   missionHeader: {
     flexDirection: 'row',
@@ -105,15 +187,54 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   favoriteIcon: {
-    fontSize: 20,
+    fontSize: 24,
     color: '#FF6B6B',
   },
-  progressContainer: {
+  pointsGoalContainer: {
     marginTop: 10,
+    marginBottom: 10,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  points: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  goal: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 5,  // Adding space between Points and Goal
+  },
+
+  progressContainer: {
+    position: 'relative', // Allows absolute positioning inside
+    height: 30, // Thicker bar
   },
   progressBar: {
-    height: 10,
-    borderRadius: 5,
+    borderRadius: 10,
+    height: '100%', // Full height of the container
+  },
+  progressTextInsideBar: {
+    position: 'absolute',
+    left: 10,
+    right: 0,
+    top: 6,
+    textAlign: 'left', // Center text horizontally
+    color: '#6D4731', // Text color
+    fontWeight: 'bold',
+  },
+  expirationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',  // Aligns the text to the right
+    marginTop: 10,               // Space from the progress bar
+  },
+  expiration: {
+    fontSize: 12,
+    color: '#666',
   },
 });
 
