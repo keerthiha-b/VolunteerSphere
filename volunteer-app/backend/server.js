@@ -8,6 +8,7 @@ const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API h
 const cors = require('cors');
 const commentRoutes = require('./API/commentRoutes');
 const fetchSignedUpActivities = require('./API/fetchactivity');
+const fetchPastActivities = require('./API/pastactivityadmin'); 
 // Progress API
 const getProgress = require('./API/getProgress');
 
@@ -43,6 +44,7 @@ app.post('/get-progress', getProgress);
 
 // Signup activity 
 app.post('/signup', newUserToActivity); // Corrected API handler usage
+app.use('/admin/past-activities', fetchPastActivities);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

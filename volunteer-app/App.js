@@ -17,6 +17,8 @@ import ActivityDetails from './src/Activitydetails';
 import ActivitySignup from './src/Signupactivity';
 import UserActivitiesScreen from './src/Commentsbystudents';
 import LeaveComment from './src/leavecomment';  
+import AdminCommentsScreen from './src/admincommentpage';
+import AdminPastActivitiesScreen from './src/Adminpastactivites';
 
 
 const Stack = createNativeStackNavigator();
@@ -39,6 +41,16 @@ function App() {
         <Stack.Screen name="ActivitySignup" component={ActivitySignup} />
         <Stack.Screen name="UserActivitiesScreen" component={UserActivitiesScreen}/>
         <Stack.Screen name="Leave Comment" component={LeaveComment} />
+        <Stack.Screen
+          name="AdminPastActivitiesScreen"
+          component={AdminPastActivitiesScreen}
+          options={{ headerShown: true, title: 'Past Activities' }}
+        />
+        <Stack.Screen
+          name="AdminCommentsScreen"
+          component={AdminCommentsScreen}
+          options={{ headerShown: true, title: 'Activity Comments' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
