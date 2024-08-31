@@ -18,6 +18,7 @@ const UserActivitiesScreen = ({ navigation }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [activityToUnenroll, setActivityToUnenroll] = useState(null);
   const [currentTab, setCurrentTab] = useState('upcoming');
+  const [error, setError] = useState(null); // New state to track error
 
   useEffect(() => {
     const fetchUserIdAndActivities = async () => {
@@ -30,14 +31,22 @@ const UserActivitiesScreen = ({ navigation }) => {
 
         const response = await axios.get(`https://volunteersphere.onrender.com/user-activities/${storedUserId}`);
         if (response.status === 200) {
-          setSignedUpActivities(response.data);
+          if (response.data.length === 0) {
+            // No activities found
+            setSignedUpActivities([]);
+            setError('No activities signed up yet.');
+          } else {
+            setSignedUpActivities(response.data);
+            setError(null); // Reset error if the request succeeds and data is not empty
+          }
         } else {
-          Alert.alert('Notice', 'No activities found for this user.');
           setSignedUpActivities([]);
+          setError('Unable to fetch your signed-up activities. Please try again later.');
         }
       } catch (error) {
         console.error('Error fetching signed-up activities:', error);
-        Alert.alert('Error', 'Unable to fetch your signed-up activities. Please try again later.');
+        setError('Unable to fetch your signed-up activities. Please try again later.');
+        setSignedUpActivities([]);
       }
     };
 
@@ -122,12 +131,26 @@ const UserActivitiesScreen = ({ navigation }) => {
           <Text style={currentTab === 'past' ? styles.activeTabText : styles.inactiveTabText}>Past Activities</Text>
         </TouchableOpacity>
       </View>
-      
-      <FlatList
-        data={filteredActivities}
-        keyExtractor={item => item._id.toString()}
-        renderItem={renderActivityItem}
-      />
+
+      {error ? (
+        <View style={styles.noActivitiesContainer}>
+          <Text style={styles.noActivitiesText}>{error}</Text>
+        </View>
+      ) : (
+        filteredActivities.length > 0 ? (
+          <FlatList
+            data={filteredActivities}
+            keyExtractor={item => item._id.toString()}
+            renderItem={renderActivityItem}
+          />
+        ) : (
+          <View style={styles.noActivitiesContainer}>
+            <Text style={styles.noActivitiesText}>
+              {currentTab === 'upcoming' ? 'No upcoming activities yet' : 'No past activities yet'}
+            </Text>
+          </View>
+        )
+      )}
 
       {/* Unenroll Confirmation Modal */}
       <Modal
@@ -294,6 +317,15 @@ const styles = StyleSheet.create({
     color: '#333', // Darker text color for the "Cancel" button
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  noActivitiesContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noActivitiesText: {
+    fontSize: 16,
+    color: '#555',
   },
 });
 
