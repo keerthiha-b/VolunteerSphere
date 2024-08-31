@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Image, Modal, Button } from 'react-native';
 import { getValueFor } from './utils/secureStoreUtil'; // Ensure this path is correct
 import axios from 'axios';
 
@@ -15,6 +15,9 @@ const images = {
 const UserActivitiesScreen = ({ navigation }) => {
   const [signedUpActivities, setSignedUpActivities] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [activityToUnenroll, setActivityToUnenroll] = useState(null);
+  const [currentTab, setCurrentTab] = useState('upcoming');
 
   useEffect(() => {
     const fetchUserIdAndActivities = async () => {
@@ -27,12 +30,10 @@ const UserActivitiesScreen = ({ navigation }) => {
 
         const response = await axios.get(`https://volunteersphere.onrender.com/user-activities/${storedUserId}`);
         if (response.status === 200) {
-          console.log('API Response:', response.data);
           setSignedUpActivities(response.data);
         } else {
-          console.log('No activities found for this user.');
           Alert.alert('Notice', 'No activities found for this user.');
-          setSignedUpActivities([]); // Set to empty array if no activities are found
+          setSignedUpActivities([]);
         }
       } catch (error) {
         console.error('Error fetching signed-up activities:', error);
@@ -44,11 +45,11 @@ const UserActivitiesScreen = ({ navigation }) => {
   }, []);
 
   const handleRemoveActivity = async (activityId) => {
+    setShowConfirmationModal(false); // Hide modal after user confirms
     try {
       const response = await axios.delete(`https://volunteersphere.onrender.com/user-activities/${userId}/${activityId}`);
       if (response.status === 200) {
-        Alert.alert("Success", "You have successfully removed the activity.");
-        // Update the state to remove the unenrolled activity from the list
+        Alert.alert('Success', 'You have successfully removed the activity.');
         setSignedUpActivities((prevActivities) => 
           prevActivities.filter(activity => activity.opportunityId._id !== activityId)
         );
@@ -57,23 +58,26 @@ const UserActivitiesScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error removing activity:', error);
-      Alert.alert("Error", "Unable to remove the activity. Please try again later.");
+      Alert.alert('Error', 'Unable to remove the activity. Please try again later.');
     }
+  };
+
+  const confirmUnenroll = (activityId) => {
+    setActivityToUnenroll(activityId);
+    setShowConfirmationModal(true);
   };
 
   const renderActivityItem = ({ item }) => {
     const isPastActivity = new Date(item.opportunityId.date) < new Date();
     const activityImage = images[item.opportunityId.category.toLowerCase()] || images['default'];
-
-    // Convert and format the date
+    
     const formattedDate = new Date(item.opportunityId.date).toLocaleDateString('en-US', {
-      weekday: 'long', // "Monday"
-      year: 'numeric', // "2024"
-      month: 'long',   // "August"
-      day: 'numeric'   // "24"
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
 
-    // Convert and format the time
     const formattedTime = new Date(item.opportunityId.date).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
@@ -85,19 +89,18 @@ const UserActivitiesScreen = ({ navigation }) => {
         <Text style={styles.activityTitle}>{item.opportunityId.name}</Text>
         <Text style={styles.activityDetails}>{item.opportunityId.organization}</Text>
         <Text style={styles.activityDetails}>{item.opportunityId.duration} of volunteering</Text>
-        {/* Display the formatted date and time */}
         <Text style={styles.activityDetails}>{formattedDate} at {formattedTime}</Text>
 
         {isPastActivity ? (
           <TouchableOpacity 
             style={styles.commentButton} 
             onPress={() => navigation.navigate('Leave Comment', { userToActivityId: item._id })}>
-            <Text style={styles.commentButtonText}>Leave comment on past signup</Text>
+            <Text style={styles.commentButtonText}>Leave a comment</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity 
             style={styles.unenrollButton} 
-            onPress={() => handleRemoveActivity(item.opportunityId._id)}>
+            onPress={() => confirmUnenroll(item.opportunityId._id)}>
             <Text style={styles.unenrollButtonText}>Unenroll</Text>
           </TouchableOpacity>
         )}
@@ -105,14 +108,42 @@ const UserActivitiesScreen = ({ navigation }) => {
     );
   };
 
+  const filteredActivities = signedUpActivities.filter(activity => 
+    currentTab === 'upcoming' ? new Date(activity.opportunityId.date) >= new Date() : new Date(activity.opportunityId.date) < new Date()
+  );
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Manage Signups and Reviews</Text>
+      <View style={styles.tabContainer}>
+        <TouchableOpacity style={currentTab === 'upcoming' ? styles.activeTab : styles.inactiveTab} onPress={() => setCurrentTab('upcoming')}>
+          <Text style={currentTab === 'upcoming' ? styles.activeTabText : styles.inactiveTabText}>Upcoming Activities</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={currentTab === 'past' ? styles.activeTab : styles.inactiveTab} onPress={() => setCurrentTab('past')}>
+          <Text style={currentTab === 'past' ? styles.activeTabText : styles.inactiveTabText}>Past Activities</Text>
+        </TouchableOpacity>
+      </View>
+      
       <FlatList
-        data={signedUpActivities}
+        data={filteredActivities}
         keyExtractor={item => item._id.toString()}
         renderItem={renderActivityItem}
       />
+
+      {/* Unenroll Confirmation Modal */}
+      <Modal
+        visible={showConfirmationModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowConfirmationModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text>Are you sure you want to unenroll from this activity?</Text>
+            <Button title="Cancel" onPress={() => setShowConfirmationModal(false)} />
+            <Button title="Unenroll" onPress={() => handleRemoveActivity(activityToUnenroll)} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -123,11 +154,28 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  tabContainer: {
+    flexDirection: 'row',
     marginBottom: 20,
-    color: '#ff8c00', // Color to match your design
+  },
+  activeTab: {
+    flex: 1,
+    padding: 10,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ff8c00',
+    alignItems: 'center',
+  },
+  inactiveTab: {
+    flex: 1,
+    padding: 10,
+    alignItems: 'center',
+  },
+  activeTabText: {
+    color: '#ff8c00',
+    fontWeight: 'bold',
+  },
+  inactiveTabText: {
+    color: '#888',
   },
   activityContainer: {
     backgroundColor: '#f9f9f9',
@@ -157,7 +205,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   unenrollButton: {
-    backgroundColor: '#ff8c00', // Orange color for the "Unenroll" button
+    backgroundColor: '#ff8c00',
     paddingVertical: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -169,7 +217,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   commentButton: {
-    backgroundColor: '#ff8c00', // Orange color for the "Leave comment" button
+    backgroundColor: '#ff8c00',
     paddingVertical: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -179,6 +227,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: 300,
   },
 });
 

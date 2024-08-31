@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, Image } from 'react-native';
 import axios from 'axios';
+import { FontAwesome } from '@expo/vector-icons';
 
 // Import the static image for comments
 const commentsImage = require('./images/comments.jpg'); // Adjust the path according to your project structure
@@ -8,6 +9,7 @@ const commentsImage = require('./images/comments.jpg'); // Adjust the path accor
 const LeaveComment = ({ route, navigation }) => {
   const { userToActivityId } = route.params;
   const [comment, setComment] = useState('');
+  const [rating, setRating] = useState(0); // State to manage star rating
 
   const handleAddComment = async () => {
     if (!comment.trim()) {
@@ -16,7 +18,7 @@ const LeaveComment = ({ route, navigation }) => {
     }
 
     try {
-      const response = await axios.post(`https://volunteersphere.onrender.com/comments/${userToActivityId}`, { text: comment });
+      const response = await axios.post(`https://volunteersphere.onrender.com/comments/${userToActivityId}`, { text: comment, rating });
       
       if (response.status === 201) {
         Alert.alert("Success", "Comment added successfully.");
@@ -33,6 +35,20 @@ const LeaveComment = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Add a Review</Text>
+      
+      {/* Star Rating */}
+      <View style={styles.ratingContainer}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <TouchableOpacity key={star} onPress={() => setRating(star)}>
+            <FontAwesome
+              name={star <= rating ? 'star' : 'star-o'}
+              size={32}
+              color="#ff8c00"
+            />
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <TextInput
         style={styles.input}
         placeholder="Write your review here"
@@ -65,6 +81,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 20,
   },
   input: {
