@@ -5,7 +5,7 @@ const Activity = require('../Schema/Activity'); // Ensure this is the correct pa
 // Route to fetch past activities by organization ID
 router.get('/past/:organizationId', async (req, res) => {
   try {
-    const { organizationId } = req.params; // Correctly extracting the parameter from URL
+    const { organizationId } = req.params;
 
     // Validate the organizationId
     if (!organizationId) {
@@ -14,9 +14,9 @@ router.get('/past/:organizationId', async (req, res) => {
 
     // Find activities that belong to the organization and are past
     const pastActivities = await Activity.find({
-      userId: organizationId,
-      userType: 'org',
-      endDate: { $lt: new Date() }, // Fetch activities with endDate in the past
+      userId: organizationId, // The ID of the organization
+      userType: 'org', // Ensure it's an organization
+      date: { $lt: new Date() }, // Fetch activities with date in the past
     });
 
     if (pastActivities.length === 0) {

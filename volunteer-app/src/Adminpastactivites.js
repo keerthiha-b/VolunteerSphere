@@ -11,11 +11,13 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
   useEffect(() => {
     const fetchPastActivities = async () => {
       try {
+        // Make an API call to fetch past activities for the given organization
         const response = await axios.get(`https://volunteersphere.onrender.com/activities/past/${orgId}`);
+        
         if (response.status === 200) {
           if (response.data.length > 0) {
-            setPastActivities(response.data);
-            setError(null);
+            setPastActivities(response.data); // Store the fetched activities
+            setError(null); // Reset any previous error messages
           } else {
             setPastActivities([]);
             setError('No past activities found.');
@@ -28,21 +30,21 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
         setError('Unable to fetch past activities. Please try again later.');
         setPastActivities([]);
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading indicator
       }
     };
 
-    fetchPastActivities();
-  }, [orgId]);
+    fetchPastActivities(); // Call the function to fetch data when the component mounts
+  }, [orgId]); // Dependency array ensures the effect runs when orgId changes
 
   const handleSeeReview = (activityId) => {
-    navigation.navigate('AdminCommentsScreen', { activityId, orgId });
+    navigation.navigate('AdminCommentsScreen', { activityId, orgId }); // Navigate to review screen with selected activity
   };
 
   const renderActivityItem = ({ item }) => (
     <View style={styles.activityContainer}>
       <Text style={styles.activityTitle}>{item.name}</Text>
-      <Text style={styles.activityDetails}>End Date: {new Date(item.endDate).toLocaleDateString()}</Text>
+      <Text style={styles.activityDetails}>Date: {new Date(item.date).toLocaleDateString()}</Text>
       <TouchableOpacity
         style={styles.reviewButton}
         onPress={() => handleSeeReview(item._id)}
@@ -56,14 +58,14 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <Text style={styles.header}>Past Activities</Text>
       {loading ? (
-        <ActivityIndicator size="large" color="#ff8c00" />
-      ) : error ? (
+        <ActivityIndicator size="large" color="#ff8c00" /> // Show loading indicator while fetching data
+      ) : error ? ( // Check if there's an error
         <View style={styles.noActivitiesContainer}>
-          <Text style={styles.noActivitiesText}>{error}</Text>
+          <Text style={styles.noActivitiesText}>{error}</Text> // Show error message
         </View>
       ) : (
         <FlatList
-          data={pastActivities}
+          data={pastActivities} // Pass fetched activities as data to FlatList
           keyExtractor={(item) => item._id.toString()}
           renderItem={renderActivityItem}
         />
