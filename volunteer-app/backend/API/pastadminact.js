@@ -1,20 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const Activity = require('../Schema/Activity'); // Ensure the path and name are correct
+const Activity = require('../Schema/Activity'); // Ensure this is the correct path to your Activity model
 
-// New route: GET /activities/past/:organizationId - Fetch past activities by organization ID
+// Route to fetch past activities by organization ID
 router.get('/past/:organizationId', async (req, res) => {
   try {
-    const { organizationId } = req.params;
-    const activities = await Activity.find({
+    const { organizationId } = req.params; // Correctly extracting the parameter from URL
+
+    // Validate the organizationId
+    if (!organizationId) {
+      return res.status(400).json({ errorMsg: 'Organization ID is required.' });
+    }
+
+    // Find activities that belong to the organization and are past
+    const pastActivities = await Activity.find({
       userId: organizationId,
       userType: 'org',
-      endDate: { $lt: new Date() }, // Filter past activities based on endDate
+      endDate: { $lt: new Date() }, // Fetch activities with endDate in the past
     });
-    res.json(activities);
+
+    if (pastActivities.length === 0) {
+      return res.status(404).json({ errorMsg: 'No past activities found.' });
+    }
+
+    res.status(200).json(pastActivities);
   } catch (error) {
-    console.error('Error fetching past activities for organization:', error);
-    res.status(500).json({ message: 'Error fetching past activities for organization', error });
+    console.error('Error fetching past activities:', error);
+    res.status(500).json({ errorMsg: 'Error fetching past activities: ' + error.message });
   }
 });
 

@@ -11,13 +11,17 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
   useEffect(() => {
     const fetchPastActivities = async () => {
       try {
-        const response = await axios.get(`https://volunteersphere.onrender.com/admin/past-activities?orgId=${orgId}`);
-        if (response.status === 200 && response.data.length > 0) {
-          setPastActivities(response.data);
-          setError(null);
-        } else if (response.status === 404) {
-          setPastActivities([]);
-          setError('No past activities found.');
+        const response = await axios.get(`https://volunteersphere.onrender.com/activities/past/${orgId}`);
+        if (response.status === 200) {
+          if (response.data.length > 0) {
+            setPastActivities(response.data);
+            setError(null);
+          } else {
+            setPastActivities([]);
+            setError('No past activities found.');
+          }
+        } else {
+          setError('Unable to fetch past activities. Please try again later.');
         }
       } catch (error) {
         console.error('Error fetching past activities:', error);
