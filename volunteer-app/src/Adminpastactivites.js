@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
 const AdminPastActivitiesScreen = ({ navigation, route }) => {
@@ -11,34 +11,28 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
   useEffect(() => {
     const fetchPastActivities = async () => {
       try {
-        // Make an API call to fetch past activities for the given organization
-        const response = await axios.get(`https://volunteersphere.onrender.com/admin/past-activities?orgId=${orgId}`);
-        
+        const response = await axios.get(`https://volunteersphere.onrender.com/admin/activities/past/${orgId}`);
         if (response.status === 200) {
-          if (response.data.length > 0) {
-            setPastActivities(response.data); // Store the fetched activities
-            setError(null); // Reset any previous error messages
-          } else {
-            setPastActivities([]);
-            setError('No past activities found.');
-          }
+          setPastActivities(response.data);
+          setError(null);
         } else {
-          setError('Unable to fetch past activities. Please try again later.');
+          setPastActivities([]);
+          setError('No past activities found.');
         }
       } catch (error) {
         console.error('Error fetching past activities:', error);
         setError('Unable to fetch past activities. Please try again later.');
         setPastActivities([]);
       } finally {
-        setLoading(false); // Stop loading indicator
+        setLoading(false);
       }
     };
 
-    fetchPastActivities(); // Call the function to fetch data when the component mounts
-  }, [orgId]); // Dependency array ensures the effect runs when orgId changes
+    fetchPastActivities();
+  }, [orgId]);
 
   const handleSeeReview = (activityId) => {
-    navigation.navigate('AdminCommentsScreen', { activityId, orgId }); // Navigate to review screen with selected activity
+    navigation.navigate('AdminCommentsScreen', { activityId, orgId }); // Navigate to the review screen
   };
 
   const renderActivityItem = ({ item }) => (
@@ -58,14 +52,14 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
     <View style={styles.container}>
       <Text style={styles.header}>Past Activities</Text>
       {loading ? (
-        <ActivityIndicator size="large" color="#ff8c00" /> // Show loading indicator while fetching data
-      ) : error ? ( // Check if there's an error
+        <ActivityIndicator size="large" color="#ff8c00" />
+      ) : error ? (
         <View style={styles.noActivitiesContainer}>
-          <Text style={styles.noActivitiesText}>{error}</Text> // Show error message
+          <Text style={styles.noActivitiesText}>{error}</Text>
         </View>
       ) : (
         <FlatList
-          data={pastActivities} // Pass fetched activities as data to FlatList
+          data={pastActivities}
           keyExtractor={(item) => item._id.toString()}
           renderItem={renderActivityItem}
         />
