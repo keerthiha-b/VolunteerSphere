@@ -95,7 +95,7 @@ const UserActivitiesScreen = ({ navigation }) => {
           <TouchableOpacity 
             style={styles.commentButton} 
             onPress={() => navigation.navigate('Leave Comment', { userToActivityId: item._id })}>
-            <Text style={styles.commentButtonText}>Leave a comment</Text>
+            <Text style={styles.commentButtonText}>Leave a Review</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity 
