@@ -12,7 +12,7 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
     const fetchPastActivities = async () => {
       try {
         // Make an API call to fetch past activities for the given organization
-        const response = await axios.get(`https://volunteersphere.onrender.com/activities/past/${orgId}`);
+        const response = await axios.get(`https://volunteersphere.onrender.com/admin/past-activities?orgId=${orgId}`);
         
         if (response.status === 200) {
           if (response.data.length > 0) {
