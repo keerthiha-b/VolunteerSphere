@@ -17,9 +17,13 @@ router.get('/:activityId', async (req, res) => {
 
     // Fetch comments for a specific activity created by a specific organization
     const comments = await Comment.find({
-      activityId: mongoose.Types.ObjectId(activityId),
-      createdBy: mongoose.Types.ObjectId(orgId), // Filter by organization ID
+      userToActivityId: mongoose.Types.ObjectId(activityId),
+      createdBy: mongoose.Types.ObjectId(orgId), // Make sure 'createdBy' is part of your schema
     });
+
+    if (comments.length === 0) {
+      return res.status(404).json({ errorMsg: 'No comments received yet.' });
+    }
 
     res.status(200).json(comments);
   } catch (error) {

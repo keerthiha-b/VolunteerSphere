@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 
 const AdminPastActivitiesScreen = ({ navigation, route }) => {
@@ -15,7 +15,7 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
         if (response.status === 200 && response.data.length > 0) {
           setPastActivities(response.data);
           setError(null);
-        } else {
+        } else if (response.status === 404) {
           setPastActivities([]);
           setError('No past activities found.');
         }
@@ -32,7 +32,6 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
   }, [orgId]);
 
   const handleSeeReview = (activityId) => {
-    // Navigate to the AdminCommentsScreen with the selected activityId and orgId
     navigation.navigate('AdminCommentsScreen', { activityId, orgId });
   };
 

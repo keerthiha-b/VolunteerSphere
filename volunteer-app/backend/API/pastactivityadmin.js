@@ -20,6 +20,10 @@ router.get('/', async (req, res) => {
       endDate: { $lt: new Date() } // Only fetch activities where endDate is before the current date
     });
 
+    if (pastActivities.length === 0) {
+      return res.status(404).json({ errorMsg: 'No past activities found.' });
+    }
+
     res.status(200).json(pastActivities);
   } catch (error) {
     console.error('Error fetching past activities:', error);

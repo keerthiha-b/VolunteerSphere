@@ -1,45 +1,34 @@
-import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, TouchableOpacity, StyleSheet, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
+import { getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
 
 const OrgLandingPage = ({ navigation }) => {
-  console.log(getValueFor("name"));
-  const org_name = getValueFor("name");
+  const [orgName, setOrgName] = useState('');
+  const [orgId, setOrgId] = useState('');
+
+  useEffect(() => {
+    const fetchOrgDetails = async () => {
+      try {
+        const storedOrgName = await getValueFor('name');
+        const storedOrgId = await getValueFor('orgId');
+        setOrgName(storedOrgName);
+        setOrgId(storedOrgId);
+      } catch (error) {
+        Alert.alert('Alert', error.message);
+      }
+    };
+
+    fetchOrgDetails();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { org_name })}>
+      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { orgName })}>
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
 
-      <Text style={styles.greeting}>Welcome back, {org_name} </Text>
-
-      <View style={styles.notification}>
-        <Text style={styles.notificationText}>User Bob Dylan has completed Raking the Playground and is requesting confirmation.</Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.approveButton}>
-            <Text style={styles.buttonText}>Approve</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.rejectButton}>
-            <Text style={styles.buttonText}>Reject</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View style={styles.notification}>
-        <Text style={styles.notificationText}>User Ashtian De La Cruz has completed Beach Cleanup and is requesting confirmation.</Text>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.approveButton}>
-            <Text style={styles.buttonText}>Approve</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.rejectButton}>
-            <Text style={styles.buttonText}>Reject</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <Text style={styles.title}>What would you like to do?</Text>
+      <Text style={styles.greeting}>Welcome back, {orgName}</Text>
 
       <View style={styles.optionsContainer}>
         <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CreateVolunteerOpportunity')}>
@@ -50,7 +39,10 @@ const OrgLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Manage Volunteer Opportunities</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
+        <TouchableOpacity
+          style={styles.optionButton}
+          onPress={() => navigation.navigate('AdminPastActivitiesScreen', { orgId })}
+        >
           <Text style={styles.optionButtonText}>Review Comments on Past Postings</Text>
         </TouchableOpacity>
       </View>
@@ -73,45 +65,6 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  notification: {
-    backgroundColor: '#f0f0f0',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  notificationText: {
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  approveButton: {
-    backgroundColor: '#28a745',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginRight: 5,
-    alignItems: 'center',
-  },
-  rejectButton: {
-    backgroundColor: '#dc3545',
-    padding: 10,
-    borderRadius: 5,
-    flex: 1,
-    marginLeft: 5,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
-  },
-  title: {
-    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
   },
