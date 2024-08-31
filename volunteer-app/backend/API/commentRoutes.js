@@ -1,5 +1,3 @@
-// commentRoutes.js
-
 const express = require('express');
 const mongoose = require('mongoose');
 const Comment = require('../Schema/Comments'); // Ensure the path and name are correct
@@ -29,11 +27,11 @@ router.get('/:userToActivityId', async (req, res) => {
   }
 });
 
-// Add a comment to a specific signup
+// Add a comment with rating to a specific signup
 router.post('/:userToActivityId', async (req, res) => {
   try {
     const { userToActivityId } = req.params;
-    const { text } = req.body;
+    const { text, rating } = req.body; // Extract rating from the request body
 
     // Validate if userToActivityId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(userToActivityId)) {
@@ -44,10 +42,16 @@ router.post('/:userToActivityId', async (req, res) => {
       return res.status(400).json({ errorMsg: 'Comment text is required.' });
     }
 
+    // Validate rating if provided
+    if (rating !== undefined && (rating < 1 || rating > 5)) {
+      return res.status(400).json({ errorMsg: 'Rating must be between 1 and 5.' });
+    }
+
     // Correctly use 'new' with ObjectId
     const newComment = new Comment({
       userToActivityId: new mongoose.Types.ObjectId(userToActivityId),
       text,
+      rating, // Include rating in the new comment
     });
 
     await newComment.save();
