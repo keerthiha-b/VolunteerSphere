@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
@@ -15,16 +15,27 @@ const CreateVolunteerOpportunity = () => {
   const [minute, setMinute] = useState('');
   const [duration, setDuration] = useState('');
   const [address, setAddress] = useState('');
+  const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const categories = [
-    { label: 'Environment', value: 'Environment' },
-    { label: 'Education', value: 'Education' },
-    { label: 'Health', value: 'Health' },
-    { label: 'Community Service', value: 'Community Service' },
-    { label: 'Animal Welfare', value: 'Animal Welfare' },
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('https://volunteersphere.onrender.com/api/categories');
+        const fetchedCategories = response.data.map(category => ({
+          label: category.name,
+          value: category.name,
+        }));
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        Alert.alert('Error', 'Unable to fetch categories. Please try again later.');
+      }
+    };
+  
+    fetchCategories();
+  }, []);
 
   const months = [
     { label: 'January', value: 0 },
