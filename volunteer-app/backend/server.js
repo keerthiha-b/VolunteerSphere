@@ -10,7 +10,8 @@ const mapRouter = require('./API/getactivitymap');
 const newUserToActivity = require('./API/newUsertoActivity');
 const commentRoutes = require('./API/commentRoutes');
 const fetchSignedUpActivities = require('./API/fetchactivity');
-const fetchPastActivities = require('./API/pastactivityadmin'); // Corrected import
+const Pastadminact = require('./API/pastadminact');
+
 const fetchCommentsForAdmin = require('./API/retrievecommentsforadmin'); // Corrected import
 const getProgress = require('./API/getProgress');
 
@@ -45,7 +46,7 @@ app.use('/comments', commentRoutes);
 app.use('/user-activities', fetchSignedUpActivities);
 
 // Fetch past activities for the admin
-app.use('/admin/past-activities', fetchPastActivities);
+app.use('/admin/past-activities',Pastadminact);
 
 // Fetch comments for admin view (for a specific activity and org)
 app.use('/admin/comments', fetchCommentsForAdmin);
