@@ -10,6 +10,7 @@ const cors = require('cors');
 const commentRoutes = require('./API/commentRoutes');
 const fetchSignedUpActivities = require('./API/fetchactivity');
 const missionsApi = require('./API/missions');
+const categoriesApi = require('./API/categories');
 
 // Progress API
 const getProgress = require('./API/getProgress');
@@ -47,9 +48,14 @@ app.post('/get-progress', getProgress);
 // Signup activity 
 app.post('/signup', newUserToActivity); // Corrected API handler usage
 
+// Leaderboard activity
 app.use('/leaderboard', leaderboardRouter);
+
 // missions
 app.use('/api', missionsApi);
+
+// categories
+app.use('/api/categories', categoriesApi);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

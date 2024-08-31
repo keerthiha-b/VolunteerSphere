@@ -15,6 +15,7 @@ const images = {
 
 const MapScreen = ({ navigation }) => {
   const [activities, setActivities] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [mapRegion, setMapRegion] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -170,6 +171,16 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    async function fetchCategories() {
+      const response = await fetch('https://volunteersphere.onrender.com/api/categories');
+      const categories = await response.json();
+      setCategories(categories);
+    }
+  
+    fetchCategories();
+  }, []);
+
   return (
     <View style={styles.container}>
       {mapRegion && (
@@ -182,9 +193,9 @@ const MapScreen = ({ navigation }) => {
             onSubmitEditing={handleSearch}
           />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterContainer}>
-            {['All', 'Environment', 'Education', 'Health', 'Community Service', 'Animal Welfare'].map(category => (
-              <TouchableOpacity key={category} style={styles.filterButton} onPress={() => setFilter(category.toLowerCase())}>
-                <Text style={styles.filterButtonText}>{category}</Text>
+            {categories.map(category => (
+              <TouchableOpacity key={category._id} style={styles.filterButton} onPress={() => setFilter(category.name.toLowerCase())}>
+                <Text style={styles.filterButtonText}>{category.name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
