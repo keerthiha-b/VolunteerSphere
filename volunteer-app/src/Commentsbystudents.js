@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Image, Modal, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Image, Modal } from 'react-native';
 import { getValueFor } from './utils/secureStoreUtil'; // Ensure this path is correct
 import axios from 'axios';
 
@@ -138,9 +138,21 @@ const UserActivitiesScreen = ({ navigation }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text>Are you sure you want to unenroll from this activity?</Text>
-            <Button title="Cancel" onPress={() => setShowConfirmationModal(false)} />
-            <Button title="Unenroll" onPress={() => handleRemoveActivity(activityToUnenroll)} />
+            <Text style={styles.modalText}>Are you sure you want to unenroll from this activity?</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setShowConfirmationModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => handleRemoveActivity(activityToUnenroll)}
+              >
+                <Text style={styles.buttonText}>Unenroll</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -240,6 +252,48 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     width: 300,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    backgroundColor: '#ff8c00', // Orange color for the button
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#ddd', // Gray color for the "Cancel" button
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  cancelButtonText: {
+    color: '#333', // Darker text color for the "Cancel" button
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 
