@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-const SignUpsScreen = ({ route }) => {
+const SignUps = ({ route }) => {
   const { activityId } = route.params; // Get the activityId from route params
   const [signups, setSignups] = useState([]);
 
@@ -34,12 +34,13 @@ const SignUpsScreen = ({ route }) => {
         <FlatList
           data={signups}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <View style={styles.signupItem}>
+          renderItem={({ item, index }) => (
+            <View style={[styles.signupItem, index % 2 === 0 ? styles.orangeBackground : styles.grayBackground]}>
+              {/* Display the participant number */}
+              <Text style={styles.participantNumber}>{index + 1}.</Text>
               <Text style={styles.signupName}>
                 {item.firstName} {item.lastName}
               </Text>
-              <Text style={styles.signupStatus}>Status: {item.status}</Text>
             </View>
           )}
         />
@@ -60,9 +61,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   signupItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+  },
+  participantNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 10,
   },
   signupName: {
     fontSize: 16,
@@ -71,6 +79,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'grey',
   },
+  // New styles for alternating row colors
+  orangeBackground: {
+    backgroundColor: 'orange',
+  },
+  grayBackground: {
+    backgroundColor: '#f0f0f0', // Light gray color
+  },
 });
 
-export default SignUpsScreen;
+export default SignUps;

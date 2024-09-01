@@ -16,6 +16,7 @@ import MapScreen from './src/MapScreen';
 import ActivityDetails from './src/Activitydetails';
 import ActivitySignup from './src/Signupactivity';
 import LeaderboardPage from './src/LeaderboardPage';
+import SignUps from './src/showSignups';
 
 
 const Stack = createNativeStackNavigator();
@@ -37,6 +38,7 @@ function App() {
         <Stack.Screen name="ActivityDetail" component={ActivityDetails} options={{ title: 'Activity Details' }} />
         <Stack.Screen name="ActivitySignup" component={ActivitySignup} />
         <Stack.Screen name="Leaderboard" component={LeaderboardPage} options={{ headerShown: true, title: 'Leaderboard Page' }} />
+        <Stack.Screen name="Signups" component={SignUps} />
       </Stack.Navigator>
     </NavigationContainer>
   );

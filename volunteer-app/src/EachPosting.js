@@ -25,7 +25,7 @@ const EachPosting = ({ opportunity }) => {
   // Navigate to the SignUps screen with the activity ID
   const viewSignups = () => {
     if (opportunity._id) {
-      navigation.navigate('SignUps', { activityId: opportunity._id });
+      navigation.navigate('Signups', { activityId: opportunity._id });
     } else {
       console.error('No activity ID found in opportunity object:', opportunity);
     }
