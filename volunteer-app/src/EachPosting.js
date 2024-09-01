@@ -25,7 +25,7 @@ const EachPosting = ({ opportunity }) => {
   // Fetch sign-ups for the given activity
   const fetchSignups = async () => {
     try {
-      const response = await fetch(`https://volunteersphere.onrender.com/signups/${opportunity._id}`);
+      const response = await fetch(`https://volunteersphere.onrender.com/signups/${opportunity.opportunityId}`);
       
       if (!response.ok) {
         console.error('Server error:', response.status, response.statusText);
