@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
 
 // Import the images
@@ -22,11 +22,21 @@ const EachPosting = ({ opportunity }) => {
   const [signups, setSignups] = useState([]); // State to store fetched signups
   const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
+  useEffect(() => {
+    // Log the opportunity object to debug what is being passed
+    console.log('Opportunity object received in EachPosting:', opportunity);
+  }, [opportunity]);
+
   // Fetch sign-ups for the given activity
   const fetchSignups = async () => {
     try {
-      // Use opportunity.activityId which should be the activityId in the backend
-      const response = await fetch(`https://volunteersphere.onrender.com/signups/${opportunity.activityId}`);
+      // Check if opportunity object contains activityId
+      if (!opportunity.activityId) {
+        console.error('No activityId found in opportunity object:', opportunity);
+        return; // Exit early if activityId is missing
+      }
+
+      const response = await fetch(`https://volunteersphere.onrender.com/signups/${opportunity._id}`);
       
       if (!response.ok) {
         console.error('Server error:', response.status, response.statusText);
