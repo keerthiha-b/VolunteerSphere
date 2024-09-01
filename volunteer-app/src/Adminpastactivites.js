@@ -1,9 +1,10 @@
+// frontend/screens/AdminPastActivitiesScreen.js
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 
 const AdminPastActivitiesScreen = ({ navigation, route }) => {
-  const { orgId } = route.params; // Get orgId from navigation params
+  const { userId } = route.params; // Ensure you use userId passed from navigation
   const [pastActivities, setPastActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +12,7 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
   useEffect(() => {
     const fetchPastActivities = async () => {
       try {
-        const response = await axios.get(`https://volunteersphere.onrender.com/admin/activities/past/${orgId}`);
+        const response = await axios.get(`https://volunteersphere.onrender.com/admin/activities/past/${userId}`);
         if (response.status === 200) {
           setPastActivities(response.data);
           setError(null);
@@ -29,10 +30,10 @@ const AdminPastActivitiesScreen = ({ navigation, route }) => {
     };
 
     fetchPastActivities();
-  }, [orgId]);
+  }, [userId]);
 
   const handleSeeReview = (activityId) => {
-    navigation.navigate('AdminCommentsScreen', { activityId, orgId }); // Navigate to the review screen
+    navigation.navigate('AdminCommentsScreen', { activityId, userId }); // Navigate to the review screen
   };
 
   const renderActivityItem = ({ item }) => (
