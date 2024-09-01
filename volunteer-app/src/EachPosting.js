@@ -31,7 +31,7 @@ const EachPosting = ({ opportunity }) => {
   const fetchSignups = async () => {
     try {
       // Check if opportunity object contains activityId
-      if (!opportunity.activityId) {
+      if (!opportunity._id) {
         console.error('No activityId found in opportunity object:', opportunity);
         return; // Exit early if activityId is missing
       }
