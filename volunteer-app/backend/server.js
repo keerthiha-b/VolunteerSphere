@@ -6,7 +6,7 @@ const activityRouter = require('./API/activityrelated'); // Activity-related rou
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const leaderboardRouter = require('./API/leaderboard'); 
-const signupRoutes = require('./API/signupRoutes'); // Import the new signupRoutes
+const signupRoutes = require('./API/getsignups'); // Import the new signupRoutes
 const cors = require('cors');
 
 // Progress API
