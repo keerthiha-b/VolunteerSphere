@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 
 // Import the images
 import healthImage from './images/Health.jpg';
@@ -19,35 +20,14 @@ const categoryImages = {
 };
 
 const EachPosting = ({ opportunity }) => {
-  const [signups, setSignups] = useState([]); // State to store fetched signups
-  const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const navigation = useNavigation(); // Initialize navigation
 
-  useEffect(() => {
-    // Log the opportunity object to debug what is being passed
-    console.log('Opportunity object received in EachPosting:', opportunity);
-  }, [opportunity]);
-
-  // Fetch sign-ups for the given activity
-  const fetchSignups = async () => {
-    try {
-      // Check if opportunity object contains activityId
-      if (!opportunity._id) {
-        console.error('No activityId found in opportunity object:', opportunity);
-        return; // Exit early if activityId is missing
-      }
-
-      const response = await fetch(`https://volunteersphere.onrender.com/signups/${opportunity._id}`);
-      
-      if (!response.ok) {
-        console.error('Server error:', response.status, response.statusText);
-        throw new Error(`Server error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      setSignups(data);
-      setModalVisible(true);
-    } catch (error) {
-      console.error('Error fetching signups:', error.message || error);
+  // Navigate to the SignUps screen with the activity ID
+  const viewSignups = () => {
+    if (opportunity._id) {
+      navigation.navigate('SignUps', { activityId: opportunity._id });
+    } else {
+      console.error('No activity ID found in opportunity object:', opportunity);
     }
   };
 
@@ -58,7 +38,7 @@ const EachPosting = ({ opportunity }) => {
       <Text style={styles.title}>{opportunity.name}</Text>
       <Text style={styles.details}>{opportunity.duration} of volunteering</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={fetchSignups}>
+        <TouchableOpacity style={styles.button} onPress={viewSignups}>
           <Text style={styles.buttonText}>View Sign-Ups</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.editButton}>
@@ -68,29 +48,6 @@ const EachPosting = ({ opportunity }) => {
           <Text style={styles.buttonText}>🗑️</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Modal to display the sign-ups */}
-      <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Participants for {opportunity.name}</Text>
-            <Text style={styles.participantsCount}>{signups.length} participants</Text>
-            <ScrollView>
-              {signups.map((signup, index) => (
-                <View key={index} style={styles.signupItem}>
-                  <Text style={styles.signupName}>
-                    {signup.firstName} {signup.lastName} 
-                  </Text>
-                  <Text style={styles.signupStatus}>Status: {signup.status}</Text>
-                </View>
-              ))}
-            </ScrollView>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -149,54 +106,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: '80%',
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    elevation: 10,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  participantsCount: {
-    fontSize: 16,
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  signupItem: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  signupName: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  signupStatus: {
-    fontSize: 14,
-    color: 'grey',
-  },
-  closeButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: 'orange',
-    alignItems: 'center',
-    borderRadius: 5,
-  },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 16,
   },
 });
 

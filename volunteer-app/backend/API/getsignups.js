@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-const UserActivity = require('../Schema/UserActivity'); // Correct path to your UserActivity model
+const UserActivity = require('../Schema/UserActivity'); // Ensure the correct path to your UserActivity model
 
 // Route to fetch sign-ups for a specific activity by activityId
 router.get('/:activityId', async (req, res) => {
@@ -22,14 +22,13 @@ router.get('/:activityId', async (req, res) => {
     console.log('Fetched sign-ups:', signups);
 
     if (!signups.length) {
-      console.log('No signups found for the given activity ID.');
-      return res.status(404).json({ message: 'No signups found for this activity.' });
+      // Instead of 404, return an empty array or a message with 200 status
+      return res.status(200).json([]); // You could also return: res.status(200).json({ message: 'No signups found for this activity.' });
     }
 
     res.json(signups);
   } catch (error) {
-    console.error('Error fetching signups:', error.message); // Log the specific error message
-    console.error('Stack trace:', error.stack); // Log the stack trace for more details
+    console.error('Error fetching signups:', error.message);
     res.status(500).json({ message: 'Error fetching signups', error: error.message });
   }
 });
