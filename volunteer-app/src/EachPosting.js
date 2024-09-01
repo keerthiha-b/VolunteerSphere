@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
 
 // Import the images
-import healthImage from '../images/Health.jpg';
-import environmentImage from '../images/cleaning.jpg';
-import educationImage from '../images/education.jpg';
-import communityServiceImage from '../images/community.jpg';
-import animalWelfareImage from '../images/animalwelfare.png';
+import healthImage from './images/Health.jpg';
+import environmentImage from './images/cleaning.jpg';
+import educationImage from './images/education.jpg';
+import communityServiceImage from './images/community.jpg';
+import animalWelfareImage from './images/animalwelfare.png';
 
 // Map categories to corresponding images
 const categoryImages = {
@@ -19,36 +19,46 @@ const categoryImages = {
 };
 
 const EachPosting = ({ opportunity }) => {
-  const [signups, setSignups] = useState([]);
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [signups, setSignups] = useState([]); // State to store fetched signups
+  const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
+  // Fetch sign-ups for the given activity
   const fetchSignups = async () => {
     try {
-      const response = await fetch(`https://volunteersphere.onrender.com/activities/${opportunity._id}/signups`);
-      const data = await response.json();
-      if (response.ok) {
-        setSignups(data);
-        setModalVisible(true);
-      } else {
-        console.error(data.message);
+      const response = await fetch(`https://volunteersphere.onrender.com/signups/${opportunity._id}`);
+      
+      if (!response.ok) {
+        console.error('Server error:', response.status, response.statusText);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
       }
+
+      const data = await response.json();
+      setSignups(data);
+      setModalVisible(true);
     } catch (error) {
-      console.error('Error fetching signups:', error);
+      console.error('Error fetching signups:', error.message || error);
     }
   };
 
   return (
     <View style={styles.card}>
-      <Image source={categoryImages[opportunity.category]} style={styles.image} />
+      {/* Display the selected image */}
+      <Image source={categoryImages[opportunity.category] || healthImage} style={styles.image} />
       <Text style={styles.title}>{opportunity.name}</Text>
       <Text style={styles.details}>{opportunity.duration} of volunteering</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={fetchSignups}>
           <Text style={styles.buttonText}>View Sign-Ups</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.editButton}>
+          <Text style={styles.buttonText}>📝</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteButton}>
+          <Text style={styles.buttonText}>🗑️</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Modal to display the signups */}
+      {/* Modal to display the sign-ups */}
       <Modal visible={isModalVisible} animationType="slide" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
@@ -57,7 +67,9 @@ const EachPosting = ({ opportunity }) => {
             <ScrollView>
               {signups.map((signup, index) => (
                 <View key={index} style={styles.signupItem}>
-                  <Text style={styles.signupName}>{signup.firstName} {signup.lastName}</Text>
+                  <Text style={styles.signupName}>
+                    {signup.firstName} {signup.lastName} 
+                  </Text>
                   <Text style={styles.signupStatus}>Status: {signup.status}</Text>
                 </View>
               ))}
@@ -103,17 +115,29 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   button: {
+    flex: 1,
     backgroundColor: 'orange',
     padding: 10,
     alignItems: 'center',
     borderRadius: 5,
   },
+  editButton: {
+    marginLeft: 5,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteButton: {
+    marginLeft: 5,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   buttonText: {
     color: 'white',
-    fontSize: 16,
   },
   modalOverlay: {
     flex: 1,
