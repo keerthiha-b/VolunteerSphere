@@ -6,6 +6,7 @@ const activityRouter = require('./API/activityrelated'); // Activity-related rou
 const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const leaderboardRouter = require('./API/leaderboard'); 
+const signupRoutes = require('./API/signupRoutes'); // Import the new signupRoutes
 const cors = require('cors');
 
 // Progress API
@@ -33,15 +34,19 @@ app.post('/login-user', loginUser);
 app.use('/activities', activityRouter);
 
 // Map-related endpoints
-app.use('/api/map', mapRouter); // Add this line to use the new map-related route
+app.use('/api/map', mapRouter);
 
 // PROGRESS
 app.post('/get-progress', getProgress);
 
 // Signup activity 
-app.post('/signup', newUserToActivity); // Corrected API handler usage
+app.post('/signup', newUserToActivity);
 
+// Leaderboard
 app.use('/leaderboard', leaderboardRouter);
+
+// Sign-ups route for fetching sign-ups for a specific activity
+app.use('/signups', signupRoutes); // Ensure this line is added to use the signup route
+
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-

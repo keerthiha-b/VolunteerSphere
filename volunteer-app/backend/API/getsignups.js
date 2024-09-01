@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const UserActivity = require('../models/UserActivity'); // Ensure the correct path to your UserActivity model
+const UserActivity = require('./Schema/UserActivity'); // Ensure the correct path to your UserActivity model
 
 // Route to fetch sign-ups for a specific activity
 router.get('/:activityId', async (req, res) => {

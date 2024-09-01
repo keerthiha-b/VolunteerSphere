@@ -25,6 +25,7 @@ const EachPosting = ({ opportunity }) => {
   // Fetch sign-ups for the given activity
   const fetchSignups = async () => {
     try {
+      // Use opportunity.opportunityId which should be the activityId in the backend
       const response = await fetch(`https://volunteersphere.onrender.com/signups/${opportunity.opportunityId}`);
       
       if (!response.ok) {
