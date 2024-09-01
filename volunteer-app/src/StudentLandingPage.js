@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, Text, Alert, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ProgressBar } from 'react-native-paper';
+import { ProgressBar, MD3Colors } from 'react-native-paper';
 import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
+import axios from 'axios';
 
 import character from './images/PlayerChar.png';
 import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
@@ -68,6 +69,17 @@ const StudentLandingPage = ({ navigation }) => {
     }
   };
 
+  const handleMissionsClick = () => {
+    axios.post('https://volunteersphere.onrender.com/api/missions/populate')
+      .then(response => {
+        console.log(response.data.message);
+        navigation.navigate('MissionsPage');
+      })
+      .catch(error => {
+        console.error('Error inserting missions:', error);
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name: username })}>
@@ -108,7 +120,8 @@ const StudentLandingPage = ({ navigation }) => {
             style={styles.leaderboardIconStyle}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.smallOptionButton}>
+
+        <TouchableOpacity style={styles.smallOptionButton} onPress={handleMissionsClick}>
           <Image source={missionIcon} style={styles.missionsIconStyle} />
         </TouchableOpacity>
       </View> 
