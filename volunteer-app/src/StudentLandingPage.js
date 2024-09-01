@@ -91,7 +91,7 @@ const StudentLandingPage = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('UserActivitiesScreen', { userId: id })}>
-          <Text style={styles.optionButtonText}>Manage Signups and reviews</Text>
+          <Text style={styles.optionButtonText}>Manage Signups and Reviews</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionButton}>
