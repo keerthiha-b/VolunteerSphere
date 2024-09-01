@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, FlatList } from 'react-native';
 import { getValueFor } from './utils/secureStoreUtil'; // Import secure storage utility
 import axios from 'axios';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
+// Import images for each category
 const images = {
   health: require('./images/Health.jpg'),
   environment: require('./images/cleaning.jpg'),
@@ -11,8 +13,68 @@ const images = {
   'animal welfare': require('./images/animalwelfare.png'),
 };
 
+const Tab = createMaterialTopTabNavigator();
+
+// const CommunityTab = ({ userToActivityId }) => {
+//   const [comments, setComments] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchComments = async () => {
+//       try {
+//         const response = await axios.get(`https://volunteersphere.onrender.com/comments/${userToActivityId}/comments`);
+//         if (response.status === 200) {
+//           setComments(response.data);
+//         } else {
+//           console.error('Error fetching comments:', response.data.errorMsg);
+//           Alert.alert('Error', 'Unable to fetch comments. Please try again later.');
+//         }
+//       } catch (error) {
+//         console.error('Error fetching comments:', error);
+//         Alert.alert('Error', 'Unable to fetch comments. Please try again later.');
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchComments();
+//   }, [userToActivityId]);
+
+//   const renderCommentItem = ({ item }) => (
+//     <View style={styles.commentContainer}>
+//       <Text style={styles.commentUser}>{item.userToActivityId.firstName} {item.userToActivityId.lastName}</Text>
+//       <Text style={styles.commentText}>{item.text}</Text>
+//     </View>
+//   );
+
+//   return (
+//     <View style={styles.tabContent}>
+//       {loading ? (
+//         <Text>Loading comments...</Text>
+//       ) : comments.length > 0 ? (
+//         <FlatList
+//           data={comments}
+//           keyExtractor={(item) => item._id.toString()}
+//           renderItem={renderCommentItem}
+//         />
+//       ) : (
+//         <Text>No comments available for this activity.</Text>
+//       )}
+//     </View>
+//   );
+// };
+
+const DetailsTab = ({ activity }) => (
+  <View style={styles.tabContent}>
+    <Text>Category: {activity.category}</Text>
+    <Text>Duration: {activity.duration}</Text>
+    <Text>Date: {new Date(activity.date).toLocaleDateString()} {new Date(activity.date).toLocaleTimeString()}</Text>
+    <Text>Address: {activity.address}</Text>
+  </View>
+);
+
 const ActivityDetailScreen = ({ route, navigation }) => {
-  const { activity } = route.params; // Getting activity details from route params
+  const { activity, userToActivityId } = route.params; // Getting activity details and userToActivityId from route params
   const [userId, setUserId] = useState(null); // State to store fetched userId
 
   useEffect(() => {
@@ -68,7 +130,6 @@ const ActivityDetailScreen = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error('Error signing up:', error);
-      // Display a more specific error message if available
       const errorMessage = error.response?.data?.errorMsg || "Unable to sign up. Please try again later.";
       Alert.alert("Error", errorMessage);
     }
@@ -78,10 +139,18 @@ const ActivityDetailScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <Image source={images[activity.category.toLowerCase()] || images['default']} style={styles.image} />
       <Text style={styles.title}>{activity.name}</Text>
-      <Text>Category: {activity.category}</Text>
-      <Text>Duration: {activity.duration}</Text>
-      <Text>Date: {activity.date}</Text>
-      <Text>Address: {activity.address}</Text>
+      
+      {/* Tab Navigator to switch between Details and Community tabs */}
+      <Tab.Navigator>
+        <Tab.Screen name="Details">
+          {() => <DetailsTab activity={activity} />}
+        </Tab.Screen>
+        {/* <Tab.Screen name="Community">
+          {() => <CommunityTab userToActivityId={userToActivityId} />}
+        </Tab.Screen> */}
+      </Tab.Navigator>
+
+      {/* Signup Button below the tabs */}
       <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
         <Text style={styles.signupButtonText}>Sign Up</Text>
       </TouchableOpacity>
@@ -89,6 +158,7 @@ const ActivityDetailScreen = ({ route, navigation }) => {
   );
 };
 
+// Styling for the screen and components
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -99,26 +169,50 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   image: {
     width: '100%',
-    height: 300,
-    marginBottom: 20,
+    height: 200,
+    marginBottom: 10,
     borderRadius: 10,
     resizeMode: 'cover',
+  },
+  tabContent: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#f0f0f0',
   },
   signupButton: {
     backgroundColor: 'orange',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 20,
+    marginVertical: 50,
   },
   signupButtonText: {
     color: '#ffffff',
     fontSize: 18,
     fontWeight: 'bold',
   },
+  // commentContainer: {
+  //   backgroundColor: '#fff',
+  //   padding: 10,
+  //   marginVertical: 5,
+  //   borderRadius: 5,
+  //   shadowColor: '#000',
+  //   shadowOpacity: 0.1,
+  //   shadowOffset: { width: 0, height: 1 },
+  //   shadowRadius: 2,
+  //   elevation: 2,
+  // },
+  // commentUser: {
+  //   fontWeight: 'bold',
+  //   marginBottom: 5,
+  // },
+  // commentText: {
+  //   color: '#333',
+  // },
 });
 
 export default ActivityDetailScreen;

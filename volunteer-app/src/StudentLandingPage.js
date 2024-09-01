@@ -87,11 +87,11 @@ const StudentLandingPage = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Manage your sign ups</Text>
+          <Text style={styles.optionButtonText}>Unlock Avatars</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Add comments to past sign ups</Text>
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('UserActivitiesScreen', { userId: id })}>
+          <Text style={styles.optionButtonText}>Manage Signups and Reviews</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionButton}>
