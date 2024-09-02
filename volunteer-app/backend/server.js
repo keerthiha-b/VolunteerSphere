@@ -10,6 +10,7 @@ const signupRoutes = require('./API/getsignups'); // Import the new signupRoutes
 const certificateRoutes = require('./API/certificategeneration'); // Import the certificate generation routes
 const retrieveCertsRoutes = require('./API/retrievecerts'); // Import the retrieve certificates routes
 const cors = require('cors');
+const path = require('path');
 
 // Progress API
 const getProgress = require('./API/getProgress');
