@@ -4,7 +4,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const Certificate = require('../models/Certificate'); // Import the Certificate model
+const Certificate = require('../Schema/Certificate'); // Import the Certificate model
 const UserToActivity = mongoose.model('UserToActivity'); // Assuming your signup collection is named userToActivity
 
 const router = express.Router();
