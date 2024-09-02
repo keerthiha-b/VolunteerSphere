@@ -16,11 +16,10 @@ const SignUps = ({ route }) => {
         }
 
         const data = await response.json();
-
-        // Directly set all signups without date filtering
         setSignups(data);
       } catch (error) {
         console.error('Error fetching signups:', error.message || error);
+        Alert.alert('Error', 'Failed to load signups.');
       }
     };
 
@@ -30,6 +29,8 @@ const SignUps = ({ route }) => {
   // Function to handle certificate approval
   const handleApprove = async (signupId) => {
     try {
+      console.log(`Approving signup with ID: ${signupId}`); // Debugging statement
+
       // Trigger certificate generation API call
       const response = await fetch(`https://volunteersphere.onrender.com/generate-certificate/${signupId}`, {
         method: 'POST',
@@ -40,6 +41,7 @@ const SignUps = ({ route }) => {
       
       if (response.ok) {
         Alert.alert('Success', 'Certificate generated successfully!');
+        console.log('Certificate generated successfully!'); // Debugging statement
         // Optionally, update the UI or state if needed
       } else {
         console.error('Error generating certificate:', response.status, response.statusText);
@@ -53,6 +55,7 @@ const SignUps = ({ route }) => {
 
   // Function to handle decline action
   const handleDecline = (signupId) => {
+    console.log(`Declined signup with ID: ${signupId}`); // Debugging statement
     Alert.alert('Declined', `Signup for ID: ${signupId} has been declined.`);
     // Optionally, make an API call or update state to reflect the decline
   };
