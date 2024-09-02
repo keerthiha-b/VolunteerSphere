@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
 const Certificate = require('../Schema/Certificate'); // Import the Certificate model
-const UserToActivity = mongoose.model('UserToActivity'); // Assuming your signup collection is named userToActivity
+const UserToActivity = mongoose.model('UserActivity'); // Assuming your signup collection is named userToActivity
 
 const router = express.Router();
 
