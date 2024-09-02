@@ -4,13 +4,23 @@ import { ProgressBar } from 'react-native-paper';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useFocusEffect } from '@react-navigation/native';
+import { getValueFor } from './utils/secureStoreUtil'; 
 
 const MissionsPage = () => {
   const [missions, setMissions] = useState([]);
   const [selectedTab, setSelectedTab] = useState('all');
+  const [userId, setUserId] = useState(null);
 
   const fetchMissions = async () => {
     try {
+
+      const storedUserId = await getValueFor("userId");
+      if (!storedUserId) {
+        Alert.alert("Login Required", "Please log in to view missions.");
+        return;
+      }
+      setUserId(storedUserId);
+
       const response = await axios.get('https://volunteersphere.onrender.com/api/missions');
       if (Array.isArray(response.data)) {
         const missionsWithFavorites = response.data.map(mission => ({
@@ -67,7 +77,7 @@ const MissionsPage = () => {
  
   const renderMissionItem = ({ item }) => {
     // Assuming 'currentUser' holds the current logged-in user's information
-    const userProgress = item.userProgresses.find(up => up.userId === currentUser.id);
+    const userProgress = item.userProgresses.find(up => up.userId === userId);
   
     // Calculate the percentage progress for the current user
     const progressPercent = userProgress
