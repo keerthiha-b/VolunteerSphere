@@ -32,7 +32,7 @@ const SignUps = ({ route }) => {
       console.log(`Approving signup with ID: ${signupId}`); // Debugging statement
 
       // Trigger certificate generation API call
-      const response = await fetch(`https://volunteersphere.onrender.com/generate-certificate/${signupId}`, {
+      const response = await fetch(`https://volunteersphere.onrender.com/api/generate-certificate/${signupId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

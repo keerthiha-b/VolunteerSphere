@@ -10,7 +10,7 @@ const UserToActivity = mongoose.model('UserActivity'); // Assuming your signup c
 const router = express.Router();
 
 // Endpoint to generate a PDF certificate
-router.post('/generate-certificate/:signupId', async (req, res) => {
+router.post('/:signupId', async (req, res) => {
   const { signupId } = req.params;
 
   try {
