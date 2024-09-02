@@ -15,6 +15,7 @@ const OrgLandingPage = ({ navigation }) => {
 
       <Text style={styles.greeting}>Welcome back, {org_name} </Text>
 
+      {/* Example notifications for approving or rejecting */}
       <View style={styles.notification}>
         <Text style={styles.notificationText}>User Bob Dylan has completed Raking the Playground and is requesting confirmation.</Text>
         <View style={styles.buttonContainer}>
@@ -52,6 +53,11 @@ const OrgLandingPage = ({ navigation }) => {
 
         <TouchableOpacity style={styles.optionButton}>
           <Text style={styles.optionButtonText}>Review Comments on Past Postings</Text>
+        </TouchableOpacity>
+
+        {/* Add the new button for Approving/Declining */}
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('ApprovalCertificates')}>
+          <Text style={styles.optionButtonText}>Approve Certificates</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

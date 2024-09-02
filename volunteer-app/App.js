@@ -17,6 +17,7 @@ import ActivityDetails from './src/Activitydetails';
 import ActivitySignup from './src/Signupactivity';
 import LeaderboardPage from './src/LeaderboardPage';
 import SignUps from './src/showSignups';
+import ApprovalCertificates from './src/approvedecline';
 
 
 const Stack = createNativeStackNavigator();
@@ -39,6 +40,7 @@ function App() {
         <Stack.Screen name="ActivitySignup" component={ActivitySignup} />
         <Stack.Screen name="Leaderboard" component={LeaderboardPage} options={{ headerShown: true, title: 'Leaderboard Page' }} />
         <Stack.Screen name="Signups" component={SignUps} />
+        <Stack.Screen name="ApprovalCertificates" component={ApprovalCertificates} options={{ title: 'Approve Certificates' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
