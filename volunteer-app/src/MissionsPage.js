@@ -64,8 +64,16 @@ const MissionsPage = () => {
     }
   };
 
+ 
   const renderMissionItem = ({ item }) => {
-    const progressPercent = Math.round((item.progress / item.goal) * 100);
+    // Assuming 'currentUser' holds the current logged-in user's information
+    const userProgress = item.userProgresses.find(up => up.userId === currentUser.id);
+  
+    // Calculate the percentage progress for the current user
+    const progressPercent = userProgress
+      ? Math.round((userProgress.progress / item.goal) * 100)
+      : 0;
+  
     return (
       <View style={styles.missionCard}>
         <View style={styles.missionHeader}>
@@ -82,8 +90,8 @@ const MissionsPage = () => {
         </View>
         <View style={styles.progressContainer}>
           <ProgressBar
-            progress={item.progress / item.goal}
-            color={item.progress >= item.goal ? '#4CAF50' : '#FA7F35'}
+            progress={progressPercent / 100} // Ensure this is a fraction
+            color={progressPercent >= 100 ? '#4CAF50' : '#FA7F35'}
             style={styles.progressBar}
           />
           <Text style={styles.progressTextInsideBar}>
@@ -95,7 +103,7 @@ const MissionsPage = () => {
         </View>
       </View>
     );
-  }; 
+  };  
 
   return (
     <View style={styles.container}>

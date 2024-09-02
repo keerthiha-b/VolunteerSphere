@@ -4,43 +4,35 @@ const Mission = require('../Schema/Mission');
 const UserActivity = require('../Schema/UserActivity'); // Import the UserActivity model
 
 const updateMissionProgress = async (userId, activityId) => {
-  if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(activityId)) {
-    throw new Error('Invalid userId or activityId');
-  }
-
   try {
-    // Verify that the activity exists
-    const activity = await Activity.findById(activityId).populate('userId');
+    const activity = await Activity.findById(activityId);
     if (!activity) {
       throw new Error('Activity not found');
     }
 
-    // Ensure the user is signed up for this activity
-    const userActivity = await UserActivity.findOne({ userId, opportunityId: activityId });
-    if (!userActivity) {
-      throw new Error('User is not signed up for this activity');
-    }
-
-    // Fetch all missions with the same category as the activity
+    // Assuming we know the mission's category from the activity or another source
     const missions = await Mission.find({ category: activity.category });
-    if (!missions.length) {
+    if (missions.length === 0) {
       throw new Error(`No missions found for category: ${activity.category}`);
     }
 
-    // Update the progress for each mission
-    const updates = missions.map(async (mission) => {
-      if (mission.goalType === 'hours') {
-        mission.progress += parseFloat(activity.duration);
+    // Update progress for each mission that matches the activity's category
+    missions.forEach(async (mission) => {
+      let userProgress = mission.userProgresses.find(up => up.userId.equals(userId));
+      if (userProgress) {
+        // Update existing progress
+        userProgress.progress += (mission.goalType === 'hours' ? parseFloat(activity.duration) : 1);
       } else {
-        mission.progress += 1;
+        // Create new progress entry if not existing
+        mission.userProgresses.push({
+          userId,
+          progress: (mission.goalType === 'hours' ? parseFloat(activity.duration) : 1)
+        });
       }
-      return mission.save();
+      await mission.save();
     });
 
-    // Wait for all missions to be updated
-    await Promise.all(updates);
-
-    console.log('All related missions updated successfully');
+    console.log('Mission progress updated successfully for user:', userId);
   } catch (error) {
     console.error('Failed to update mission progress:', error);
     throw error;
