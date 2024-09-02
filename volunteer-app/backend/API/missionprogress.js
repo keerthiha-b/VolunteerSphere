@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Activity = require('../Schema/Activity');
 const Mission = require('../Schema/Mission');
+const UserActivity = require('../Schema/UserActivity'); // Import the UserActivity model
 
 const updateMissionProgress = async (userId, activityId) => {
   if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(activityId)) {
@@ -8,14 +9,16 @@ const updateMissionProgress = async (userId, activityId) => {
   }
 
   try {
+    // Verify that the activity exists
     const activity = await Activity.findById(activityId).populate('userId');
     if (!activity) {
       throw new Error('Activity not found');
     }
 
-    // Check if the user is authorized for the activity
-    if (activity.userId && !activity.userId._id.equals(userId)) {
-      throw new Error('User not authorized for this activity');
+    // Ensure the user is signed up for this activity
+    const userActivity = await UserActivity.findOne({ userId, opportunityId: activityId });
+    if (!userActivity) {
+      throw new Error('User is not signed up for this activity');
     }
 
     // Fetch all missions with the same category as the activity
