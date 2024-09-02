@@ -14,7 +14,7 @@ router.post('/:signupId', async (req, res) => {
     const signupDetails = await UserToActivity.findById(signupId)
       .populate({
         path: 'userId',
-        select: 'firstName lastName', // Ensure only the required fields are selected
+        select: 'first_name last_name', // Ensure only the required fields are selected
       })
       .populate({
         path: 'opportunityId',
