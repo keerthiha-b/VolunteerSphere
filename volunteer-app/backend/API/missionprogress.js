@@ -10,13 +10,13 @@ exports.updateMissionProgress = async (req, res) => {
   }
 
   try {
-    const activity = await Activity.findById(activityId);
+    const activity = await Activity.findById(activityId).populate('userId');
     if (!activity) {
       return res.status(404).json({ message: 'Activity not found' });
     }
 
-    // Check if the user is assigned to or eligible for the activity
-    if (!activity.users || !activity.users.includes(userId)) {
+    // Check if the user (organization) is authorized for the activity
+    if (activity.userId && !activity.userId._id.equals(userId)) {
       return res.status(403).json({ message: 'User not authorized for this activity' });
     }
 
@@ -29,7 +29,7 @@ exports.updateMissionProgress = async (req, res) => {
     // Update the progress for each mission
     const updates = missions.map(async (mission) => {
       if (mission.goalType === 'hours') {
-        mission.progress += activity.duration;
+        mission.progress += parseFloat(activity.duration);  // Ensure conversion from duration string to number
       } else {
         mission.progress += 1;
       }
