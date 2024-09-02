@@ -51,7 +51,7 @@ app.use('/leaderboard', leaderboardRouter);
 app.use('/signups', signupRoutes);
 
 // Certificate Generation and Retrieval
-app.use('/api/certificates', certificateRoutes); // Use the certificate generation route
+app.use('/api/generate-certificate', certificateRoutes); // Use the certificate generation route
 app.use('/api/certificates', retrieveCertsRoutes); // Use the retrieve certificates route
 
 // Start server
