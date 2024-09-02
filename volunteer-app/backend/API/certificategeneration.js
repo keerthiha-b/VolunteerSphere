@@ -15,7 +15,9 @@ router.post('/:signupId', async (req, res) => {
 
   try {
     // Fetch the signup details using the signupId from your userToActivity collection
-    const signupDetails = await UserToActivity.findById(signupId).populate('userId', 'firstName lastName').populate('opportunityId', 'name duration');
+    const signupDetails = await UserToActivity.findById(signupId)
+      .populate('userId', 'firstName lastName')
+      .populate('opportunityId', 'name duration');
 
     if (!signupDetails) {
       return res.status(404).json({ message: 'Signup not found.' });
@@ -27,15 +29,18 @@ router.post('/:signupId', async (req, res) => {
     const activityName = opportunityId.name;
     const hoursSpent = opportunityId.duration; // Assuming duration is stored as a string like '3 hours'
 
+    // Define the output file path for the PDF
+    const outputDir = path.join(__dirname, '../certificates'); // Certificates directory path
+
+    // Ensure the certificates directory exists
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true }); // Create the directory if it doesn't exist
+    }
+
+    const outputPath = path.join(outputDir, `${signupId}-certificate.pdf`);
+
     // Create a new PDF document
     const doc = new PDFDocument();
-
-    // Define the output file path for the PDF
-    const outputDir = path.join(__dirname, '../certificates');
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir); // Ensure the certificates directory exists
-    }
-    const outputPath = path.join(outputDir, `${signupId}-certificate.pdf`);
 
     // Pipe the PDF into a writable stream
     doc.pipe(fs.createWriteStream(outputPath));
