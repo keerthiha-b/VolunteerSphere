@@ -8,6 +8,7 @@ const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API h
 const leaderboardRouter = require('./API/leaderboard'); 
 const signupRoutes = require('./API/getsignups'); // Import the new signupRoutes
 const certificateRoutes = require('./API/certificategeneration'); // Import the certificate generation routes
+const getProgress = require('./API/getProgress');
 const cors = require('cors');
 
 const app = express();
