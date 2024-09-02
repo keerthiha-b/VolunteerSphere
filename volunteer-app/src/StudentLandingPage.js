@@ -94,9 +94,9 @@ const StudentLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Add comments to past sign ups</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Check your awards</Text>
-        </TouchableOpacity>
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CertificatesScreen', { studentId: id })}>
+  <Text style={styles.optionButtonText}>Check your awards</Text>
+</TouchableOpacity>
       </View> 
       
       <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />

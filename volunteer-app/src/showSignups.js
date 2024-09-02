@@ -16,14 +16,7 @@ const SignUps = ({ route }) => {
         }
 
         const data = await response.json();
-
-        // Filter signups to include only future activities
-        const upcomingSignups = data.filter(signup => {
-          const activityDate = new Date(signup.date); // Use 'date' field from the data
-          return activityDate > new Date(); // Only include activities with a date in the future
-        });
-
-        setSignups(upcomingSignups);
+        setSignups(data);
       } catch (error) {
         console.error('Error fetching signups:', error.message || error);
       }
@@ -36,7 +29,7 @@ const SignUps = ({ route }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Participants</Text>
       {signups.length === 0 ? (
-        <Text>No upcoming signups for this activity.</Text>
+        <Text>No signups for this activity.</Text>
       ) : (
         <FlatList
           data={signups}
@@ -46,7 +39,7 @@ const SignUps = ({ route }) => {
               {/* Display the participant number */}
               <Text style={styles.participantNumber}>{index + 1}.</Text>
               <Text style={styles.signupName}>
-                {item.name} {/* Assuming 'name' contains participant's name */}
+                {item.firstName} {item.lastName}
               </Text>
             </View>
           )}

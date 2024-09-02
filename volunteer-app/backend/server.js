@@ -7,6 +7,8 @@ const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const leaderboardRouter = require('./API/leaderboard'); 
 const signupRoutes = require('./API/getsignups'); // Import the new signupRoutes
+const certificateRoutes = require('./API/certificategeneration'); // Import the certificate generation routes
+const retrieveCertsRoutes = require('./API/retrievecerts'); // Import the retrieve certificates routes
 const cors = require('cors');
 
 // Progress API
@@ -46,7 +48,11 @@ app.post('/signup', newUserToActivity);
 app.use('/leaderboard', leaderboardRouter);
 
 // Sign-ups route for fetching sign-ups for a specific activity
-app.use('/signups', signupRoutes); // Ensure this line is added to use the signup route
+app.use('/signups', signupRoutes);
+
+// Certificate Generation and Retrieval
+app.use('/api/certificates', certificateRoutes); // Use the certificate generation route
+app.use('/api/certificates', retrieveCertsRoutes); // Use the retrieve certificates route
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

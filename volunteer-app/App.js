@@ -17,6 +17,9 @@ import ActivityDetails from './src/Activitydetails';
 import ActivitySignup from './src/Signupactivity';
 import LeaderboardPage from './src/LeaderboardPage';
 import SignUps from './src/showSignups';
+import PastActivities from './src/showPastsignups'
+import CertificatesScreen from './src/CertificateList';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -39,6 +42,8 @@ function App() {
         <Stack.Screen name="ActivitySignup" component={ActivitySignup} />
         <Stack.Screen name="Leaderboard" component={LeaderboardPage} options={{ headerShown: true, title: 'Leaderboard Page' }} />
         <Stack.Screen name="Signups" component={SignUps} />
+        <Stack.Screen name="PastActivities" component={PastActivities} />
+        <Stack.Screen name="CertificatesScreen" component={CertificatesScreen} options={{ title: 'Your Certificates' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
