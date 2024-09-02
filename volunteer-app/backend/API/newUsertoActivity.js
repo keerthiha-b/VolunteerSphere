@@ -71,7 +71,7 @@ const newUserToActivity = async (req, res) => {
 
     console.log('Saving new UserActivity entry to the database...');
     await newUserToActivityEntry.save();
-    await updateMissionProgress(opportunityId);
+    await updateMissionProgress(userId, opportunityId);
 
     console.log('Successfully signed user up for opportunity', newUserToActivityEntry);
     res.status(201).json({ message: 'Successfully signed up for the opportunity!' });
