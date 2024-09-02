@@ -1,7 +1,7 @@
 // routes/certificateRoutes.js
 const express = require('express');
 const mongoose = require('mongoose');
-const Certificate = require('../models/Certificate'); // Import the Certificate model
+const Certificate = require('../Schema/Certificate'); // Import the Certificate model
 
 const router = express.Router();
 
