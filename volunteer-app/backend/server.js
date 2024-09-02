@@ -53,8 +53,8 @@ app.use('/signups', signupRoutes);
 
 // Certificate Generation and Retrieval
 app.use('/api/generate-certificate', certificateRoutes); // Use the certificate generation route
-app.use('/api/certificates', retrieveCertsRoutes); // Use the retrieve certificates route
-app.use('/certificates', express.static(path.join(__dirname, 'certificates')));
+//app.use('/api/certificates', retrieveCertsRoutes); // Use the retrieve certificates route
+
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

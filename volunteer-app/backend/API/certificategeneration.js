@@ -1,15 +1,12 @@
 const express = require('express');
-const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const path = require('path');
 const mongoose = require('mongoose');
-const Certificate = require('../Schema/Certificate');
-const UserToActivity = mongoose.model('UserActivity'); // Assuming the signup collection is named userToActivity
+const Certificate = require('../Schema/Certificate'); // Import the Certificate model
+const UserToActivity = mongoose.model('UserActivity');
 
 const router = express.Router();
 
-// Endpoint to generate a PDF certificate
-router.post('/:signupId', async (req, res) => {
+// Endpoint to generate and return HTML certificate
+router.get('/html/:signupId', async (req, res) => {
   const { signupId } = req.params;
 
   try {
@@ -27,60 +24,40 @@ router.post('/:signupId', async (req, res) => {
     const activityName = opportunityId.name;
     const hoursSpent = opportunityId.duration;
 
-    // Define the output file path for the PDF
-    const outputDir = path.join(__dirname, '../certificates');
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
+    // Generate HTML content
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Certificate of Completion</title>
+        <style>
+          body { font-family: Arial, sans-serif; text-align: center; }
+          .certificate { border: 5px solid #eee; padding: 20px; margin: 20px; }
+          h1 { font-size: 24px; }
+          p { font-size: 18px; }
+        </style>
+      </head>
+      <body>
+        <div class="certificate">
+          <h1>Certificate of Completion</h1>
+          <p>This certifies that</p>
+          <h2>${studentName}</h2>
+          <p>has successfully completed the activity "${activityName}"</p>
+          <p>and spent ${hoursSpent} contributing to this cause.</p>
+          <p>We appreciate your efforts and dedication.</p>
+          <p>Signed by,</p>
+          <p>VolunteerSphere Organization</p>
+        </div>
+      </body>
+      </html>
+    `;
 
-    const outputPath = path.join(outputDir, `${signupId}-certificate.pdf`);
-
-    // Create a new PDF document
-    const doc = new PDFDocument();
-    doc.pipe(fs.createWriteStream(outputPath));
-
-    // Add content to the PDF
-    doc
-      .fontSize(26)
-      .text('Certificate of Completion', { align: 'center' })
-      .moveDown();
-
-    doc
-      .fontSize(20)
-      .text(`This certifies that ${studentName}`, { align: 'center' })
-      .moveDown();
-
-    doc
-      .fontSize(16)
-      .text(`has successfully completed the activity "${activityName}"`, { align: 'center' })
-      .text(`and spent ${hoursSpent} contributing to this cause.`, { align: 'center' })
-      .moveDown();
-
-    doc
-      .fontSize(14)
-      .text(`We appreciate your efforts and dedication.`, { align: 'center' })
-      .moveDown(2);
-
-    doc
-      .fontSize(16)
-      .text(`Signed by,`, { align: 'left' })
-      .text(`VolunteerSphere Organization`, { align: 'left' });
-
-    doc.end();
-
-    // Save certificate details to MongoDB
-    const newCertificate = new Certificate({
-      studentId: userId._id,
-      activityId: opportunityId._id,
-      certificatePath: `/certificates/${signupId}-certificate.pdf`,
-    });
-
-    await newCertificate.save();
-
-    res.status(200).json({ message: 'Certificate generated and saved successfully!', certificate: newCertificate });
+    // Send HTML content as response
+    res.status(200).send(htmlContent);
   } catch (error) {
-    console.error('Error generating certificate:', error);
-    res.status(500).json({ message: 'Error generating certificate', error });
+    console.error('Error generating certificate HTML:', error);
+    res.status(500).json({ message: 'Error generating certificate HTML', error });
   }
 });
 

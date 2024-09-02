@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
-import Pdf from 'react-native-pdf';
+import { WebView } from 'react-native-webview';
 
 const CertificatesScreen = ({ route }) => {
   const { studentId } = route.params;
   const [certificates, setCertificates] = useState([]);
-  const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [selectedCertificateHtml, setSelectedCertificateHtml] = useState(null);
 
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
-        const response = await fetch(`https://volunteersphere.onrender.com/api/certificates/${studentId}`);
+        const response = await fetch(`https://volunteersphere.onrender.com/api/generate-certificate/${studentId}`);
         
         if (!response.ok) {
           console.error('Server error:', response.status, response.statusText);
@@ -28,26 +28,31 @@ const CertificatesScreen = ({ route }) => {
     fetchCertificates();
   }, [studentId]);
 
-  const handleViewCertificate = (certificatePath) => {
-    setSelectedCertificate(`https://volunteersphere.onrender.com${certificatePath}`);
+  const handleViewCertificate = async (signupId) => {
+    try {
+      const response = await fetch(`https://volunteersphere.onrender.com/api/generate-certificate/html/${signupId}`);
+
+      if (!response.ok) {
+        console.error('Server error:', response.status, response.statusText);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+      }
+
+      const htmlContent = await response.text();
+      setSelectedCertificateHtml(htmlContent);
+    } catch (error) {
+      console.error('Error fetching certificate HTML:', error.message || error);
+      Alert.alert('Error', 'Failed to load certificate.');
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Certificates</Text>
-      {selectedCertificate ? (
-        <Pdf
-          source={{ uri: selectedCertificate }}
-          onLoadComplete={(numberOfPages, filePath) => {
-            console.log(`Number of pages: ${numberOfPages}`);
-          }}
-          onPageChanged={(page, numberOfPages) => {
-            console.log(`Current page: ${page}`);
-          }}
-          onError={(error) => {
-            console.log(error);
-          }}
-          style={styles.pdf}
+      {selectedCertificateHtml ? (
+        <WebView
+          originWhitelist={['*']}
+          source={{ html: selectedCertificateHtml }}
+          style={styles.webview}
         />
       ) : (
         <FlatList
@@ -58,7 +63,7 @@ const CertificatesScreen = ({ route }) => {
               <Text>Activity: {item.activityId.name}</Text>
               <TouchableOpacity
                 style={styles.viewButton}
-                onPress={() => handleViewCertificate(item.certificatePath)}
+                onPress={() => handleViewCertificate(item._id)}
               >
                 <Text style={styles.buttonText}>View Certificate</Text>
               </TouchableOpacity>
@@ -97,7 +102,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#ffffff',
   },
-  pdf: {
+  webview: {
     flex: 1,
     width: '100%',
     height: '100%',
