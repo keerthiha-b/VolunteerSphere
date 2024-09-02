@@ -8,32 +8,28 @@ const MissionsPage = () => {
   const [missions, setMissions] = useState([]);
   const [selectedTab, setSelectedTab] = useState('all');
 
-  useEffect(() => {
-    let isMounted = true; // Track if the component is still mounted
+  const fetchMissions = async () => {
+    try {
+      const response = await axios.get('https://volunteersphere.onrender.com/api/missions');
+      if (Array.isArray(response.data)) {
+        const missionsWithFavorites = response.data.map(mission => ({
+          ...mission,
+          isFavorite: false  // Initialize all missions as not favorite
+        }));
+        setMissions(missionsWithFavorites);
+      } else {
+        console.error('Unexpected data format, expected an array.');
+      }
+    } catch (error) {
+      console.error('Error fetching missions:', error);
+    }
+  };
 
-    const fetchMissions = async () => {
-        try {
-          const response = await axios.get('https://volunteersphere.onrender.com/api/missions');
-  
-          if (isMounted && Array.isArray(response.data)) {
-            // Enhance missions with favorite status
-            const missionsWithFavorites = response.data.map(mission => ({
-              ...mission,
-              isFavorite: false  // Initialize all missions as not favorite
-            }));
-            setMissions(missionsWithFavorites);
-          } else {
-            console.error('Unexpected data format, expected an array.');
-          }
-        } catch (error) {
-          console.error('Error fetching missions:', error);
-        }
-      };
-  
+  useFocusEffect(
+    useCallback(() => {
       fetchMissions();
-  
-      return () => { isMounted = false; };
-    }, []);
+    }, [])
+  );
 
   const toggleFavorite = (id) => {
     // Toggle the favorite status
