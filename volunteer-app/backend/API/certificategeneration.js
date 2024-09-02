@@ -1,3 +1,4 @@
+// routes/certificateRoutes.js
 const express = require('express');
 const mongoose = require('mongoose');
 const Certificate = require('../Schema/Certificate'); // Import the Certificate model
@@ -5,8 +6,8 @@ const UserToActivity = mongoose.model('UserActivity');
 
 const router = express.Router();
 
-// Endpoint to generate HTML certificate for a specific signup
-router.get('/html/:signupId', async (req, res) => {
+// Endpoint to generate a certificate for a signup
+router.post('/:signupId', async (req, res) => {
   const { signupId } = req.params;
 
   try {
@@ -24,40 +25,23 @@ router.get('/html/:signupId', async (req, res) => {
     const activityName = opportunityId.name;
     const hoursSpent = opportunityId.duration;
 
-    // Generate HTML content
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <title>Certificate of Completion</title>
-        <style>
-          body { font-family: Arial, sans-serif; text-align: center; }
-          .certificate { border: 5px solid #eee; padding: 20px; margin: 20px; }
-          h1 { font-size: 24px; }
-          p { font-size: 18px; }
-        </style>
-      </head>
-      <body>
-        <div class="certificate">
-          <h1>Certificate of Completion</h1>
-          <p>This certifies that</p>
-          <h2>${studentName}</h2>
-          <p>has successfully completed the activity "${activityName}"</p>
-          <p>and spent ${hoursSpent} contributing to this cause.</p>
-          <p>We appreciate your efforts and dedication.</p>
-          <p>Signed by,</p>
-          <p>VolunteerSphere Organization</p>
-        </div>
-      </body>
-      </html>
-    `;
+    // Save certificate details to MongoDB
+    const newCertificate = new Certificate({
+      studentId: userId._id,
+      activityId: opportunityId._id,
+      certificateDetails: {
+        studentName,
+        activityName,
+        hoursSpent,
+      }
+    });
 
-    // Send HTML content as response
-    res.status(200).send(htmlContent);
+    await newCertificate.save();
+
+    res.status(200).json({ message: 'Certificate generated and saved successfully!', certificate: newCertificate });
   } catch (error) {
-    console.error('Error generating certificate HTML:', error);
-    res.status(500).json({ message: 'Error generating certificate HTML', error });
+    console.error('Error generating certificate:', error);
+    res.status(500).json({ message: 'Error generating certificate', error });
   }
 });
 

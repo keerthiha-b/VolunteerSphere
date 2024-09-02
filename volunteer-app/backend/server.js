@@ -8,12 +8,7 @@ const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API h
 const leaderboardRouter = require('./API/leaderboard'); 
 const signupRoutes = require('./API/getsignups'); // Import the new signupRoutes
 const certificateRoutes = require('./API/certificategeneration'); // Import the certificate generation routes
-//onst retrieveCertsRoutes = require('./API/retrievecerts'); // Import the retrieve certificates routes
 const cors = require('cors');
-const path = require('path');
-
-// Progress API
-const getProgress = require('./API/getProgress');
 
 const app = express();
 const PORT = process.env.PORT || 3001; 
@@ -53,8 +48,6 @@ app.use('/signups', signupRoutes);
 
 // Certificate Generation and Retrieval
 app.use('/api/generate-certificate', certificateRoutes); // Use the certificate generation route
-//app.use('/api/certificates', retrieveCertsRoutes); // Use the retrieve certificates route
-
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
