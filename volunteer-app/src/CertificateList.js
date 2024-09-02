@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 
 const CertificatesScreen = ({ route }) => {
   const { studentId } = route.params;
   const [certificates, setCertificates] = useState([]);
+  const navigation = useNavigation(); // Initialize navigation
 
   useEffect(() => {
     const fetchCertificates = async () => {
@@ -27,16 +29,20 @@ const CertificatesScreen = ({ route }) => {
     fetchCertificates();
   }, [studentId]);
 
-  const renderCertificate = ({ item }) => (
-    <View style={styles.certificateContainer}>
-      <Text style={styles.certificateTitle}>Certificate of Completion</Text>
-      <Text style={styles.certificateText}>This certifies that</Text>
-      <Text style={styles.certificateName}>{item.certificateDetails.studentName}</Text>
-      <Text style={styles.certificateText}>has successfully completed the activity</Text>
-      <Text style={styles.certificateActivity}>"{item.certificateDetails.activityName}"</Text>
-      <Text style={styles.certificateText}>and spent {item.certificateDetails.hoursSpent} contributing to this cause.</Text>
-      <Text style={styles.certificateFooter}>We appreciate your efforts and dedication.</Text>
-      <Text style={styles.certificateSignature}>Signed by, VolunteerSphere Organization</Text>
+  const handleViewCertificate = (certificate) => {
+    // Navigate to the CertificateDetailScreen with the selected certificate
+    navigation.navigate('CertificateDetailScreen', { certificate });
+  };
+
+  const renderCertificateItem = ({ item }) => (
+    <View style={styles.certificateItem}>
+      <Text style={styles.activityName}>Activity: {item.certificateDetails.activityName}</Text>
+      <TouchableOpacity
+        style={styles.viewButton}
+        onPress={() => handleViewCertificate(item)}
+      >
+        <Text style={styles.buttonText}>View Certificate</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -47,7 +53,7 @@ const CertificatesScreen = ({ route }) => {
         <FlatList
           data={certificates}
           keyExtractor={(item) => item._id}
-          renderItem={renderCertificate}
+          renderItem={renderCertificateItem}
         />
       ) : (
         <Text>No certificates available.</Text>
@@ -68,52 +74,28 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  certificateContainer: {
-    borderWidth: 2,
-    borderColor: '#eee',
-    borderRadius: 10,
-    padding: 20,
+  certificateItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    marginBottom: 10,
     backgroundColor: '#fff',
-    marginBottom: 20,
-    elevation: 3, // Adds shadow for Android
-    shadowColor: '#000', // Adds shadow for iOS
-    shadowOffset: { width: 0, height: 2 }, // Adds shadow for iOS
-    shadowOpacity: 0.2, // Adds shadow for iOS
-    shadowRadius: 5, // Adds shadow for iOS
+    borderRadius: 8,
   },
-  certificateTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  certificateText: {
+  activityName: {
     fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 5,
+    flex: 1,
   },
-  certificateName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 10,
+  viewButton: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
   },
-  certificateActivity: {
-    fontSize: 16,
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  certificateFooter: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 10,
-  },
-  certificateSignature: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-    fontWeight: 'bold',
+  buttonText: {
+    color: '#ffffff',
   },
 });
 

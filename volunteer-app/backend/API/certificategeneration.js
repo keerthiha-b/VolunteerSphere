@@ -29,11 +29,11 @@ router.post('/:signupId', async (req, res) => {
     // Extract user and opportunity details
     const { userId, opportunityId } = signupDetails;
 
-    if (!userId) {
-      return res.status(400).json({ message: 'User details not found.' });
+    if (!userId || !opportunityId) {
+      return res.status(400).json({ message: 'User or opportunity details not found.' });
     }
 
-    const studentName = `${userId.firstName || 'First'} ${userId.lastName || 'Last'}`; // Fallback to avoid undefined
+    const studentName = `${userId.firstName || 'First'} ${userId.lastName || 'Last'}`;
     const activityName = opportunityId.name || 'Unknown Activity';
     const hoursSpent = opportunityId.duration || 'Unknown Duration';
 
@@ -54,6 +54,32 @@ router.post('/:signupId', async (req, res) => {
   } catch (error) {
     console.error('Error generating certificate:', error);
     res.status(500).json({ message: 'Error generating certificate', error });
+  }
+});
+
+// Endpoint to get all certificates for a student
+router.get('/student/:studentId', async (req, res) => {
+  const { studentId } = req.params;
+
+  // Validate that studentId is a valid ObjectId
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    return res.status(400).json({ message: 'Invalid student ID.' });
+  }
+
+  try {
+    // Fetch all certificates for the given studentId
+    const certificates = await Certificate.find({ studentId }).populate('activityId', 'name');
+
+    // If no certificates are found, return a 404 status
+    if (!certificates.length) {
+      return res.status(404).json({ message: 'No certificates found for this student.' });
+    }
+
+    // Return the certificates with a 200 status
+    res.status(200).json(certificates);
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+    res.status(500).json({ message: 'Error fetching certificates', error });
   }
 });
 

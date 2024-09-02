@@ -19,6 +19,7 @@ import LeaderboardPage from './src/LeaderboardPage';
 import SignUps from './src/showSignups';
 import PastActivities from './src/showPastsignups'
 import CertificatesScreen from './src/CertificateList';
+import CertificateDetailScreen from './src/certificatedetail';
 
 
 
@@ -44,6 +45,7 @@ function App() {
         <Stack.Screen name="Signups" component={SignUps} />
         <Stack.Screen name="PastActivities" component={PastActivities} />
         <Stack.Screen name="CertificatesScreen" component={CertificatesScreen} options={{ title: 'Your Certificates' }} />
+        <Stack.Screen name="CertificateDetailScreen" component={CertificateDetailScreen} options={{ title: 'Your Certificates' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
