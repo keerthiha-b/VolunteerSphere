@@ -11,7 +11,7 @@ const commentRoutes = require('./API/commentRoutes');
 const fetchSignedUpActivities = require('./API/fetchactivity');
 const missionsApi = require('./API/missions');
 const categoriesApi = require('./API/categories');
-const updateMissionProgress = require('./API/missionprogress');
+const { updateMissionProgress } = require('./API/missionprogress');
 
 // Progress API
 const getProgress = require('./API/getProgress');
