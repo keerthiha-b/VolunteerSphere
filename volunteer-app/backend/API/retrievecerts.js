@@ -6,7 +6,7 @@ const Certificate = require('../Schema/Certificate'); // Import the Certificate 
 const router = express.Router();
 
 // Endpoint to get certificates for a student
-router.get('/certificates/:studentId', async (req, res) => {
+router.get('/:studentId', async (req, res) => {
   const { studentId } = req.params;
 
   // Validate that studentId is a valid ObjectId
