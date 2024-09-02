@@ -10,7 +10,8 @@ const CertificatesScreen = ({ route }) => {
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
-        const response = await fetch(`https://volunteersphere.onrender.com/api/generate-certificate/${studentId}`);
+        // Fetch all certificates for the student
+        const response = await fetch(`https://volunteersphere.onrender.com/api/generate-certificate/student/${studentId}`);
         
         if (!response.ok) {
           console.error('Server error:', response.status, response.statusText);

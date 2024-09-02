@@ -5,7 +5,7 @@ const UserToActivity = mongoose.model('UserActivity');
 
 const router = express.Router();
 
-// Endpoint to generate and return HTML certificate
+// Endpoint to generate HTML certificate for a specific signup
 router.get('/html/:signupId', async (req, res) => {
   const { signupId } = req.params;
 
@@ -58,6 +58,32 @@ router.get('/html/:signupId', async (req, res) => {
   } catch (error) {
     console.error('Error generating certificate HTML:', error);
     res.status(500).json({ message: 'Error generating certificate HTML', error });
+  }
+});
+
+// Endpoint to get all certificates for a student
+router.get('/student/:studentId', async (req, res) => {
+  const { studentId } = req.params;
+
+  // Validate that studentId is a valid ObjectId
+  if (!mongoose.Types.ObjectId.isValid(studentId)) {
+    return res.status(400).json({ message: 'Invalid student ID.' });
+  }
+
+  try {
+    // Fetch all certificates for the given studentId
+    const certificates = await Certificate.find({ studentId }).populate('activityId', 'name');
+
+    // If no certificates are found, return a 404 status
+    if (!certificates.length) {
+      return res.status(404).json({ message: 'No certificates found for this student.' });
+    }
+
+    // Return the certificates with a 200 status
+    res.status(200).json(certificates);
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+    res.status(500).json({ message: 'Error fetching certificates', error });
   }
 });
 
