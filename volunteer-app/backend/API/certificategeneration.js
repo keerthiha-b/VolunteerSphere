@@ -1,11 +1,10 @@
-// routes/certificateRoutes.js
 const express = require('express');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
-const Certificate = require('../Schema/Certificate'); // Import the Certificate model
-const UserToActivity = mongoose.model('UserActivity'); // Assuming your signup collection is named userToActivity
+const Certificate = require('../Schema/Certificate');
+const UserToActivity = mongoose.model('UserActivity'); // Assuming the signup collection is named userToActivity
 
 const router = express.Router();
 
@@ -14,7 +13,7 @@ router.post('/:signupId', async (req, res) => {
   const { signupId } = req.params;
 
   try {
-    // Fetch the signup details using the signupId from your userToActivity collection
+    // Fetch the signup details
     const signupDetails = await UserToActivity.findById(signupId)
       .populate('userId', 'firstName lastName')
       .populate('opportunityId', 'name duration');
@@ -23,26 +22,21 @@ router.post('/:signupId', async (req, res) => {
       return res.status(404).json({ message: 'Signup not found.' });
     }
 
-    // Extract necessary details from signupDetails
     const { userId, opportunityId } = signupDetails;
     const studentName = `${userId.firstName} ${userId.lastName}`;
     const activityName = opportunityId.name;
-    const hoursSpent = opportunityId.duration; // Assuming duration is stored as a string like '3 hours'
+    const hoursSpent = opportunityId.duration;
 
     // Define the output file path for the PDF
-    const outputDir = path.join(__dirname, '../certificates'); // Certificates directory path
-
-    // Ensure the certificates directory exists
+    const outputDir = path.join(__dirname, '../certificates');
     if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true }); // Create the directory if it doesn't exist
+      fs.mkdirSync(outputDir, { recursive: true });
     }
 
     const outputPath = path.join(outputDir, `${signupId}-certificate.pdf`);
 
     // Create a new PDF document
     const doc = new PDFDocument();
-
-    // Pipe the PDF into a writable stream
     doc.pipe(fs.createWriteStream(outputPath));
 
     // Add content to the PDF
@@ -72,19 +66,17 @@ router.post('/:signupId', async (req, res) => {
       .text(`Signed by,`, { align: 'left' })
       .text(`VolunteerSphere Organization`, { align: 'left' });
 
-    // Finalize the PDF and end the stream
     doc.end();
 
     // Save certificate details to MongoDB
     const newCertificate = new Certificate({
       studentId: userId._id,
       activityId: opportunityId._id,
-      certificatePath: outputPath,
+      certificatePath: `/certificates/${signupId}-certificate.pdf`,
     });
 
     await newCertificate.save();
 
-    // Send response back to the client
     res.status(200).json({ message: 'Certificate generated and saved successfully!', certificate: newCertificate });
   } catch (error) {
     console.error('Error generating certificate:', error);

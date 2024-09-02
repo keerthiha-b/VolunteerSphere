@@ -1,47 +1,61 @@
-// CertificatesScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import Pdf from 'react-native-pdf';
 
 const CertificatesScreen = ({ route }) => {
-  const { studentId } = route.params; // Get the studentId from route params
+  const { studentId } = route.params;
   const [certificates, setCertificates] = useState([]);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
 
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
         const response = await fetch(`https://volunteersphere.onrender.com/api/certificates/${studentId}`);
+        
         if (!response.ok) {
-          throw new Error('Error fetching certificates');
+          console.error('Server error:', response.status, response.statusText);
+          throw new Error(`Server error: ${response.status} ${response.statusText}`);
         }
+
         const data = await response.json();
         setCertificates(data);
       } catch (error) {
-        console.error('Error fetching certificates:', error);
-        Alert.alert('Error', 'Failed to load certificates');
+        console.error('Error fetching certificates:', error.message || error);
+        Alert.alert('Error', 'Failed to load certificates.');
       }
     };
 
     fetchCertificates();
   }, [studentId]);
 
-  // Function to handle viewing the certificate
   const handleViewCertificate = (certificatePath) => {
-    // Here you can implement the logic to view or download the certificate
-    Alert.alert('View Certificate', `Opening certificate at ${certificatePath}`);
+    setSelectedCertificate(`https://volunteersphere.onrender.com${certificatePath}`);
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Certificates</Text>
-      {certificates.length === 0 ? (
-        <Text>No certificates available.</Text>
+      {selectedCertificate ? (
+        <Pdf
+          source={{ uri: selectedCertificate }}
+          onLoadComplete={(numberOfPages, filePath) => {
+            console.log(`Number of pages: ${numberOfPages}`);
+          }}
+          onPageChanged={(page, numberOfPages) => {
+            console.log(`Current page: ${page}`);
+          }}
+          onError={(error) => {
+            console.log(error);
+          }}
+          style={styles.pdf}
+        />
       ) : (
         <FlatList
           data={certificates}
-          keyExtractor={(item) => item._id.toString()}
+          keyExtractor={(item) => item._id}
           renderItem={({ item }) => (
             <View style={styles.certificateItem}>
-              <Text style={styles.certificateText}>Activity: {item.activityId.name}</Text>
+              <Text>Activity: {item.activityId.name}</Text>
               <TouchableOpacity
                 style={styles.viewButton}
                 onPress={() => handleViewCertificate(item.certificatePath)}
@@ -68,15 +82,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   certificateItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  certificateText: {
-    fontSize: 16,
   },
   viewButton: {
     backgroundColor: '#007bff',
@@ -85,7 +96,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#ffffff',
-    fontWeight: 'bold',
+  },
+  pdf: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
 });
 
