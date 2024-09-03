@@ -58,7 +58,7 @@ const OrgLandingPage = ({ navigation }) => {
         {/* New button for "Approve certificates" */}
         <TouchableOpacity 
           style={styles.optionButton} 
-          onPress={() => navigation.navigate('PastActivities')}  // Ensure this screen exists in your navigation stack
+          onPress={() => navigation.navigate('PastActivities', { activityId: '66d78bc05c2ec9cd682a5119' })}  // Ensure this screen exists in your navigation stack
         >
           <Text style={styles.optionButtonText}>Approve certificates</Text>
         </TouchableOpacity>

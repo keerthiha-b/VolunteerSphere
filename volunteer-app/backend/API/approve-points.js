@@ -25,6 +25,16 @@ router.post('/approve-signup/:userId/:opportunityId', async (req, res) => {
       // Assuming 'duration' is stored in hours in the activity schema
       const pointsToAdd = activity.duration * 100; // Ensure 'duration' is the correct field
       user.points = user.points + pointsToAdd; // Update the user's points
+
+      // LEVELLING ALGORITHM
+      const levelMultiplier = 1.25;
+      const multiplierAdditive = min(0.5 * (user.level + 1), 2); // Want to limit how much can be added
+      
+      if (user.points >= user.maxPoints) {
+        user.points = user.points - user.maxPoints; // Remainder
+        user.level += 1;
+        user.maxPoints = user.maxPoints * (levelMultiplier + multiplierAdditive);
+      }
   
       // Save the updated user document
       await user.save();
