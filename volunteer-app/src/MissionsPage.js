@@ -74,6 +74,21 @@ const MissionsPage = () => {
     }
   };
 
+  const handleMissionCompletion = async (mission) => {
+    // Call backend endpoint to update mission completion and user points
+    try {
+      const response = await axios.post('https://volunteersphere.onrender.com/api/missions/complete', {
+        userId,
+        missionId: mission._id
+      });
+      Alert.alert("Mission Completed", "Congratulations on completing the mission!");
+      fetchMissions();  // Reload missions to reflect the updated status
+    } catch (error) {
+      console.error("Failed to complete mission:", error);
+      Alert.alert("Error", "Failed to update mission completion.");
+    }
+  };
+
  
   const renderMissionItem = ({ item }) => {
     // Assuming 'currentUser' holds the current logged-in user's information
@@ -83,6 +98,12 @@ const MissionsPage = () => {
     const progressPercent = userProgress
       ? Math.round((userProgress.progress / item.goal) * 100)
       : 0;
+    
+      useEffect(() => {
+        if (progressPercent >= 100 && !item.completed) {
+          handleMissionCompletion(item);
+        }
+      }, [progressPercent, item.completed]);
   
     return (
       <View style={styles.missionCard}>
