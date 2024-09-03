@@ -5,7 +5,7 @@ const UserActivity = require('../Schema/UserActivity'); // Ensure this path is c
 const router = express.Router();
 
 // Endpoint to decline a signup
-router.patch('/decline-signup/:signupId', async (req, res) => {
+router.patch('/:signupId', async (req, res) => {
   const { signupId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(signupId)) {
