@@ -54,10 +54,28 @@ const SignUps = ({ route }) => {
   };
 
   // Function to handle decline action
-  const handleDecline = (signupId) => {
-    console.log(`Declined signup with ID: ${signupId}`); // Debugging statement
-    Alert.alert('Declined', `Signup for ID: ${signupId} has been declined.`);
-    // Optionally, make an API call or update state to reflect the decline
+  const handleDecline = async (signupId) => {
+    try {
+      console.log(`Declining signup with ID: ${signupId}`); // Debugging statement
+      const response = await fetch(`https://volunteersphere.onrender.com/api/decline-signup/${signupId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+
+      if (response.ok) {
+        const updatedSignups = signups.filter(item => item._id !== signupId);
+        setSignups(updatedSignups);
+        Alert.alert('Success', 'Signup successfully declined.');
+      } else {
+        console.error('Error declining signup:', response.status, response.statusText);
+        Alert.alert('Error', `Failed to decline signup: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Alert.alert('Error', 'An error occurred while declining the signup.');
+    }
   };
 
   return (
@@ -71,7 +89,6 @@ const SignUps = ({ route }) => {
           keyExtractor={(item) => item._id}
           renderItem={({ item, index }) => (
             <View style={[styles.signupItem, index % 2 === 0 ? styles.orangeBackground : styles.grayBackground]}>
-              {/* Participant Info and Buttons Container */}
               <View style={styles.infoContainer}>
                 <Text style={styles.participantNumber}>{index + 1}.</Text>
                 <Text style={styles.signupName}>
@@ -150,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'orange',
   },
   grayBackground: {
-    backgroundColor: '#f0f0f0', // Light gray color
+    backgroundColor: '#f0f0f0',
   },
 });
 
