@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Mission = require('../models/Mission');
-const User = require('../models/User');
+const Mission = require('../Schema/Mission');
+const User = require('../Schema/User');
 
 router.post('/api/missions/complete', async (req, res) => {
   const { userId, missionId } = req.body;
