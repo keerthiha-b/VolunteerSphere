@@ -74,6 +74,17 @@ const MissionsPage = () => {
     }
   };
 
+  useEffect(() => {
+    missions.forEach(mission => {
+      const userProgress = mission.userProgresses.find(up => up.userId === userId);
+      const progressPercent = userProgress ? Math.round((userProgress.progress / mission.goal) * 100) : 0;
+
+      if (progressPercent >= 100 && !mission.completed) {
+        handleMissionCompletion(mission);
+      }
+    });
+  }, [missions, userId]);
+
   const handleMissionCompletion = async (mission) => {
     // Call backend endpoint to update mission completion and user points
     try {
@@ -99,12 +110,6 @@ const MissionsPage = () => {
       ? Math.round((userProgress.progress / item.goal) * 100)
       : 0;
     
-      useEffect(() => {
-        if (progressPercent >= 100 && !item.completed) {
-          handleMissionCompletion(item);
-        }
-      }, [progressPercent, item.completed]);
-  
     return (
       <View style={styles.missionCard}>
         <View style={styles.missionHeader}>
