@@ -8,7 +8,7 @@ const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API h
 const cors = require('cors');
 const commentRoutes = require('./API/commentRoutes');
 const fetchSignedUpActivities = require('./API/fetchactivity');
-// Progress API
+const commentsforadmins = require('./API/fetchcomments'); // Admin-specific comments handler
 const getProgress = require('./API/getProgress');
 
 const app = express();
@@ -35,7 +35,13 @@ app.use('/activities', activityRouter);
 // Map-related endpoints
 app.use('/api/map', mapRouter); // Add this line to use the new map-related route
 
+// General comment routes
 app.use('/comments', commentRoutes);
+
+// Admin-specific comment routes
+app.use('/admin/comments', commentsforadmins);
+
+// Fetch signed-up activities
 app.use('/user-activities', fetchSignedUpActivities);
 
 // PROGRESS
@@ -46,4 +52,3 @@ app.post('/signup', newUserToActivity); // Corrected API handler usage
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
