@@ -32,6 +32,7 @@ const ActivityListScreen = ({ navigation }) => {
       <Text>{item.description}</Text>
       <Button
         title="View Comments"
+        color="orange" // Set the button color to orange
         onPress={() => navigation.navigate('Commentdetail', { opportunityId: item._id })}
       />
     </View>
