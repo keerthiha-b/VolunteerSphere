@@ -42,7 +42,7 @@ const SignUps = ({ route }) => {
         console.log('Certificate generated successfully!');
 
         // Approve the signup and update points
-        const approveResponse = await fetch(`https://volunteersphere.onrender.com/approve-signup/${userId}/${opportunityId}`, {
+        const approveResponse = await fetch(`https://volunteersphere.onrender.com/api/approve-signup/${userId}/${opportunityId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
