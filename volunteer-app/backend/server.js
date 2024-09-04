@@ -55,7 +55,7 @@ app.use('/leaderboard', leaderboardRouter);
 
 // missions
 app.use('/api', missionsApi);
-app.use('/api/missions/complete', updatepointsapi);
+app.post('/api/missions/complete', updatepointsapi);
 // app.post('/api/update-mission-progress', updateMissionProgress);
 
 // categories

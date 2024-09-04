@@ -87,6 +87,9 @@ const MissionsPage = () => {
 
   const handleMissionCompletion = async (mission) => {
     // Call backend endpoint to update mission completion and user points
+    console.log(mission._id);
+    console.log(userId);
+
     try {
       const response = await axios.post('https://volunteersphere.onrender.com/api/missions/complete', {
         userId,
