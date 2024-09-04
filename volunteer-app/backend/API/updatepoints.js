@@ -19,6 +19,17 @@ router.post('/api/missions/complete', async (req, res) => {
 
     // Update user points
     user.points += mission.points;
+
+    // LEVELLING ALGORITHM
+    const levelMultiplier = 1.25;
+    const multiplierAdditive = Math.min(0.5 * (user.level + 1), 2); // Limit multiplier additive
+
+    if (user.points >= user.maxPoints) {
+        user.points -= user.maxPoints; // Deduct max points and carry forward the remainder
+        user.level += 1;
+        user.maxPoints *= (levelMultiplier + multiplierAdditive); // Update maxPoints for next level
+    }
+
     await user.save();
 
     // Update mission completion status
