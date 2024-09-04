@@ -47,7 +47,6 @@ const StudentLandingPage = ({ navigation }) => {
       // Validate that storedId is a valid 24-character hex string
       if (storedId && /^[0-9a-fA-F]{24}$/.test(storedId)) {
         setId(storedId);
-        getAvatar();    
       } else {
         console.error('Invalid ID format:', storedId);
         Alert.alert('Error', 'Invalid user ID format. Please log in  again.');
@@ -57,10 +56,6 @@ const StudentLandingPage = ({ navigation }) => {
       Alert.alert('Error', 'Failed to initialize user data.');
     }
   };
-
-  useEffect(() => {
-    initializeUserData();
-  }, [])
 
   // ON BACK BUTTON
   useFocusEffect(
@@ -77,6 +72,8 @@ const StudentLandingPage = ({ navigation }) => {
       getProgress();
     }
   }, [id]);
+
+  useEffect
 
   const getProgress = async () => {
     try {
@@ -159,12 +156,12 @@ const StudentLandingPage = ({ navigation }) => {
         <Text style={styles.gearText}>⚙️</Text>
       </TouchableOpacity>
 
-      <SafeAreaView style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
+      <TouchableOpacity style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
         <Image
           source={avatarDictionary[currAvatar]} // Update this path to the location of your image file
           style={styles.playerChar}
         />
-      </SafeAreaView>
+      </TouchableOpacity>
       
       <Text style={styles.greeting}>Welcome back, {username} </Text>
 
@@ -186,9 +183,9 @@ const StudentLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Check your awards</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => logOut()}>
+        {/* <TouchableOpacity style={styles.optionButton} onPress={() => logOut()}>
           <Text style={styles.optionButtonText}>Log out</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View> 
       
       <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />
@@ -227,11 +224,13 @@ const styles = StyleSheet.create({
     flex: 1, // Make the container fill the available space
     justifyContent: 'center', // Center items vertically
     alignItems: 'center', // Center items horizontally
-    marginBottom: 75
+    marginBottom: 75,
+    marginTop: 60
   },
   playerChar: {
-    width: 100,
-    height: 100
+    width: 85,
+    height: 85,
+    resizeMode: 'contain'
   },
   leaderboardIconStyle: {
     width: 30,

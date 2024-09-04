@@ -257,11 +257,13 @@ const styles = StyleSheet.create({
     flex: 1, // Make the container fill the available space
     justifyContent: 'center', // Center items vertically
     alignItems: 'center', // Center items horizontally
-    marginBottom: 75
+    marginBottom: 75,
+    marginTop: 20
   },
   playerChar: {
-    width: 100,
-    height: 100
+    width: 85,
+    height: 85,
+    resizeMode: 'contain'
   },
   leaderboardIconStyle: {
     width: 30,
@@ -328,7 +330,7 @@ const styles = StyleSheet.create({
   },
   progressBarStyle: {
     marginTop: 100,
-    marginLeft: 150,
+    marginLeft: 75,
     bottom: 20,
     height: 50, 
     width: 200,
