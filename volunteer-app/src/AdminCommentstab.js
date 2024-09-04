@@ -9,7 +9,8 @@ const ActivityListScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        response = await axios.get(`https://volunteersphere.onrender.com/activities/${organizationId}`);
+        // Fetch all activities without needing an organizationId
+        const response = await axios.get(`https://volunteersphere.onrender.com/activities`);
         setActivities(response.data);
       } catch (error) {
         console.error('Error fetching activities:', error);

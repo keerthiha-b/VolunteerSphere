@@ -11,8 +11,7 @@ const CommentsScreen = ({ route }) => {
     const fetchComments = async () => {
       try {
         // Using the provided server name and the correct endpoint for fetching comments
-        const response = await axios.get(
-          `https://volunteersphere.onrender.com/api/admin/comments/${opportunityId}`
+        const response = await axios.get(`https://volunteersphere.onrender.com/admin/comments/${opportunityId}`
         );
         setComments(response.data);
       } catch (error) {
