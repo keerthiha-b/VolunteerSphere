@@ -5,7 +5,7 @@ const User = require('../Schema/User');
 const Activity = require('../Schema/Activity');  
 
 // Route to approve a signup and update user points
-router.post('/approve-signup/:userId/:opportunityId', async (req, res) => {
+router.post('/:userId/:opportunityId', async (req, res) => {
     const { userId, opportunityId } = req.params;
 
     try {
