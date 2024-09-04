@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Comment = require('../models/comment');
-const UserActivity = require('../models/userActivity');
+const Comment = require('../Schema/Comments');
+const UserActivity = require('../Schema/UserActivity');
 
 router.get('/:opportunityId', async (req, res) => {
   try {
