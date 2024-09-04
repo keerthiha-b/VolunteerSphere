@@ -50,7 +50,7 @@ const OrgLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Manage Volunteer Opportunities</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
+        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('Comments')}>
           <Text style={styles.optionButtonText}>Review Comments on Past Postings</Text>
         </TouchableOpacity>
       </View>

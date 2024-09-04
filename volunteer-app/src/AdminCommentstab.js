@@ -31,7 +31,7 @@ const ActivityListScreen = ({ navigation }) => {
       <Text>{item.description}</Text>
       <Button
         title="View Comments"
-        onPress={() => navigation.navigate('CommentsScreen', { opportunityId: item._id })}
+        onPress={() => navigation.navigate('Commentdetail', { opportunityId: item._id })}
       />
     </View>
   );
