@@ -64,6 +64,22 @@ const CreateVolunteerOpportunity = () => {
     { label: '2 hr', value: '2 hr' },
   ];
 
+  const formatPhoneNumber = (input) => {
+    // Remove non-digit characters
+    const cleaned = ('' + input).replace(/\D/g, '');
+    let formatted = cleaned;
+
+    if (cleaned.length > 3 && cleaned.length <= 6) {
+      // Format: 555-555
+      formatted = `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+    } else if (cleaned.length > 6) {
+      // Format: 555-555-5555
+      formatted = `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+    }
+
+    setPhoneNumber(formatted);
+  };
+
   const validateFields = () => {
     const phonePattern = /^\d{3}-\d{3}-\d{4}$/;
 
@@ -262,7 +278,13 @@ const CreateVolunteerOpportunity = () => {
       </View>
 
       <Text style={styles.label}>Provide a contact phone number*</Text>
-      <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" placeholder="555-555-5555" />
+      <TextInput
+        style={styles.input}
+        value={phoneNumber}
+        onChangeText={formatPhoneNumber}
+        keyboardType="phone-pad"
+        placeholder="555-555-5555"
+      />
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>

@@ -116,7 +116,7 @@ const StudentLandingPage = ({ navigation }) => {
       <View style={styles.smallOptionsContainer}>
         <TouchableOpacity style={styles.smallOptionButton} onPress={() => navigation.navigate('Leaderboard', { userId: id })}>
           <Image
-            source={leaderboardIcon} // Update this path to the location of your image file
+            source={leaderboardIcon} 
             style={styles.leaderboardIconStyle}
           />
         </TouchableOpacity>
