@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView, FlatList, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import EachPosting from './EachPosting';  
 import ApprovalActivitiesList from './ApprovalActivitiesList'; 
@@ -37,13 +37,28 @@ const VolunteerOpportunities = () => {
     fetchActivities();
   }, []);
 
+  // Callback to remove deleted activity from upcoming list
+  const removeFromUpcoming = (activityId) => {
+    setOpportunities(prevOpportunities => prevOpportunities.filter(activity => activity._id !== activityId));
+  };
+
+  // Callback to remove deleted activity from past list
+  const removeFromPast = (activityId) => {
+    setPastOpportunities(prevPastOpportunities => prevPastOpportunities.filter(activity => activity._id !== activityId));
+  };
+
   // Upcoming Activities Component
   const UpcomingActivities = () => (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={opportunities}
         keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => <EachPosting opportunity={item} />}
+        renderItem={({ item }) => (
+          <EachPosting
+            opportunity={item}
+            deleteActivityCallback={removeFromUpcoming} // Pass callback to remove the activity from the upcoming list
+          />
+        )}
       />
     </SafeAreaView>
   );
@@ -54,7 +69,12 @@ const VolunteerOpportunities = () => {
       <FlatList
         data={pastOpportunities}
         keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => <ApprovalActivitiesList opportunity={item} />}
+        renderItem={({ item }) => (
+          <ApprovalActivitiesList
+            opportunity={item}
+            deleteActivityCallback={removeFromPast} // Pass callback to remove the activity from the past list
+          />
+        )}
       />
     </SafeAreaView>
   );

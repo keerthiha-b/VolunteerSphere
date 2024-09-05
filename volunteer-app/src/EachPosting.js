@@ -20,24 +20,29 @@ const categoryImages = {
   // Add more categories and corresponding images as needed
 };
 
-const EachPosting = ({ opportunity }) => {
+const EachPosting = ({ opportunity, deleteActivityCallback }) => {
   const navigation = useNavigation(); // Initialize navigation
 
   // Function to handle deleting the activity
   const deleteActivity = async () => {
     try {
-      const response = await axios.post('https://your-backend-url.com/api/delete-activity', {
+      const response = await axios.post('https://volunteersphere.onrender.com/delete-activity', {
         activityId: opportunity._id,
       });
 
       if (response.status === 200) {
         Alert.alert('Success', 'Activity deleted successfully');
-      } else {
-        Alert.alert('Error', response.data.message);
+        deleteActivityCallback(opportunity._id); // Call the parent to remove the activity from the list
       }
     } catch (error) {
       console.error('Error deleting activity:', error);
-      Alert.alert('Error', 'Failed to delete activity.');
+
+      // Check if the error is due to signups
+      if (error.response && error.response.status === 400) {
+        Alert.alert('Cannot Delete', 'This activity has signups and cannot be deleted.');
+      } else {
+        Alert.alert('Error', 'Failed to delete activity.');
+      }
     }
   };
 
