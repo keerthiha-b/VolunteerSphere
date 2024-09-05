@@ -51,7 +51,6 @@ app.post('/signup', newUserToActivity);
 
 // Sign-ups route for fetching sign-ups for a specific activity
 app.use('/signups', signupRoutes); // Ensure this line is added to use the signup route
-=======
 // Leaderboard activity
 app.use('/leaderboard', leaderboardRouter);
 
