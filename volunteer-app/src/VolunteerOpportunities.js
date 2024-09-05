@@ -29,16 +29,28 @@ const VolunteerOpportunities = () => {
     fetchActivities();
   }, []);
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={opportunities}
-        keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => <EachPosting opportunity={item} />}
-      />
-    </SafeAreaView>
-  );
-};
+    // Function to remove the deleted opportunity from the list
+    const removeOpportunity = (id) => {
+      setOpportunities((prevOpportunities) =>
+        prevOpportunities.filter((opportunity) => opportunity._id !== id)
+      );
+    };
+
+    return (
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          data={opportunities}
+          keyExtractor={item => item._id.toString()}
+          renderItem={({ item }) => (
+            <EachPosting 
+              opportunity={item} 
+              onDelete={() => removeOpportunity(item._id)} // Pass the removeOpportunity function to EachPosting
+            />
+          )}
+        />
+      </SafeAreaView>
+    );
+  };
 
 const styles = StyleSheet.create({
   container: {

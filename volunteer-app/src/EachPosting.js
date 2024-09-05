@@ -9,6 +9,7 @@ import environmentImage from './images/cleaning.jpg';
 import educationImage from './images/education.jpg';
 import communityServiceImage from './images/community.jpg';
 import animalWelfareImage from './images/animalwelfare.png';
+import { findOneAndDelete } from '../backend/Schema/User';
 
 // Map categories to corresponding images
 const categoryImages = {
@@ -20,29 +21,19 @@ const categoryImages = {
   // Add more categories and corresponding images as needed
 };
 
-const EachPosting = ({ opportunity }) => {
+const EachPosting = ({ opportunity, onDelete }) => {
   const [modalVisible, setModalVisible] = useState(false);
   // Select the image based on the category of the opportunity
   const selectedImage = categoryImages[opportunity.category] || healthImage; // Default to healthImage if category not found
 
-  // Function to handle delete button press
-  const handleDeletePress = () => {
-    setModalVisible(false);  // Close the modal after confirmation
-  };
 
   // Function to handle the actual deletion
   const handleDelete = async () => {
+    setModalVisible(false);  // Close the modal after confirmation
     try {
-      const response = await fetch(`https://volunteersphere.onrender.com/activities/delete/${opportunity.id}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        // Handle successful deletion (e.g., update the UI, refresh list)
-        console.log("Opportunity deleted successfully");
-      } else {
-        console.error("Failed to delete the opportunity");
-      }
+      const response = await axios.delete(`https://volunteersphere.onrender.com/activities/delete/${opportunity._id}`);
+      console.log("Opportunity deleted successfully");
+      onDelete();
     } catch (error) {
       console.error("Error deleting opportunity:", error);
     }
@@ -85,7 +76,7 @@ const EachPosting = ({ opportunity }) => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modalButton}
-                onPress={() => {handleDelete}}
+                onPress={handleDelete}
               >
                 <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
