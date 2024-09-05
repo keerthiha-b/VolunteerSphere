@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const UserActivity = require('../Schema/UserActivity'); // Ensure the path and name are correct
+const Activity = require('../Schema/Activity');
 
 const router = express.Router();
 
@@ -17,19 +18,39 @@ router.get('/:userId', async (req, res) => {
     }
 
     // Fetch user activities for the given userId
-    const activities = await UserActivity.find({ userId: new mongoose.Types.ObjectId(userId) }).populate('opportunityId');
+    const user_activities = await UserActivity.find({ userId: new mongoose.Types.ObjectId(userId) }).populate('opportunityId');
 
-    if (!activities.length) {
+    if (!user_activities.length) {
       console.log('No activities found for this user.');
       return res.status(404).json({ errorMsg: 'No activities found for this user.' });
     }
 
-    res.status(200).json(activities);
+    // Extract the opportunity IDs from the user activities
+    const opportunityIds = user_activities.map(activity => activity.opportunityId);
+
+    // Query the Activity collection to ensure all opportunityIds exist
+    const existingActivities = await Activity.find({ _id: { $in: opportunityIds } });
+
+    // Convert existingActivities to a Set of IDs for easier lookup
+    const existingActivityIds = new Set(existingActivities.map(activity => activity._id.toString()));
+
+    // Filter user_activities to only include those with valid opportunities
+    const validActivities = user_activities.filter(activity => existingActivityIds.has(activity.opportunityId.toString()));
+
+    if (!validActivities.length) {
+      console.log('No valid activities found for this user.');
+      return res.status(404).json({ errorMsg: 'No valid activities found for this user.' });
+    }
+
+    res.status(200).json(validActivities);
   } catch (error) {
     console.error('Error fetching activities:', error);
     res.status(500).json({ errorMsg: 'Error fetching activities: ' + error.message });
   }
 });
+
+module.exports = router;
+
 
 // Unenroll a user from an activity
 router.delete('/:userId/:activityId', async (req, res) => {
