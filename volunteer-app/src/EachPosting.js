@@ -78,9 +78,6 @@ const EachPosting = ({ opportunity, deleteActivityCallback }) => {
         <TouchableOpacity style={styles.button} onPress={viewSignups}>
           <Text style={styles.buttonText}>View Sign-Ups</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.editButton}>
-          <Text style={styles.buttonText}>📝</Text>
-        </TouchableOpacity>
         <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
           <Text style={styles.buttonText}>🗑️</Text>
         </TouchableOpacity>
