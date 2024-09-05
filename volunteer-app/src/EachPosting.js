@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 
 // Import the images
 import healthImage from './images/Health.jpg';
@@ -19,17 +20,25 @@ const categoryImages = {
 };
 
 const EachPosting = ({ opportunity }) => {
-  // Select the image based on the category of the opportunity
-  const selectedImage = categoryImages[opportunity.category] || healthImage; // Default to healthImage if category not found
+  const navigation = useNavigation(); // Initialize navigation
+
+  // Navigate to the SignUps screen with the activity ID
+  const viewSignups = () => {
+    if (opportunity._id) {
+      navigation.navigate('Signups', { activityId: opportunity._id });
+    } else {
+      console.error('No activity ID found in opportunity object:', opportunity);
+    }
+  };
 
   return (
     <View style={styles.card}>
       {/* Display the selected image */}
-      <Image source={selectedImage} style={styles.image} />
+      <Image source={categoryImages[opportunity.category] || healthImage} style={styles.image} />
       <Text style={styles.title}>{opportunity.name}</Text>
       <Text style={styles.details}>{opportunity.duration} of volunteering</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={viewSignups}>
           <Text style={styles.buttonText}>View Sign-Ups</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.editButton}>
