@@ -27,15 +27,19 @@ router.get('/:userId', async (req, res) => {
 
     // Extract the opportunity IDs from the user activities
     const opportunityIds = user_activities.map(activity => activity.opportunityId);
+    console.log(opportunityIds);
 
     // Query the Activity collection to ensure all opportunityIds exist
     const existingActivities = await Activity.find({ _id: { $in: opportunityIds } });
+    console.log(existingActivities);
 
     // Convert existingActivities to a Set of IDs for easier lookup
     const existingActivityIds = new Set(existingActivities.map(activity => activity._id.toString()));
+    console.log(existingActivityIds);
 
     // Filter user_activities to only include those with valid opportunities
     const validActivities = user_activities.filter(activity => existingActivityIds.has(activity.opportunityId.toString()));
+    console.log(validActivities);
 
     if (!validActivities.length) {
       console.log('No valid activities found for this user.');
