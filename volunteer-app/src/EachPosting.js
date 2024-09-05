@@ -49,9 +49,11 @@ const EachPosting = ({ opportunity, onDelete }) => {
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>View Sign-Ups</Text>
         </TouchableOpacity>
+        {/*
         <TouchableOpacity style={styles.editButton}>
           <Text style={styles.buttonText}>📝</Text>
         </TouchableOpacity>
+        **/}
         <TouchableOpacity style={styles.deleteButton} onPress={() => setModalVisible(true)}>
           <Text style={styles.buttonText}>🗑️</Text>
         </TouchableOpacity>
