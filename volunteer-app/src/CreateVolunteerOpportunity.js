@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import axios from 'axios';
@@ -15,16 +15,27 @@ const CreateVolunteerOpportunity = () => {
   const [minute, setMinute] = useState('');
   const [duration, setDuration] = useState('');
   const [address, setAddress] = useState('');
+  const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const categories = [
-    { label: 'Environment', value: 'Environment' },
-    { label: 'Education', value: 'Education' },
-    { label: 'Health', value: 'Health' },
-    { label: 'Community Service', value: 'Community Service' },
-    { label: 'Animal Welfare', value: 'Animal Welfare' },
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('https://volunteersphere.onrender.com/api/categories');
+        const fetchedCategories = response.data.map(category => ({
+          label: category.name,
+          value: category.name,
+        }));
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        Alert.alert('Error', 'Unable to fetch categories. Please try again later.');
+      }
+    };
+  
+    fetchCategories();
+  }, []);
 
   const months = [
     { label: 'January', value: 0 },
@@ -52,6 +63,22 @@ const CreateVolunteerOpportunity = () => {
     { label: '1 hr 30 min', value: '1 hr 30 min' },
     { label: '2 hr', value: '2 hr' },
   ];
+
+  const formatPhoneNumber = (input) => {
+    // Remove non-digit characters
+    const cleaned = ('' + input).replace(/\D/g, '');
+    let formatted = cleaned;
+
+    if (cleaned.length > 3 && cleaned.length <= 6) {
+      // Format: 555-555
+      formatted = `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+    } else if (cleaned.length > 6) {
+      // Format: 555-555-5555
+      formatted = `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+    }
+
+    setPhoneNumber(formatted);
+  };
 
   const validateFields = () => {
     const phonePattern = /^\d{3}-\d{3}-\d{4}$/;
@@ -251,7 +278,13 @@ const CreateVolunteerOpportunity = () => {
       </View>
 
       <Text style={styles.label}>Provide a contact phone number*</Text>
-      <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" placeholder="555-555-5555" />
+      <TextInput
+        style={styles.input}
+        value={phoneNumber}
+        onChangeText={formatPhoneNumber}
+        keyboardType="phone-pad"
+        placeholder="555-555-5555"
+      />
 
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>Submit</Text>
