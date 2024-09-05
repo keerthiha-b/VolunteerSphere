@@ -237,6 +237,10 @@ const AvatarSelection = ({ navigation }) => {
         </TouchableOpacity>
       </View> 
       
+      <Text style={styles.progLevel}> 
+        Level {progress.level} 
+        <Text style={styles.progPoints}> 🔸 {progress.points} / {progress.maxPoints} pt </Text>
+      </Text>
       <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />
     </SafeAreaView>
   );
@@ -259,6 +263,20 @@ const styles = StyleSheet.create({
     alignItems: 'center', // Center items horizontally
     marginBottom: 75,
     marginTop: 20
+  },
+  progLevel: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    color: '#FA7F35',
+    marginTop: 40
+  },
+  progPoints: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    alignSelf: 'flex-end',
+    color: '#FA7F35',
+    marginTop: 40
   },
   playerChar: {
     width: 85,
@@ -329,7 +347,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   progressBarStyle: {
-    marginTop: 100,
+    marginTop: 30,
     marginLeft: 75,
     bottom: 20,
     height: 50, 

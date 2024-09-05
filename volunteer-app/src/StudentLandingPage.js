@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { save, getValueFor, remove } from './utils/secureStoreUtil'; // Adjust the path as needed
@@ -9,6 +9,7 @@ import { ProgressBar } from 'react-native-paper';
 import character from './images/PlayerChar.png';
 import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
 import missionIcon from './images/buttonicons/MissionsIcon.png';
+import logoutIcon from './images/buttonicons/log-out.svg';
 import MapScreen from './MapScreen';
 
 // AVATAR IMAGES
@@ -24,6 +25,7 @@ const StudentLandingPage = ({ navigation }) => {
   const [id, setId] = useState(null);
   const [progress, setProgress] = useState({ level: 1, points: 0, maxPoints: 1000 });
   const [currAvatar, setCurrAvatar] = useState('Default.png');
+  const isFocused = useIsFocused();
 
   // avatar dictionary
   const avatarDictionary = {
@@ -57,12 +59,22 @@ const StudentLandingPage = ({ navigation }) => {
     }
   };
 
-  // ON BACK BUTTON
-  useFocusEffect(
-    useCallback(() => {
-      initializeUserData();
-    }, [])
-  );
+  useEffect(() => {
+    initializeUserData();
+  }, [])
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log("called when screen open or when back on screen "); 
+
+      // Want to update possible progress
+      if (id) {
+        console.log(`Attempting to fetch progress for user ID: ${id}`); // Added log
+        getAvatar();
+        getProgress();
+      }
+   }
+  },[isFocused]);
 
   // Fetch progress data when ID is set
   useEffect(() => {
@@ -72,8 +84,6 @@ const StudentLandingPage = ({ navigation }) => {
       getProgress();
     }
   }, [id]);
-
-  useEffect
 
   const getProgress = async () => {
     try {
@@ -152,9 +162,14 @@ const StudentLandingPage = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name: username })}>
-        <Text style={styles.gearText}>⚙️</Text>
-      </TouchableOpacity>
+      <SafeAreaView style={styles.profileGear}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile', { name: username })}>
+          <Text style={styles.gearText}>⚙️</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => logOut()}>
+          <Text style={styles.gearText}>⬅️</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
 
       <TouchableOpacity style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
         <Image
@@ -171,7 +186,7 @@ const StudentLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Find new opportunities</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('AvatarSelection')}>
+        <TouchableOpacity style={styles.optionButton}>
           <Text style={styles.optionButtonText}>Manage your sign ups</Text>
         </TouchableOpacity>
 
@@ -188,7 +203,12 @@ const StudentLandingPage = ({ navigation }) => {
         </TouchableOpacity> */}
       </View> 
       
-      <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />
+      <Text style={styles.progLevel}> 
+        Level {progress.level} 
+        <Text style={styles.progPoints}> 🔸 {progress.points} / {progress.maxPoints} pt </Text>
+      </Text>
+      
+      <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true}/>
     
       <View style={styles.smallOptionsContainer}>
         <TouchableOpacity style={styles.smallOptionButton}>
@@ -219,6 +239,11 @@ const styles = StyleSheet.create({
   },
   profileGear: {
     alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: -60,
+    width: '20%'
   },
   centeredImageContainer: {
     flex: 1, // Make the container fill the available space
@@ -248,6 +273,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
+  progLevel: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignSelf: 'flex-end',
+    color: '#FA7F35',
+    marginTop: 40
+  },
+  progPoints: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    alignSelf: 'flex-end',
+    color: '#FA7F35',
+    marginTop: 40
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -274,7 +313,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   progressBarStyle: {
-    marginTop: 100,
+    marginTop: 30,
     marginLeft: 150,
     bottom: 20,
     height: 50, 
