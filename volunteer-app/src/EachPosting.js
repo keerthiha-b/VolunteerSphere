@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import axios from 'axios'; // Add axios for API calls
 
 // Import the images
 import healthImage from './images/Health.jpg';
@@ -21,6 +22,37 @@ const categoryImages = {
 
 const EachPosting = ({ opportunity }) => {
   const navigation = useNavigation(); // Initialize navigation
+
+  // Function to handle deleting the activity
+  const deleteActivity = async () => {
+    try {
+      const response = await axios.post('https://your-backend-url.com/api/delete-activity', {
+        activityId: opportunity._id,
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'Activity deleted successfully');
+      } else {
+        Alert.alert('Error', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      Alert.alert('Error', 'Failed to delete activity.');
+    }
+  };
+
+  // Confirm deletion
+  const confirmDelete = () => {
+    Alert.alert(
+      'Delete Activity',
+      'Are you sure you want to delete this activity?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', onPress: deleteActivity },
+      ],
+      { cancelable: true }
+    );
+  };
 
   // Navigate to the SignUps screen with the activity ID
   const viewSignups = () => {
@@ -44,7 +76,7 @@ const EachPosting = ({ opportunity }) => {
         <TouchableOpacity style={styles.editButton}>
           <Text style={styles.buttonText}>📝</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.deleteButton}>
+        <TouchableOpacity style={styles.deleteButton} onPress={confirmDelete}>
           <Text style={styles.buttonText}>🗑️</Text>
         </TouchableOpacity>
       </View>
