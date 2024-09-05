@@ -59,4 +59,19 @@ router.get('/:organizationId', async (req, res) => {
   }
 });
 
+// DELETE /activities/delete/:opportunityId - Delete activity by opportunityId
+router.delete('/delete/:opportunityId', async (req, res) => {
+  try {
+    const { opportunityId } = req.params;
+    const deletedOpportunity = await Activity.findByIdAndDelete(opportunityId);
+    if (!deletedOpportunity) {
+      return res.status(404).json({ message: 'Volunteer opportunity not found' });
+    }
+    res.json({ message: 'Volunteer opportunity deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting volunteer opportunity:', error);
+    res.status(500).json({ message: 'Error deleting volunteer opportunity', error });
+  }
+});
+
 module.exports = router;

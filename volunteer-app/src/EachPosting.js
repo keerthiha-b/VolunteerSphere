@@ -1,5 +1,7 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from 'react-native';
+import { getValueFor } from './utils/secureStoreUtil'; // Ensure this path is correct
+import axios from 'axios';
 
 // Import the images
 import healthImage from './images/Health.jpg';
@@ -19,8 +21,32 @@ const categoryImages = {
 };
 
 const EachPosting = ({ opportunity }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   // Select the image based on the category of the opportunity
   const selectedImage = categoryImages[opportunity.category] || healthImage; // Default to healthImage if category not found
+
+  // Function to handle delete button press
+  const handleDeletePress = () => {
+    setModalVisible(false);  // Close the modal after confirmation
+  };
+
+  // Function to handle the actual deletion
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`https://volunteersphere.onrender.com/activities/delete/${opportunity.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        // Handle successful deletion (e.g., update the UI, refresh list)
+        console.log("Opportunity deleted successfully");
+      } else {
+        console.error("Failed to delete the opportunity");
+      }
+    } catch (error) {
+      console.error("Error deleting opportunity:", error);
+    }
+  };
 
   return (
     <View style={styles.card}>
@@ -35,11 +61,40 @@ const EachPosting = ({ opportunity }) => {
         <TouchableOpacity style={styles.editButton}>
           <Text style={styles.buttonText}>📝</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.deleteButton}>
+        <TouchableOpacity style={styles.deleteButton} onPress={() => setModalVisible(true)}>
           <Text style={styles.buttonText}>🗑️</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Are you sure you want to delete this activity?</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalButton}
+                onPress={() => {handleDelete}}
+              >
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
+
   );
 };
 
@@ -97,6 +152,61 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: 300,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  modalText: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalButton: {
+    flex: 1,
+    backgroundColor: '#ff8c00', // Orange color for the button
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#ddd', // Gray color for the "Cancel" button
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  cancelButtonText: {
+    color: '#333', // Darker text color for the "Cancel" button
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 
