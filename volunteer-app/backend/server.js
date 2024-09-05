@@ -21,7 +21,6 @@ const fetchSignedUpActivities = require('./API/fetchactivity');
 const commentsforadmins = require('./API/fetchcomments'); // Admin-specific comments handler
 const getProgress = require('./API/getProgress');
 const Decline = require('./API/decline');
-const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3001; 
