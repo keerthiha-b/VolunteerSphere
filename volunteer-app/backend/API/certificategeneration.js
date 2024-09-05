@@ -62,9 +62,9 @@ router.get('/student/:studentId', async (req, res) => {
       // Fetch all certificates for the given studentId
       const certificates = await Certificate.find({ studentId }).populate('activityId', 'name');
   
-      // If no certificates are found, return a 404 status
+      // Case where no certificates are found
       if (!certificates.length) {
-        return res.status(404).json({ message: 'No certificates found for this student.' });
+        return res.status(200).json({ message: 'No certificates found for this student.' });
       }
   
       // Return the certificates with a 200 status
