@@ -7,14 +7,24 @@ const CertificateDetailScreen = ({ route }) => {
   return (
     <View style={styles.certificateContainer}>
       <View style={styles.certificateBox}>
+        {/* Watermark */}
+        <Text style={styles.watermark}>VOLUNTEER SPHERE</Text>
+
+        {/* Header for Certificate Title */}
         <View style={styles.header}>
           <Text style={styles.headerText}>CERTIFICATE OF COMPLETION</Text>
         </View>
-        <Text style={styles.bodyText}>This certificate is awarded to</Text>
-        <Text style={styles.name}>{certificate.certificateDetails.studentName}</Text>
-        <Text style={styles.bodyText}>For completing</Text>
-        <Text style={styles.activity}>{certificate.certificateDetails.activityName}</Text>
-        <Text style={styles.certificateFooter}>We appreciate your efforts and dedication.</Text>
+
+        {/* Certificate Details */}
+        <View style={styles.centeredContent}>
+          <Text style={styles.bodyText}>This certificate is awarded to</Text>
+          <Text style={styles.name}>{certificate.certificateDetails.studentName}</Text>
+          <Text style={styles.bodyText}>For completing</Text>
+          <Text style={styles.activity}>{certificate.certificateDetails.activityName}</Text>
+          <Text style={styles.certificateFooter}>
+            We appreciate your efforts and dedication.
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -39,6 +49,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
+    position: 'relative', // Added for watermark positioning
   },
   header: {
     backgroundColor: '#004445',
@@ -53,6 +64,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
+  },
+  centeredContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20, // Added margin to center the text block vertically
   },
   bodyText: {
     fontSize: 18,
@@ -72,24 +88,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  date: {
+  certificateFooter: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 10,
-  },
-  footer: {
     marginTop: 20,
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 16,
     color: '#000000',
-    alignItems: 'center',
   },
-  signature: {
-    fontSize: 18,
+  watermark: {
+    position: 'absolute',
+    top: '75%',
+    left: '35%',
+    transform: [{ translateX: -50 }, { translateY: -50 }],
+    fontSize: 25,
+    color: 'orange',
+    opacity: 0.35, // Low opacity for watermark effect
     fontWeight: 'bold',
     textAlign: 'center',
+    zIndex: -1, // Ensures watermark is behind other content
   },
 });
 
