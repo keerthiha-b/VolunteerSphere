@@ -55,13 +55,6 @@ const OrgLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Review Comments on Past Postings</Text>
         </TouchableOpacity>
 
-        {/* New button for "Approve certificates" */}
-        <TouchableOpacity 
-          style={styles.optionButton} 
-          onPress={() => navigation.navigate('PastActivities')}  // Ensure this screen exists in your navigation stack
-        >
-          <Text style={styles.optionButtonText}>Approve certificates</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
