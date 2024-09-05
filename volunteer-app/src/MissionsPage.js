@@ -25,7 +25,8 @@ const MissionsPage = () => {
       if (Array.isArray(response.data)) {
         const missionsWithFavorites = response.data.map(mission => ({
           ...mission,
-          isFavorite: false  // Initialize all missions as not favorite
+          isFavorite: false,  // Initialize all missions as not favorite
+          completed: mission.completed || false
         }));
         setMissions(missionsWithFavorites);
       } else {
@@ -69,7 +70,7 @@ const MissionsPage = () => {
     switch (tab) {
       case 'all': return missions;
       case 'favs': return missions.filter(mission => mission.isFavorite);
-      case 'completed': return missions.filter(mission => mission.isCompleted);
+      case 'completed': return missions.filter(mission => mission.completed);
       default: return missions;
     }
   };
