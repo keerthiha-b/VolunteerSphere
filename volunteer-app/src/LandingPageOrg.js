@@ -15,6 +15,7 @@ const OrgLandingPage = ({ navigation }) => {
 
       <Text style={styles.greeting}>Welcome back, {org_name} </Text>
 
+      {/* Notification examples */}
       <View style={styles.notification}>
         <Text style={styles.notificationText}>User Bob Dylan has completed Raking the Playground and is requesting confirmation.</Text>
         <View style={styles.buttonContainer}>
@@ -53,6 +54,7 @@ const OrgLandingPage = ({ navigation }) => {
         <TouchableOpacity style={styles.optionButton}>
           <Text style={styles.optionButtonText}>Review Comments on Past Postings</Text>
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
