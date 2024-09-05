@@ -24,6 +24,10 @@ import UserActivitiesScreen from './src/Commentsbystudents';
 import LeaveComment from './src/leavecomment';  
 import MissionsPage from './src/MissionsPage';
 
+import UserActivitiesScreen from './src/Commentsbystudents';
+import LeaveComment from './src/leavecomment';  
+import AdminComment from'./src/AdminCommentstab';
+import Commentdetail from './src/commentsview';
 
 
 const Stack = createNativeStackNavigator();
@@ -54,6 +58,10 @@ function App() {
         <Stack.Screen name="UserActivitiesScreen" component={UserActivitiesScreen}/>
         <Stack.Screen name="Leave Comment" component={LeaveComment} />
         <Stack.Screen name="MissionsPage" component={MissionsPage} options={{ headerShown: true, title: 'Missions' }} /> 
+        <Stack.Screen name="UserActivitiesScreen" component={UserActivitiesScreen}/>
+        <Stack.Screen name="Leave Comment" component={LeaveComment} />
+        <Stack.Screen name="Comments" component={AdminComment} />
+        <Stack.Screen name="Commentdetail" component={Commentdetail}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

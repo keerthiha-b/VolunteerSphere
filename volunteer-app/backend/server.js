@@ -10,14 +10,15 @@ const signupRoutes = require('./API/getsignups'); // Import the new signupRoutes
 
 const certificateRoutes = require('./API/certificategeneration'); // Import the certificate generation routes
 
-
-const commentRoutes = require('./API/commentRoutes');
-const fetchSignedUpActivities = require('./API/fetchactivity');
 const missionsApi = require('./API/missions');
 const categoriesApi = require('./API/categories');
 
 // Progress API
 
+const cors = require('cors');
+const commentRoutes = require('./API/commentRoutes');
+const fetchSignedUpActivities = require('./API/fetchactivity');
+const commentsforadmins = require('./API/fetchcomments'); // Admin-specific comments handler
 const getProgress = require('./API/getProgress');
 const Decline = require('./API/decline');
 const cors = require('cors');
@@ -47,6 +48,15 @@ app.use('/activities', activityRouter);
 app.use('/api/map', mapRouter);
 
 app.use('/comments', commentRoutes);
+app.use('/user-activities', fetchSignedUpActivities);
+
+// General comment routes
+app.use('/comments', commentRoutes);
+
+// Admin-specific comment routes
+app.use('/admin/comments', commentsforadmins);
+
+// Fetch signed-up activities
 app.use('/user-activities', fetchSignedUpActivities);
 
 // PROGRESS
