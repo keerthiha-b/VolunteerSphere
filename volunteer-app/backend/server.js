@@ -7,7 +7,17 @@ const mapRouter = require('./API/getactivitymap'); // Map-related routes
 const newUserToActivity = require('./API/newUsertoActivity'); // Corrected API handler import
 const leaderboardRouter = require('./API/leaderboard'); 
 const signupRoutes = require('./API/getsignups'); // Import the new signupRoutes
+
 const certificateRoutes = require('./API/certificategeneration'); // Import the certificate generation routes
+
+const cors = require('cors');
+const commentRoutes = require('./API/commentRoutes');
+const fetchSignedUpActivities = require('./API/fetchactivity');
+const missionsApi = require('./API/missions');
+const categoriesApi = require('./API/categories');
+
+// Progress API
+
 const getProgress = require('./API/getProgress');
 const Decline = require('./API/decline');
 const cors = require('cors');
@@ -36,22 +46,33 @@ app.use('/activities', activityRouter);
 // Map-related endpoints
 app.use('/api/map', mapRouter);
 
+app.use('/comments', commentRoutes);
+app.use('/user-activities', fetchSignedUpActivities);
+
 // PROGRESS
 app.post('/get-progress', getProgress);
 
 // Signup activity 
 app.post('/signup', newUserToActivity);
 
-// Leaderboard
-app.use('/leaderboard', leaderboardRouter);
-
 // Sign-ups route for fetching sign-ups for a specific activity
-app.use('/signups', signupRoutes);
+
 
 // Certificate Generation and Retrieval
 app.use('/api/generate-certificate', certificateRoutes); // Use the certificate generation route
 
 app.use('/api/decline-signup',Decline)
+
+app.use('/signups', signupRoutes); // Ensure this line is added to use the signup route
+// Leaderboard activity
+app.use('/leaderboard', leaderboardRouter);
+
+// missions
+app.use('/api', missionsApi);
+
+// categories
+app.use('/api/categories', categoriesApi);
+
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
