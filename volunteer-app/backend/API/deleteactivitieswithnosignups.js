@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Activity = require('../Schema/Activity'); // Adjust paths as necessary
-const Certificate = require('../Schema/Certificate');
+//const Certificate = require('../Schema/Certificate');
 const Comment = require('../Schema/Comments');
 const UserActivity = require('../Schema/UserActivity');
 
@@ -24,7 +24,7 @@ async function deleteActivityById(req, res) {
 
     // Delete activity and related documents if no signups
     await Activity.deleteOne({ _id: activityId }).session(session);
-    await Certificate.deleteMany({ activityId }).session(session);
+    //await Certificate.deleteMany({ activityId }).session(session);
     await Comment.deleteMany({ userToActivityId: activityId }).session(session);
 
     await session.commitTransaction();
@@ -39,4 +39,4 @@ async function deleteActivityById(req, res) {
   }
 }
 
-module.exports = { deleteActivityById };
+module.exports = deleteActivityById;

@@ -21,6 +21,7 @@ const fetchSignedUpActivities = require('./API/fetchactivity');
 const commentsforadmins = require('./API/fetchcomments'); // Admin-specific comments handler
 const getProgress = require('./API/getProgress');
 const Decline = require('./API/decline');
+const Deletewithnosignup = require('./API/deleteactivitieswithnosignups'); 
 
 const app = express();
 const PORT = process.env.PORT || 3001; 
@@ -57,6 +58,8 @@ app.use('/admin/comments', commentsforadmins);
 
 // Fetch signed-up activities
 app.use('/user-activities', fetchSignedUpActivities);
+
+app.post('/delete-activity', Deletewithnosignup); 
 
 // PROGRESS
 app.post('/get-progress', getProgress);
