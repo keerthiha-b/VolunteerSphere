@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Modal } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
-import axios from 'axios'; // Add axios for API calls
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 // Import the images
 import healthImage from './images/Health.jpg';
@@ -20,8 +20,8 @@ const categoryImages = {
 };
 
 const EachPosting = ({ opportunity, deleteActivityCallback }) => {
-  const navigation = useNavigation(); // Initialize navigation
-  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+  const navigation = useNavigation();
+  const [modalVisible, setModalVisible] = useState(false);
 
   // Function to handle deleting the activity
   const deleteActivity = async () => {
@@ -31,16 +31,28 @@ const EachPosting = ({ opportunity, deleteActivityCallback }) => {
       });
 
       if (response.status === 200) {
-        setModalVisible(false); // Close modal
-        deleteActivityCallback(opportunity._id); // Call the parent to remove the activity from the list
+        setModalVisible(false);
+        deleteActivityCallback(opportunity._id);
+        Alert.alert('Success', 'Activity deleted successfully.');
+      } else if (response.status === 400) {
+        // Show an alert if there are signups
+        Alert.alert(
+          'Cannot Delete Activity',
+          `This activity has ${response.data.signupsCount} signups and cannot be deleted.`
+        );
       }
     } catch (error) {
-      console.error('Error deleting activity:', error);
-
+      // If an error other than 400 is encountered, handle it here
       if (error.response && error.response.status === 400) {
-        alert('Cannot Delete', `This activity has ${error.response.data.signupsCount} signups and cannot be deleted.`);
+        // Handle the case when there are signups
+        Alert.alert(
+          'Cannot Delete Activity',
+          `This activity has ${error.response.data.signupsCount} signups and cannot be deleted.`
+        );
       } else {
-        alert('Error', 'Failed to delete activity.');
+        // Handle all other errors
+        console.error('Error deleting activity:', error);
+        Alert.alert('Error', 'Failed to delete activity. Please try again.');
       }
     }
   };
