@@ -4,25 +4,25 @@ const Comment = require('../Schema/Comments');
 const UserActivity = require('../Schema/UserActivity');
 const Activity = require('../Schema/Activity');
 
-// Assuming you have middleware to get current user's ID (e.g., req.user.id)
+// Assuming you have middleware that sets req.user.id as the logged-in organization ID
 router.get('/:opportunityId', async (req, res) => {
   try {
     const { opportunityId } = req.params;
-    const userId = req.user.id; // Assuming req.user.id is the logged-in organization user ID
+    const orgId = req.user.id; // Logged-in organization's ID from auth middleware
 
-    // Find the activity that belongs to the organization
-    const activity = await Activity.findOne({ _id: opportunityId, userId });
+    // Find the activity that belongs to the logged-in organization
+    const activity = await Activity.findOne({ _id: opportunityId, userId: orgId });
 
     if (!activity) {
-      return res.status(404).json({ message: 'Activity not found or not authorized' });
+      return res.status(404).json({ message: 'Activity not found or unauthorized' });
     }
 
-    // Find the UserActivity entries related to this activity
+    // Find the related UserActivity records for the activity
     const userActivities = await UserActivity.find({ opportunityId: activity._id });
 
     const userToActivityIds = userActivities.map(activity => activity._id);
 
-    // Fetch comments based on UserActivity references
+    // Fetch comments for this organization's activity
     const comments = await Comment.find({ userToActivityId: { $in: userToActivityIds } })
       .populate('userToActivityId')
       .exec();
