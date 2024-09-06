@@ -24,7 +24,7 @@ const commentsforadmins = require('./API/fetchcomments'); // Admin-specific comm
 const getProgress = require('./API/getProgress');
 const Decline = require('./API/decline');
 const approve = require('./API/approve-points');
-const cors = require('cors');
+
 
 
 // Avatar API
