@@ -21,10 +21,14 @@ const fetchSignedUpActivities = require('./API/fetchactivity');
 const commentsforadmins = require('./API/fetchcomments'); // Admin-specific comments handler
 const getProgress = require('./API/getProgress');
 const Decline = require('./API/decline');
+const approve = require('./API/approve-points');
+const cors = require('cors');
+
 
 // Avatar API
 const getAvatar = require('./API/getAvatar');
 const setAvatar = require('./API/setAvatar');
+
 
 const app = express();
 const PORT = process.env.PORT || 3001; 
@@ -74,7 +78,9 @@ app.post('/signup', newUserToActivity);
 // Certificate Generation and Retrieval
 app.use('/api/generate-certificate', certificateRoutes); // Use the certificate generation route
 
-app.use('/api/decline-signup',Decline)
+app.use('/api/decline-signup',Decline);
+
+app.use ('/api/approve-signup',approve);
 
 app.use('/signups', signupRoutes); // Ensure this line is added to use the signup route
 // Leaderboard activity

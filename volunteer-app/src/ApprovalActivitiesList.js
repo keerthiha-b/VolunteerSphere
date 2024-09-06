@@ -26,7 +26,7 @@ const ApprovalActivitiesList = ({ opportunity }) => {
     if (opportunity._id) {
       navigation.navigate('PastActivities', { activityId: opportunity._id });
     } else {
-      console.error('No activity ID found in opportunity object:', opportunity);
+      console.error('No  activity ID found in opportunity object:', opportunity);
     }
   };
 

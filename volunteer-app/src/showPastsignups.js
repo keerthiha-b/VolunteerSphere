@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 
 const SignUps = ({ route }) => {
-  const { activityId } = route.params; // Get the activityId from route params
+  const { activityId } = route.params;
   const [signups, setSignups] = useState([]);
 
   useEffect(() => {
@@ -26,37 +26,50 @@ const SignUps = ({ route }) => {
     fetchSignups();
   }, [activityId]);
 
-  // Function to handle certificate approval
-  const handleApprove = async (signupId) => {
+  // Function to handle signup approval, certificate generation, and updating points
+  const handleApprove = async (userId, opportunityId, signupId) => {
     try {
-      console.log(`Approving signup with ID: ${signupId}`); // Debugging statement
-
       // Trigger certificate generation API call
-      const response = await fetch(`https://volunteersphere.onrender.com/api/generate-certificate/${signupId}`, {
+      const certificateResponse = await fetch(`https://volunteersphere.onrender.com/api/generate-certificate/${signupId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
       });
-      
-      if (response.ok) {
+
+      if (certificateResponse.ok) {
         Alert.alert('Success', 'Certificate generated successfully!');
-        console.log('Certificate generated successfully!'); // Debugging statement
-        // Optionally, update the UI or state if needed
+        console.log('Certificate generated successfully!');
+
+        // Approve the signup and update points
+        const approveResponse = await fetch(`https://volunteersphere.onrender.com/api/approve-signup/${userId}/${opportunityId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (approveResponse.ok) {
+          Alert.alert('Success', 'Signup approved and points updated successfully!');
+          const updatedSignups = signups.filter(item => item._id !== signupId);
+          setSignups(updatedSignups);
+        } else {
+          console.error('Error approving signup and updating points:', approveResponse.status, approveResponse.statusText);
+          Alert.alert('Error', `Failed to approve signup and update points: ${approveResponse.statusText}`);
+        }
       } else {
-        console.error('Error generating certificate:', response.status, response.statusText);
-        Alert.alert('Error', 'Failed to generate certificate.');
+        console.error('Error generating certificate:', certificateResponse.status, certificateResponse.statusText);
+        Alert.alert('Error', `Failed to generate certificate: ${certificateResponse.statusText}`);
       }
     } catch (error) {
       console.error('Error:', error);
-      Alert.alert('Error', 'An error occurred while generating the certificate.');
+      Alert.alert('Error', 'An error occurred while processing the signup.');
     }
   };
 
   // Function to handle decline action
   const handleDecline = async (signupId) => {
     try {
-      console.log(`Declining signup with ID: ${signupId}`); // Debugging statement
       const response = await fetch(`https://volunteersphere.onrender.com/api/decline-signup/${signupId}`, {
         method: 'PATCH',
         headers: {
@@ -91,12 +104,10 @@ const SignUps = ({ route }) => {
             <View style={[styles.signupItem, index % 2 === 0 ? styles.orangeBackground : styles.grayBackground]}>
               <View style={styles.infoContainer}>
                 <Text style={styles.participantNumber}>{index + 1}.</Text>
-                <Text style={styles.signupName}>
-                  {item.firstName} {item.lastName}
-                </Text>
+                <Text style={styles.signupName}>{item.firstName} {item.lastName}</Text>
               </View>
               <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.approveButton} onPress={() => handleApprove(item._id)}>
+                <TouchableOpacity style={styles.approveButton} onPress={() => handleApprove(item.userId, item.opportunityId, item._id)}>
                   <Text style={styles.buttonText}>Approve</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.rejectButton} onPress={() => handleDecline(item._id)}>
