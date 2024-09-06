@@ -9,7 +9,7 @@ const ActivityListScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        // Fetch all activities without needing an organizationId
+        // Fetch activities, no need to send userId or token, backend will handle the org userId
         const response = await axios.get(`https://volunteersphere.onrender.com/activities`);
         setActivities(response.data);
       } catch (error) {
