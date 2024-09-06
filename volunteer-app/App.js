@@ -48,7 +48,7 @@ function App() {
         <Stack.Screen name="ActivitySignup" component={ActivitySignup} />
         <Stack.Screen name="Leaderboard" component={LeaderboardPage} options={{ headerShown: true, title: 'Leaderboard Page' }} />
         <Stack.Screen name="Signups" component={SignUps} />
-
+        <Stack.Screen name="Success" component={SuccessScreen} />
         <Stack.Screen name="PastActivities" component={PastActivities} />
         <Stack.Screen name="CertificatesScreen" component={CertificatesScreen} options={{ title: 'Your Certificates' }} />
         <Stack.Screen name="CertificateDetailScreen" component={CertificateDetailScreen} options={{ title: 'Your Certificates' }} />

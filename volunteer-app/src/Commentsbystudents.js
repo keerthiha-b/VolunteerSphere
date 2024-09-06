@@ -32,12 +32,12 @@ const UserActivitiesScreen = ({ navigation }) => {
         const response = await axios.get(`https://volunteersphere.onrender.com/user-activities/${storedUserId}`);
         if (response.status === 200) {
           if (response.data.length === 0) {
-            // No activities found
+            // No activities found, but no error
             setSignedUpActivities([]);
             setError('No activities signed up yet.');
           } else {
             setSignedUpActivities(response.data);
-            setError(null); // Reset error if the request succeeds and data is not empty
+            setError(null); // Clear error state if activities are found
           }
         } else {
           setSignedUpActivities([]);
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-    backgroundColor: '#ff8c00', // Orange color for the button
+    backgroundColor: '#ff8c00',
     paddingVertical: 10,
     borderRadius: 5,
     marginHorizontal: 5,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: '#ddd', // Gray color for the "Cancel" button
+    backgroundColor: '#ddd',
     paddingVertical: 10,
     borderRadius: 5,
     marginHorizontal: 5,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   cancelButtonText: {
-    color: '#333', // Darker text color for the "Cancel" button
+    color: '#333',
     fontSize: 14,
     fontWeight: 'bold',
   },
