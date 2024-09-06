@@ -1,39 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, FlatList, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { ProgressBar } from 'react-native-paper';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useFocusEffect } from '@react-navigation/native';
+import { getValueFor } from './utils/secureStoreUtil'; 
 
 const MissionsPage = () => {
   const [missions, setMissions] = useState([]);
   const [selectedTab, setSelectedTab] = useState('all');
+  const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
-    let isMounted = true; // Track if the component is still mounted
+  const fetchMissions = async () => {
+    try {
 
-    const fetchMissions = async () => {
-        try {
-          const response = await axios.get('https://volunteersphere.onrender.com/api/missions');
-  
-          if (isMounted && Array.isArray(response.data)) {
-            // Enhance missions with favorite status
-            const missionsWithFavorites = response.data.map(mission => ({
-              ...mission,
-              isFavorite: false  // Initialize all missions as not favorite
-            }));
-            setMissions(missionsWithFavorites);
-          } else {
-            console.error('Unexpected data format, expected an array.');
-          }
-        } catch (error) {
-          console.error('Error fetching missions:', error);
-        }
-      };
-  
+      const storedUserId = await getValueFor("userId");
+      if (!storedUserId) {
+        Alert.alert("Login Required", "Please log in to view missions.");
+        return;
+      }
+      setUserId(storedUserId);
+
+      const response = await axios.get('https://volunteersphere.onrender.com/api/missions');
+      if (Array.isArray(response.data)) {
+        const missionsWithFavorites = response.data.map(mission => ({
+          ...mission,
+          isFavorite: false,  // Initialize all missions as not favorite
+          completed: mission.completed || false
+        }));
+        setMissions(missionsWithFavorites);
+      } else {
+        console.error('Unexpected data format, expected an array.');
+      }
+    } catch (error) {
+      console.error('Error fetching missions:', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
       fetchMissions();
-  
-      return () => { isMounted = false; };
-    }, []);
+    }, [])
+  );
 
   const toggleFavorite = (id) => {
     // Toggle the favorite status
@@ -60,15 +68,60 @@ const MissionsPage = () => {
 
   const filterMissions = (tab) => {
     switch (tab) {
-      case 'all': return missions;
-      case 'favs': return missions.filter(mission => mission.isFavorite);
-      case 'completed': return missions.filter(mission => mission.isCompleted);
-      default: return missions;
+      case 'all': 
+        return missions;
+      case 'favs': 
+        return missions.filter(mission => mission.isFavorite);
+      case 'completed':
+        return missions.filter(mission => {
+          const userProgress = mission.userProgresses.find(up => up.userId === userId);
+          const progressPercent = userProgress ? Math.round((userProgress.progress / mission.goal) * 100) : 0;
+          return progressPercent >= 100;
+        });
+      default: 
+        return missions;
     }
   };
 
+  useEffect(() => {
+    missions.forEach(mission => {
+      const userProgress = mission.userProgresses.find(up => up.userId === userId);
+      const progressPercent = userProgress ? Math.round((userProgress.progress / mission.goal) * 100) : 0;
+
+      if (progressPercent >= 100 && !mission.completed) {
+        handleMissionCompletion(mission);
+      }
+    });
+  }, [missions, userId]);
+
+  const handleMissionCompletion = async (mission) => {
+    // Call backend endpoint to update mission completion and user points
+    console.log(mission._id);
+    console.log(userId);
+
+    try {
+      const response = await axios.post('https://volunteersphere.onrender.com/api/missions/complete', {
+        userId,
+        missionId: mission._id
+      });
+      Alert.alert("Mission Completed", "Congratulations on completing the mission!");
+      fetchMissions();  // Reload missions to reflect the updated status
+    } catch (error) {
+      console.error("Failed to complete mission:", error);
+      Alert.alert("Error", "Failed to update mission completion.");
+    }
+  };
+
+ 
   const renderMissionItem = ({ item }) => {
-    const progressPercent = Math.round((item.progress / item.goal) * 100);
+    // Assuming 'currentUser' holds the current logged-in user's information
+    const userProgress = item.userProgresses.find(up => up.userId === userId);
+  
+    // Calculate the percentage progress for the current user
+    const progressPercent = userProgress
+      ? Math.round((userProgress.progress / item.goal) * 100)
+      : 0;
+    
     return (
       <View style={styles.missionCard}>
         <View style={styles.missionHeader}>
@@ -85,8 +138,8 @@ const MissionsPage = () => {
         </View>
         <View style={styles.progressContainer}>
           <ProgressBar
-            progress={item.progress / item.goal}
-            color={item.progress >= item.goal ? '#4CAF50' : '#FA7F35'}
+            progress={progressPercent / 100} // Ensure this is a fraction
+            color={progressPercent >= 100 ? '#4CAF50' : '#FA7F35'}
             style={styles.progressBar}
           />
           <Text style={styles.progressTextInsideBar}>
@@ -98,7 +151,7 @@ const MissionsPage = () => {
         </View>
       </View>
     );
-  }; 
+  };  
 
   return (
     <View style={styles.container}>

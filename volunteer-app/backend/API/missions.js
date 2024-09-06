@@ -12,44 +12,44 @@ router.post('/missions/populate', async (req, res) => {
         title: "Environmental Steward",
         category: "Environment",
         goal: 3,
-        progress: 0,
+        userProgresses: [], // Ensure this field is included for user-specific progress tracking
         points: 100,
         goalType: "activity",
         description: "Participate in activities that protect or restore the environment, such as tree planting or beach cleanups.",
-        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 20)), // Expires in 15 days
         completed: false
       },
       {
         title: "Community Helper",
         category: "Community Service",
         goal: 5,
-        progress: 0,
+        userProgresses: [], // Same here for user-specific progress tracking
         points: 150,
         goalType: "hours",
         description: "Help out in your local community by volunteering for 5 hours.",
-        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 20)), // Expires in 15 days
         completed: false
       },
       {
         title: "Healthy Living Advocate",
-        category: "Health and Wellness",
+        category: "Health",
         goal: 2,
-        progress: 0,
+        userProgresses: [], // Each mission should have this field
         points: 120,
         goalType: "activity",
         description: "Participate in activities that promote healthy living, such as fitness events, mental health workshops, or wellness initiatives.",
-        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 20)), // Expires in 15 days
         completed: false
       },
       {
         title: "Educator for Change",
         category: "Education",
         goal: 2,
-        progress: 0,
+        userProgresses: [], // Initialize empty for new tracking approach
         points: 130,
         goalType: "activity",
         description: "Promote education by attending or assisting in educational activities like tutoring, teaching workshops, or literacy programs.",
-        expirationDate: new Date(new Date().setDate(new Date().getDate() + 15)), // Expires in 15 days
+        expirationDate: new Date(new Date().setDate(new Date().getDate() + 20)), // Expires in 15 days
         completed: false
       }
     ];

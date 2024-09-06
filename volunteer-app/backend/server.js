@@ -12,6 +12,8 @@ const certificateRoutes = require('./API/certificategeneration'); // Import the 
 
 const missionsApi = require('./API/missions');
 const categoriesApi = require('./API/categories');
+const updatepointsapi = require('./API/updatepoints');
+// const { updateMissionProgress } = require('./API/missionprogress');
 
 // Progress API
 
@@ -88,6 +90,8 @@ app.use('/leaderboard', leaderboardRouter);
 
 // missions
 app.use('/api', missionsApi);
+app.post('/api/missions/complete', updatepointsapi);
+// app.post('/api/update-mission-progress', updateMissionProgress);
 
 // categories
 app.use('/api/categories', categoriesApi);

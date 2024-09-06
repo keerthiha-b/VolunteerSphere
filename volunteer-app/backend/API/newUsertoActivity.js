@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const UserActivity = require('../Schema/UserActivity'); // Correct path with exact casing
 const User = require('../Schema/User'); // Correct path to the User model
 const Activity = require('../Schema/Activity'); // Correct path to the Activity model
+const { updateMissionProgress } = require('./missionprogress');
 
 const newUserToActivity = async (req, res) => {
   try {
@@ -70,6 +71,7 @@ const newUserToActivity = async (req, res) => {
 
     console.log('Saving new UserActivity entry to the database...');
     await newUserToActivityEntry.save();
+    await updateMissionProgress(userId, opportunityId);
 
     console.log('Successfully signed user up for opportunity', newUserToActivityEntry);
     res.status(201).json({ message: 'Successfully signed up for the opportunity!' });

@@ -1,6 +1,19 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const missionSchema = new mongoose.Schema({
+const userProgressSchema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  progress: {
+    type: Number,
+    default: 0
+  }
+});
+
+const missionSchema = new Schema({
   title: {
     type: String,
     required: true
@@ -10,15 +23,12 @@ const missionSchema = new mongoose.Schema({
     required: true
   },
   goal: {
-    type: Number, // Total number of activities or hours to complete
+    type: Number,
     required: true
   },
-  progress: {
-    type: Number, // Track progress towards goal
-    default: 0
-  },
+  userProgresses: [userProgressSchema], // Array of user progress
   points: {
-    type: Number, // Total points awarded upon completion
+    type: Number,
     required: true
   },
   goalType: {
@@ -30,12 +40,12 @@ const missionSchema = new mongoose.Schema({
     required: true
   },
   expirationDate: {
-    type: Date, // Date after which the mission expires
+    type: Date,
     required: true
   },
   completed: {
     type: Boolean,
-    default: false // Marks if the mission has been completed
+    default: false
   }
 });
 
