@@ -40,6 +40,11 @@ router.post('/activity', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const activities = await Activity.find().populate('userId', 'organization_name');
+    
+    if (!activities.length) {
+      return res.status(200).json([]); // Return an empty array if no activities
+    }
+
     res.json(activities);
   } catch (error) {
     console.error('Error fetching activities:', error);
@@ -52,6 +57,11 @@ router.get('/:organizationId', async (req, res) => {
   try {
     const { organizationId } = req.params;
     const activities = await Activity.find({ userId: organizationId, userType: 'org' });
+
+    if (!activities.length) {
+      return res.status(200).json([]); // Return an empty array if no activities
+    }
+
     res.json(activities);
   } catch (error) {
     console.error('Error fetching activities for organization:', error);

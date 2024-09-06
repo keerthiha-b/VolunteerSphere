@@ -9,6 +9,7 @@ const VolunteerOpportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [pastOpportunities, setPastOpportunities] = useState([]);
   const [selectedTab, setSelectedTab] = useState('upcoming');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -28,6 +29,7 @@ const VolunteerOpportunities = () => {
         setPastOpportunities(allActivities.filter(activity => new Date(activity.date) < new Date())); // Past
       } catch (error) {
         console.error('Error fetching activities:', error);
+        setError('Error fetching activities');
       }
     };
 
@@ -36,21 +38,29 @@ const VolunteerOpportunities = () => {
 
   const renderUpcomingActivities = () => (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={opportunities}
-        keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => <EachPosting opportunity={item} />}
-      />
+      {opportunities.length === 0 ? (
+        <Text>No upcoming opportunities found.</Text> // Display message if no upcoming opportunities
+      ) : (
+        <FlatList
+          data={opportunities}
+          keyExtractor={item => item._id.toString()}
+          renderItem={({ item }) => <EachPosting opportunity={item} />}
+        />
+      )}
     </SafeAreaView>
   );
 
   const renderPastActivities = () => (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={pastOpportunities}
-        keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => <ApprovalActivitiesList opportunity={item} />}
-      />
+      {pastOpportunities.length === 0 ? (
+        <Text>No past opportunities found.</Text> // Display message if no past opportunities
+      ) : (
+        <FlatList
+          data={pastOpportunities}
+          keyExtractor={item => item._id.toString()}
+          renderItem={({ item }) => <ApprovalActivitiesList opportunity={item} />}
+        />
+      )}
     </SafeAreaView>
   );
 
@@ -77,8 +87,13 @@ const VolunteerOpportunities = () => {
       </View>
 
       {/* Render content based on selected tab */}
-      {selectedTab === 'upcoming' && renderUpcomingActivities()}
-      {selectedTab === 'past' && renderPastActivities()}
+      {error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : selectedTab === 'upcoming' ? (
+        renderUpcomingActivities()
+      ) : (
+        renderPastActivities()
+      )}
     </View>
   );
 };
@@ -109,6 +124,11 @@ const styles = StyleSheet.create({
   },
   activeTabText: {
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 10,
   },
 });
 

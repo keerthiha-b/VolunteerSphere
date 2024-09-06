@@ -9,7 +9,7 @@ router.get('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
-    console.log(`Fetching activities for userId: ${userId}`); // Debugging line
+    console.log(`Fetching activities for userId: ${userId}`);
 
     // Validate if userId is a valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -21,9 +21,11 @@ router.get('/:userId', async (req, res) => {
 
     if (!activities.length) {
       console.log('No activities found for this user.');
-      return res.status(404).json({ errorMsg: 'No activities found for this user.' });
+      // Return a 200 status with an empty array to indicate no activities found
+      return res.status(200).json([]); 
     }
 
+    // Return the activities if found
     res.status(200).json(activities);
   } catch (error) {
     console.error('Error fetching activities:', error);
