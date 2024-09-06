@@ -42,30 +42,6 @@ const OrgLandingPage = ({ navigation }) => {
         </View>
       </View>
 
-      <Text style={styles.title}>What would you like to do?</Text>
-
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CreateVolunteerOpportunity')}>
-          <Text style={styles.optionButtonText}>Create a New Volunteer Opportunity</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('VolunteerOpportunities')}>
-          <Text style={styles.optionButtonText}>Manage Volunteer Opportunities</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Review Comments on Past Postings</Text>
-        </TouchableOpacity>
-
-        {/* New button for "Approve certificates" */}
-        <TouchableOpacity 
-          style={styles.optionButton} 
-          onPress={() => navigation.navigate('PastActivities', { activityId: '66d78bc05c2ec9cd682a5119' })}  // Ensure this screen exists in your navigation stack
-        >
-          <Text style={styles.optionButtonText}>Approve certificates</Text>
-        </TouchableOpacity>
-      </View>
-
     </SafeAreaView>
   );
 };
