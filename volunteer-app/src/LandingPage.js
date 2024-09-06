@@ -1,8 +1,22 @@
 
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { save, getValueFor, remove } from './utils/secureStoreUtil'; // Adjust the path as needed
 
 const LandingPage = ({ navigation }) => {
+  const checkData = async () => {
+
+    const storedId = await getValueFor("userId");
+
+    if (!storedId) {
+      console.log('User ID is empty.');
+    }
+  }
+
+  useEffect(() => {
+    checkData();
+  }, [])
+
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logo.png')} style={styles.logo} />

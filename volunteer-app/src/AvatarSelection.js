@@ -1,19 +1,11 @@
-
-import axios from 'axios';
-import React, { useEffect, useState, useCallback } from 'react';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, Text, Button, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { save, getValueFor, remove } from './utils/secureStoreUtil'; // Adjust the path as needed
-import { ProgressBar } from 'react-native-paper';
+import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
+import { ProgressBar, MD3Colors } from 'react-native-paper';
 
-import character from './images/PlayerChar.png';
-import leaderboardIcon from './images/buttonicons/LeaderboardIcon.png';
-import missionIcon from './images/buttonicons/MissionsIcon.png';
-import logoutIcon from './images/buttonicons/log-out.svg';
-import MapScreen from './MapScreen';
-
-// AVATAR IMAGES
+// IMAGES
+import character from './images/PlayerChar.png'; //default
 import Construction from './images/Avatars/Construction.png';
 import FireFighter from './images/Avatars/FireFighter.png';
 import Goggles from './images/Avatars/Goggles.png';
@@ -21,12 +13,11 @@ import Headphones from './images/Avatars/Headphones.png';
 import Nurse from './images/Avatars/Nurse.png';
 import Pilot from './images/Avatars/Pilot.png';
 
-const StudentLandingPage = ({ navigation }) => {
+const AvatarSelection = ({ navigation }) => {
   const [username, setUsername] = useState('user');
-  const [id, setId] = useState(null);
+  const [id, setId] = useState(0);
   const [progress, setProgress] = useState({ level: 1, points: 0, maxPoints: 1000 });
   const [currAvatar, setCurrAvatar] = useState('Default.png');
-  const isFocused = useIsFocused();
 
   // avatar dictionary
   const avatarDictionary = {
@@ -52,7 +43,7 @@ const StudentLandingPage = ({ navigation }) => {
         setId(storedId);
       } else {
         console.error('Invalid ID format:', storedId);
-        Alert.alert('Error', 'Invalid user ID format. Please log in  again.');
+        Alert.alert('Error', 'Invalid user ID format. Please log in again.');
       }
     } catch (error) {
       console.error('Error initializing user data:', error);
@@ -60,23 +51,10 @@ const StudentLandingPage = ({ navigation }) => {
     }
   };
 
+  // ON BOOT
   useEffect(() => {
     initializeUserData();
-  }, [])
-
-  // Fetch progress data when ID is set
-  useEffect(() => {
-    if (isFocused) {
-      console.log("called when screen open or when back on screen "); 
-
-      // Want to update possible progress
-      if (id) {
-        console.log(`Attempting to fetch progress for user ID: ${id}`); // Added log
-        getAvatar();
-        getProgress();
-      }
-   }
-  },[isFocused]);
+  }, []);
 
   // Fetch progress data when ID is set
   useEffect(() => {
@@ -110,34 +88,19 @@ const StudentLandingPage = ({ navigation }) => {
       }
 
       const data = await response.json();
+      console.log('Received progress data:', data); // Log the received data
 
-      if (response.ok) {
-        setProgress(data);
-      } else {
-        console.error('Error getting progress:', data.errorMsg);
-        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data');
-      }
+      setProgress(data);
     } catch (error) {
       console.error('Network Error:', error);
       Alert.alert('Network Error', 'Could not fetch progress data.');
     }
   };
 
-  const handleMissionsClick = () => {
-    axios.post('https://volunteersphere.onrender.com/api/missions/populate')
-      .then(response => {
-        console.log(response.data.message);
-        navigation.navigate('MissionsPage');
-      })
-      .catch(error => {
-        console.error('Error inserting missions:', error);
-      });
-  };
-
   const getAvatar = async () => {
     try {
       if (!id) {
-        console.error('User ID is not available for fetching avatar.');
+        console.error('User ID is not available for fetching progress.');
         return;
       }
 
@@ -168,73 +131,117 @@ const StudentLandingPage = ({ navigation }) => {
     }
   };
 
-  const logOut = async () =>
-  {
-    await remove('name');
-    await remove('email');
-    await remove('userType');
-    await remove('userId');
-    navigation.navigate('LandingPage');
+  const setAvatar = async (avatarName, minLevel) => {
+    try {
+      if (!id) {
+        console.error('User ID is not available for fetching progress.');
+        return;
+      }
+      
+      if (progress.level < minLevel) {
+        Alert.alert('Attention', 'Cannot equip avatar - must be level ' + minLevel + ' to equip');
+        return;
+      }
+
+      const response = await fetch('https://volunteersphere.onrender.com/set-avatar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id, avatar: avatarName })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        console.error('Error getting progress:', data.errorMsg);
+        Alert.alert('Error', data.errorMsg || 'Could not fetch progress data.');
+        return;
+      }
+
+      const data = await response.json();
+      console.log('Received progress data:', data); // Log the received data
+      getAvatar();
+    } catch (error) {
+      console.error('Network Error:', error);
+      Alert.alert('Network Error', 'Could not fetch progress data.');
+    }
+  };
+
+  const determineButtonStyle = (minLevel) => {
+    if (progress.level >= minLevel) {
+      return styles.optionButtonAvailable;
+    }
+    else {
+      return styles.optionButtonUnavailable;
+    }
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <SafeAreaView style={styles.profileGear}>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile', { name: username })}>
-          <Text style={styles.gearText}>⚙️</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => logOut()}>
-          <Text style={styles.gearText}>⬅️</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
+      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { name: username })}>
+        <Text style={styles.gearText}>⚙️</Text>
+      </TouchableOpacity>
 
-      <TouchableOpacity style={styles.centeredImageContainer} onPress={() => navigation.navigate('AvatarSelection')}>
+      <TouchableOpacity style={styles.centeredImageContainer} onPress={() => setAvatar("Default.png")}>
         <Image
           source={avatarDictionary[currAvatar]} // Update this path to the location of your image file
           style={styles.playerChar}
         />
       </TouchableOpacity>
-      
-      <Text style={styles.greeting}>Welcome back, {username || 'User'} </Text>
 
-      <Text style={styles.title}>What would you like to do?</Text>
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('MapScreen')}>
-          <Text style={styles.optionButtonText}>Find new opportunities</Text>
+        <TouchableOpacity style={styles.optionButtonAvailable} onPress={() => setAvatar("Construction.png", 0)}>
+            <Image
+            source={Construction} // Update this path to the location of your image file
+            style={styles.playerChar}
+            />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Unlock Avatars</Text>
+        <TouchableOpacity style={styles.optionButtonAvailable} onPress={() => setAvatar("FireFighter.png", 0)}>
+            <Image
+                source={FireFighter} // Update this path to the location of your image file
+                style={styles.playerChar}
+            />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('UserActivitiesScreen', { userId: id })}>
-          <Text style={styles.optionButtonText}>Manage Signups and Reviews</Text>
+        <TouchableOpacity style={determineButtonStyle(1)} onPress={() => setAvatar("Goggles.png", 1)}>
+          {progress.level < 1 && <TouchableOpacity style={styles.diagonalLine}/>} 
+            <Image
+                source={Goggles} // Update this path to the location of your image file
+                style={styles.playerChar}
+            />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CertificatesScreen', { studentId: id })}>
-  <Text style={styles.optionButtonText}>Check your awards</Text>
-</TouchableOpacity>
+        <TouchableOpacity style={determineButtonStyle(2)} onPress={() => setAvatar("Headphones.png", 2)}>
+         {progress.level < 2 && <TouchableOpacity style={styles.diagonalLine}/>}
+            <Image
+                source={Headphones} // Update this path to the location of your image file
+                style={styles.playerChar}
+            />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={determineButtonStyle(3)} onPress={() => setAvatar("Nurse.png", 3)}>
+          {progress.level < 3 && <TouchableOpacity style={styles.diagonalLine}/>}
+            <Image
+                source={Nurse} // Update this path to the location of your image file
+                style={styles.playerChar}
+            />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={determineButtonStyle(4)} onPress={() => setAvatar("Pilot.png", 4)}>
+         {progress.level < 4 && <TouchableOpacity style={styles.diagonalLine}/>}
+            <Image
+                source={Pilot} // Update this path to the location of your image file
+                style={styles.playerChar}
+            />
+        </TouchableOpacity>
       </View> 
       
       <Text style={styles.progLevel}> 
         Level {progress.level} 
         <Text style={styles.progPoints}> 🔸 {progress.points} / {progress.maxPoints} pt </Text>
       </Text>
-      
-      <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true}/>
-    
-      <View style={styles.smallOptionsContainer}>
-        <TouchableOpacity style={styles.smallOptionButton} onPress={() => navigation.navigate('Leaderboard', { userId: id })}>
-          <Image
-            source={leaderboardIcon} 
-            style={styles.leaderboardIconStyle}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.smallOptionButton} onPress={handleMissionsClick}>
-          <Image source={missionIcon} style={styles.missionsIconStyle} />
-        </TouchableOpacity>
-      </View> 
+      <ProgressBar progress={progress.points / progress.maxPoints} style={styles.progressBarStyle} color={"#FA7F35"} visible={true} />
     </SafeAreaView>
   );
 };
@@ -249,22 +256,27 @@ const styles = StyleSheet.create({
   },
   profileGear: {
     alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginTop: -60,
-    width: '20%'
   },
   centeredImageContainer: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // marginBottom: 75
     flex: 1, // Make the container fill the available space
     justifyContent: 'center', // Center items vertically
     alignItems: 'center', // Center items horizontally
     marginBottom: 75,
-    marginTop: 60
+    marginTop: 20
+  },
+  progLevel: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    color: '#FA7F35',
+    marginTop: 40
+  },
+  progPoints: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    alignSelf: 'flex-end',
+    color: '#FA7F35',
+    marginTop: 40
   },
   playerChar: {
     width: 85,
@@ -287,20 +299,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  progLevel: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    alignSelf: 'flex-end',
-    color: '#FA7F35',
-    marginTop: 40
-  },
-  progPoints: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    alignSelf: 'flex-end',
-    color: '#FA7F35',
-    marginTop: 40
-  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -311,7 +309,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  optionButton: {
+  optionButtonAvailable: {
     backgroundColor: '#FA7F35',
     padding: 0,
     borderRadius: 10,
@@ -321,6 +319,28 @@ const styles = StyleSheet.create({
     width: '48%',
     height: 100,
   },
+  optionButtonUnavailable: {
+    backgroundColor: '#FA7F35',
+    borderColor: '#ba1e28',
+    borderWidth: 5,
+    padding: 0,
+    borderRadius: 10,
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '48%',
+    height: 100,
+  },
+  diagonalLine: {
+    position: 'absolute',
+    top: 42,
+    left: 15,
+    width: 135, // Ensure it covers the box diagonally
+    height: 5, // Thickness of the line
+    backgroundColor: '#ba1e28', // Line color
+    transform: [{ rotate: '45deg' }], // Rotate to create the diagonal
+    zIndex: 100
+  },
   optionButtonText: {
     color: '#ffffff',
     fontWeight: 'bold',
@@ -328,12 +348,12 @@ const styles = StyleSheet.create({
   },
   progressBarStyle: {
     marginTop: 30,
-    marginLeft: 150,
+    marginLeft: 75,
     bottom: 20,
     height: 50, 
     width: 200,
-    borderRadius: 50,
-    overflow: 'hidden',
+    borderRadius: 50, // Make the edges rounded
+    overflow: 'hidden', // Ensure that the progress bar stays within rounded corners
     backgroundColor: '#EEEEEE', 
   },
   smallOptionsContainer: {
@@ -354,4 +374,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StudentLandingPage;
+export default AvatarSelection;

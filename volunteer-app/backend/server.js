@@ -22,6 +22,10 @@ const commentsforadmins = require('./API/fetchcomments'); // Admin-specific comm
 const getProgress = require('./API/getProgress');
 const Decline = require('./API/decline');
 
+// Avatar API
+const getAvatar = require('./API/getAvatar');
+const setAvatar = require('./API/setAvatar');
+
 const app = express();
 const PORT = process.env.PORT || 3001; 
 const MONGO_DB_URI = process.env.MONGO_DB_URI || "mongodb+srv://Volunteer1:Admin$trator@volunteersphere.5bhk4hh.mongodb.net/?retryWrites=true&w=majority&appName=VolunteerSphere";
@@ -82,6 +86,9 @@ app.use('/api', missionsApi);
 // categories
 app.use('/api/categories', categoriesApi);
 
+// AVATARS
+app.post('/get-avatar', getAvatar);
+app.post('/set-avatar', setAvatar);
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
