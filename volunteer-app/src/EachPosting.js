@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import { useNavigation } from '@react-navigation/native';
 
 // Import the images
 import healthImage from './images/Health.jpg';
@@ -31,18 +31,29 @@ const EachPosting = ({ opportunity }) => {
     }
   };
 
+  // Format the date and time
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
   return (
     <View style={styles.card}>
       {/* Display the selected image */}
       <Image source={categoryImages[opportunity.category] || healthImage} style={styles.image} />
       <Text style={styles.title}>{opportunity.name}</Text>
       <Text style={styles.details}>{opportunity.duration} of volunteering</Text>
+      <Text style={styles.details}>{formatDate(opportunity.date)}</Text>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={viewSignups}>
           <Text style={styles.buttonText}>View Sign-Ups</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.editButton}>
-          <Text style={styles.buttonText}>📝</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.deleteButton}>
           <Text style={styles.buttonText}>🗑️</Text>

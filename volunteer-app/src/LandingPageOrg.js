@@ -1,19 +1,31 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, Image } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, View, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { save, getValueFor } from './utils/secureStoreUtil'; // Adjust the path as needed
+import { getValueFor, remove } from './utils/secureStoreUtil'; // Adjust the path as needed
 
 const OrgLandingPage = ({ navigation }) => {
-  console.log(getValueFor("name"));
   const org_name = getValueFor("name");
+
+  const logOut = async () => {
+    await remove('name');
+    await remove('email');
+    await remove('userType');
+    await remove('userId');
+    navigation.navigate('LandingPage');
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.profileGear} onPress={() => navigation.navigate('Profile', { org_name })}>
-        <Text style={styles.gearText}>⚙️</Text>
-      </TouchableOpacity>
+      <SafeAreaView style={styles.profileGear}>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile', { org_name })}>
+          <Text style={styles.gearText}>⚙️</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => logOut()}>
+          <Text style={styles.gearText}>⬅️</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
 
-      <Text style={styles.greeting}>Welcome back, {org_name} </Text>
+      <Text style={styles.greeting}>Welcome back, {org_name || 'Organization'} </Text>
       
       {/* Image added here */}
       <Image 
@@ -37,7 +49,7 @@ const OrgLandingPage = ({ navigation }) => {
         
         <View style={styles.centeredRow}>
           <TouchableOpacity style={styles.centeredOptionButton} onPress={() => navigation.navigate('Comments')}>
-            <Text style={styles.optionButtonText}>Review Comments on Past Postings</Text>
+            <Text style={styles.optionButtonText}>Reviews on Postings</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -53,8 +65,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffff',
   },
   profileGear: {
-    marginBottom: 10,
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    top:-80,
+    justifyContent: 'space-between',
+    width: '20%',
+    marginBottom: 5,
   },
   gearText: {
     fontSize: 24,
@@ -62,21 +77,25 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 5,
+    top:-40,
   },
   image: {
     width: '100%', // Full width of the container
     height: 200, // Set the desired height
+    top:-30,
     marginBottom: 20, // Space between the image and the next section
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
+    top:-40,
+    marginBottom: 10,
   },
   optionsContainer: {
     flexDirection: 'column',
     alignItems: 'center',
+    top:-30,
   },
   row: {
     flexDirection: 'row',
