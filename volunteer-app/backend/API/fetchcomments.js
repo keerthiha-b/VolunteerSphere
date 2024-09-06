@@ -1,14 +1,24 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose'); // Add this to handle ObjectId
 const Comment = require('../Schema/Comments');
 const UserActivity = require('../Schema/UserActivity');
 const Activity = require('../Schema/Activity');
 
-// Middleware should provide req.user.id as the logged-in organization ID
 router.get('/:opportunityId', async (req, res) => {
   try {
     const { opportunityId } = req.params;
-    const orgId = req.user.id; // Assuming this is provided by your authentication middleware
+
+    // Debugging: Log req.user to check if it's being populated correctly
+    console.log('req.user:', req.user);
+
+    // Check if req.user is populated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'Unauthorized: No user data found' });
+    }
+
+    // Convert userId to MongoDB ObjectId
+    const orgId = mongoose.Types.ObjectId(req.user.id); // Convert to ObjectId
 
     // Find the activity to ensure it belongs to the logged-in organization
     const activity = await Activity.findOne({ _id: opportunityId, userId: orgId });
