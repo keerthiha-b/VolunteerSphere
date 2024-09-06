@@ -28,7 +28,7 @@ const updateMissionProgress = async (userId, activityId) => {
         // Create new progress entry if not existing
         mission.userProgresses.push({
           userId,
-          progress: (mission.goalType === 'hours' ? parseFloat(activity.duration) : 1)
+          progress: initialProgress,
         });
       }
       await mission.save();
