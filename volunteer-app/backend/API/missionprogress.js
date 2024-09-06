@@ -23,6 +23,8 @@ const updateMissionProgress = async (userId, activityId) => {
         // Update existing progress
         userProgress.progress += (mission.goalType === 'hours' ? parseFloat(activity.duration) : 1);
       } else {
+        // Create new progress entry but cap it to the mission goal
+        const initialProgress = Math.min(progressIncrement, mission.goal);
         // Create new progress entry if not existing
         mission.userProgresses.push({
           userId,
