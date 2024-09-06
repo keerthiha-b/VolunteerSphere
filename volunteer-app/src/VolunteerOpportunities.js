@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, FlatList, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Text, View } from 'react-native';
 import axios from 'axios';
-import EachPosting from './EachPosting';  
-import ApprovalActivitiesList from './ApprovalActivitiesList'; 
+import EachPosting from './EachPosting';
+import ApprovalActivitiesList from './ApprovalActivitiesList';
 import { getValueFor } from './utils/secureStoreUtil';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
-// Create the Top Tab Navigator
-const Tab = createMaterialTopTabNavigator();
 
 const VolunteerOpportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [pastOpportunities, setPastOpportunities] = useState([]);
+  const [selectedTab, setSelectedTab] = useState('upcoming'); // Track selected tab
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -47,8 +44,8 @@ const VolunteerOpportunities = () => {
     setPastOpportunities(prevPastOpportunities => prevPastOpportunities.filter(activity => activity._id !== activityId));
   };
 
-  // Upcoming Activities Component
-  const UpcomingActivities = () => (
+  // Render Upcoming Activities
+  const renderUpcomingActivities = () => (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={opportunities}
@@ -56,15 +53,15 @@ const VolunteerOpportunities = () => {
         renderItem={({ item }) => (
           <EachPosting
             opportunity={item}
-            deleteActivityCallback={removeFromUpcoming} // Pass callback to remove the activity from the upcoming list
+            deleteActivityCallback={removeFromUpcoming}
           />
         )}
       />
     </SafeAreaView>
   );
 
-  // Past Activities Component
-  const PastActivities = () => (
+  // Render Past Activities
+  const renderPastActivities = () => (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={pastOpportunities}
@@ -72,7 +69,7 @@ const VolunteerOpportunities = () => {
         renderItem={({ item }) => (
           <ApprovalActivitiesList
             opportunity={item}
-            deleteActivityCallback={removeFromPast} // Pass callback to remove the activity from the past list
+            deleteActivityCallback={removeFromPast}
           />
         )}
       />
@@ -80,32 +77,60 @@ const VolunteerOpportunities = () => {
   );
 
   return (
-    <Tab.Navigator
-      initialRouteName="Upcoming"
-      screenOptions={{
-        tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
-        tabBarStyle: { backgroundColor: '#ffffff' },
-        tabBarIndicatorStyle: { backgroundColor: '#e91e63' },
-      }}
-    >
-      <Tab.Screen
-        name="Upcoming"
-        component={UpcomingActivities}
-        options={{ tabBarLabel: 'Upcoming Activities' }}
-      />
-      <Tab.Screen
-        name="Past"
-        component={PastActivities}
-        options={{ tabBarLabel: 'Past Activities' }}
-      />
-    </Tab.Navigator>
+    <View style={styles.container}>
+      {/* Custom Tab Bar */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'upcoming' && styles.activeTab]}
+          onPress={() => setSelectedTab('upcoming')}
+        >
+          <Text style={[styles.tabText, selectedTab === 'upcoming' && styles.activeTabText]}>
+            Upcoming Activities
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'past' && styles.activeTab]}
+          onPress={() => setSelectedTab('past')}
+        >
+          <Text style={[styles.tabText, selectedTab === 'past' && styles.activeTabText]}>
+            Past Activities
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Render Content Based on Selected Tab */}
+      {selectedTab === 'upcoming' ? renderUpcomingActivities() : renderPastActivities()}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',  
+    backgroundColor: '#f0f0f0',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    backgroundColor: 'white',
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 10,
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#e91e63', // Active tab underline color
+  },
+  tabText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  activeTabText: {
+    fontWeight: 'bold',
+    color: '#e91e63', // Active tab text color
   },
 });
 
