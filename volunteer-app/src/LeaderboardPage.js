@@ -107,8 +107,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
     fontWeight: 'bold',
-    color: '#FA7F35', // Use the orange color you want for the title
-    fontFamily: 'Arial', // Ensure a clean font like Arial is used
+    color: '#FA7F35', // Use the orange color you want for the title 
   },
   podiumContainer: {
     flexDirection: 'row',
