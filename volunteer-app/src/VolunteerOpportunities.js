@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, FlatList, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 import EachPosting from './EachPosting';  
 import ApprovalActivitiesList from './ApprovalActivitiesList'; 
 import { getValueFor } from './utils/secureStoreUtil';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
+// Create the Top Tab Navigator
+const Tab = createMaterialTopTabNavigator();
 
 const VolunteerOpportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [pastOpportunities, setPastOpportunities] = useState([]);
-  const [selectedTab, setSelectedTab] = useState('upcoming');
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -29,7 +31,6 @@ const VolunteerOpportunities = () => {
         setPastOpportunities(allActivities.filter(activity => new Date(activity.date) < new Date())); // Past
       } catch (error) {
         console.error('Error fetching activities:', error);
-        setError('Error fetching activities');
       }
     };
 
@@ -62,7 +63,8 @@ const VolunteerOpportunities = () => {
     </SafeAreaView>
   );
 
-  const renderPastActivities = () => (
+  // Past Activities Component
+  const PastActivities = () => (
     <SafeAreaView style={styles.container}>
       <FlatList
         data={pastOpportunities}
@@ -78,70 +80,32 @@ const VolunteerOpportunities = () => {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Tab bar */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, selectedTab === 'upcoming' && styles.activeTab]}
-          onPress={() => setSelectedTab('upcoming')}
-        >
-          <Text style={[styles.tabText, selectedTab === 'upcoming' && styles.activeTabText]}>
-            Upcoming Activities
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, selectedTab === 'past' && styles.activeTab]}
-          onPress={() => setSelectedTab('past')}
-        >
-          <Text style={[styles.tabText, selectedTab === 'past' && styles.activeTabText]}>
-            Past Activities
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Render content based on selected tab */}
-      {error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : selectedTab === 'upcoming' ? (
-        renderUpcomingActivities()
-      ) : (
-        renderPastActivities()
-      )}
-    </View>
+    <Tab.Navigator
+      initialRouteName="Upcoming"
+      screenOptions={{
+        tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
+        tabBarStyle: { backgroundColor: '#ffffff' },
+        tabBarIndicatorStyle: { backgroundColor: '#e91e63' },
+      }}
+    >
+      <Tab.Screen
+        name="Upcoming"
+        component={UpcomingActivities}
+        options={{ tabBarLabel: 'Upcoming Activities' }}
+      />
+      <Tab.Screen
+        name="Past"
+        component={PastActivities}
+        options={{ tabBarLabel: 'Past Activities' }}
+      />
+    </Tab.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: 'white',
-  },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 10,
-  },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: 'black',
-  },
-  tabText: {
-    color: 'black',
-    fontSize: 16,
-  },
-  activeTabText: {
-    fontWeight: 'bold',
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    marginVertical: 10,
+    backgroundColor: '#f0f0f0',  
   },
 });
 
