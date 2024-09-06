@@ -68,10 +68,18 @@ const MissionsPage = () => {
 
   const filterMissions = (tab) => {
     switch (tab) {
-      case 'all': return missions;
-      case 'favs': return missions.filter(mission => mission.isFavorite);
-      case 'completed': return missions.filter(mission => mission.completed);
-      default: return missions;
+      case 'all': 
+        return missions;
+      case 'favs': 
+        return missions.filter(mission => mission.isFavorite);
+      case 'completed':
+        return missions.filter(mission => {
+          const userProgress = mission.userProgresses.find(up => up.userId === userId);
+          const progressPercent = userProgress ? Math.round((userProgress.progress / mission.goal) * 100) : 0;
+          return progressPercent >= 100;
+        });
+      default: 
+        return missions;
     }
   };
 
