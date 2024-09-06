@@ -203,15 +203,14 @@ const StudentLandingPage = ({ navigation }) => {
           <Text style={styles.optionButtonText}>Find new opportunities</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionButtonText}>Unlock Avatars</Text>
-        </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('UserActivitiesScreen', { userId: id })}>
           <Text style={styles.optionButtonText}>Manage Signups and Reviews</Text>
         </TouchableOpacity>
+      </View>
 
-        <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CertificatesScreen', { studentId: id })}>
+        <View style={styles.centeredRow}>
+          <TouchableOpacity style={styles.centeredOptionButton} onPress={() => navigation.navigate('CertificatesScreen', { studentId: id })}>
   <Text style={styles.optionButtonText}>Check your awards</Text>
 </TouchableOpacity>
       </View> 
@@ -319,6 +318,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '48%',
+    height: 100,
+  },
+  centeredRow: {
+    alignItems: 'center',
+    width: '100%',
+  },
+  centeredOptionButton: {
+    backgroundColor: '#FA7F35',
+    padding: 20,
+    borderRadius: 10,
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '60%', // Adjust this width to center the button properly
     height: 100,
   },
   optionButtonText: {

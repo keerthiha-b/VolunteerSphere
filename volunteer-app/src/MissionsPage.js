@@ -112,14 +112,13 @@ const MissionsPage = () => {
     }
   };
 
- 
   const renderMissionItem = ({ item }) => {
     // Assuming 'currentUser' holds the current logged-in user's information
     const userProgress = item.userProgresses.find(up => up.userId === userId);
   
-    // Calculate the percentage progress for the current user
+    // Calculate the percentage progress for the current user, capped at 100
     const progressPercent = userProgress
-      ? Math.round((userProgress.progress / item.goal) * 100)
+      ? Math.min(Math.round((userProgress.progress / item.goal) * 100), 100)
       : 0;
     
     return (
