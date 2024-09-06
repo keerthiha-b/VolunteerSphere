@@ -31,6 +31,7 @@ const approve = require('./API/approve-points');
 const getAvatar = require('./API/getAvatar');
 const setAvatar = require('./API/setAvatar');
 
+const Deletewithnosignup = require('./API/deleteactivitieswithnosignups'); 
 
 const app = express();
 const PORT = process.env.PORT || 3001; 
@@ -67,6 +68,8 @@ app.use('/admin/comments', commentsforadmins);
 
 // Fetch signed-up activities
 app.use('/user-activities', fetchSignedUpActivities);
+
+app.post('/delete-activity', Deletewithnosignup); 
 
 // PROGRESS
 app.post('/get-progress', getProgress);

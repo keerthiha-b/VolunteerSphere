@@ -36,31 +36,44 @@ const VolunteerOpportunities = () => {
     fetchActivities();
   }, []);
 
-  const renderUpcomingActivities = () => (
+  // Callback to remove deleted activity from upcoming list
+  const removeFromUpcoming = (activityId) => {
+    setOpportunities(prevOpportunities => prevOpportunities.filter(activity => activity._id !== activityId));
+  };
+
+  // Callback to remove deleted activity from past list
+  const removeFromPast = (activityId) => {
+    setPastOpportunities(prevPastOpportunities => prevPastOpportunities.filter(activity => activity._id !== activityId));
+  };
+
+  // Upcoming Activities Component
+  const UpcomingActivities = () => (
     <SafeAreaView style={styles.container}>
-      {opportunities.length === 0 ? (
-        <Text>No upcoming opportunities found.</Text> // Display message if no upcoming opportunities
-      ) : (
-        <FlatList
-          data={opportunities}
-          keyExtractor={item => item._id.toString()}
-          renderItem={({ item }) => <EachPosting opportunity={item} />}
-        />
-      )}
+      <FlatList
+        data={opportunities}
+        keyExtractor={item => item._id.toString()}
+        renderItem={({ item }) => (
+          <EachPosting
+            opportunity={item}
+            deleteActivityCallback={removeFromUpcoming} // Pass callback to remove the activity from the upcoming list
+          />
+        )}
+      />
     </SafeAreaView>
   );
 
   const renderPastActivities = () => (
     <SafeAreaView style={styles.container}>
-      {pastOpportunities.length === 0 ? (
-        <Text>No past opportunities found.</Text> // Display message if no past opportunities
-      ) : (
-        <FlatList
-          data={pastOpportunities}
-          keyExtractor={item => item._id.toString()}
-          renderItem={({ item }) => <ApprovalActivitiesList opportunity={item} />}
-        />
-      )}
+      <FlatList
+        data={pastOpportunities}
+        keyExtractor={item => item._id.toString()}
+        renderItem={({ item }) => (
+          <ApprovalActivitiesList
+            opportunity={item}
+            deleteActivityCallback={removeFromPast} // Pass callback to remove the activity from the past list
+          />
+        )}
+      />
     </SafeAreaView>
   );
 
