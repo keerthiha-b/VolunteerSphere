@@ -1,19 +1,35 @@
-# Welcome to your Expo app 👋
+# Volunteer Sphere App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Introduction
+Volunteer Sphere is a mobile application designed to connect volunteers with opportunities in their local community. Users can find volunteer events on a map, sign up for them, and track their participation and achievements through a point system and leaderboard. The app also features missions that users can complete to earn additional points and badges.
 
-## Get started
+## Features
+- **Opportunity Discovery**: Users can view available volunteer opportunities on an interactive map and through a list sorted by proximity and interest.
+- **Sign-Up and Tracking**: Users can sign up for volunteer opportunities and track their participation directly through the app.
+- **Missions and Points**: Users can undertake missions related to different themes (e.g., environmental, educational) and earn points that contribute to a leaderboard.
+- **User Accounts**: Profiles where users can view their participation history, upcoming events, and mission progress.
+- **Admin Panel**: Admins can post new opportunities, manage existing listings, and track user participation.
 
-1. Install dependencies
+## Technologies Used
+- **React Native**: For building the mobile application.
+- **Node.js**: Backend API server.
+- **MongoDB**: Database for storing user data and volunteer opportunities.
+- **Express**: Framework used to build the backend.
+- **Render**: Hosting and runtime for the backend.
 
+## Setup and Installation
+1. **Clone the Repository**
+2. **Change to the Directory**
+   ```bash
+   cd volunteersphere-app
+   ```
+4. **Install Dependencies**
    ```bash
    npm install
    ```
-
-2. Start the app
-
+6. **Start the Project with Expo**
    ```bash
-    npx expo start
+   npx expo start
    ```
 
 In the output, you'll find options to open the app in a
