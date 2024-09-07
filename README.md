@@ -1,13 +1,14 @@
 # Volunteer Sphere App
 
 ## Introduction
-Volunteer Sphere is a mobile application designed to connect volunteers with opportunities in their local community. Users can find volunteer events on a map, sign up for them, and track their participation and achievements through a point system and leaderboard. The app also features missions that users can complete to earn additional points and badges.
+Volunteer Sphere is a mobile application designed to connect volunteers with opportunities in their local community. Users can find volunteer events on a map, sign up for them, and track their participation and achievements through a point system and leaderboard. The app also features missions that users can complete to earn additional points and certificates.
 
 ## Features
-- **Opportunity Discovery**: Users can view available volunteer opportunities on an interactive map and through a list sorted by proximity and interest.
+- **Opportunity Discovery**: Users can view available volunteer opportunities on an interactive map and through a list of filters.
 - **Sign-Up and Tracking**: Users can sign up for volunteer opportunities and track their participation directly through the app.
 - **Missions and Points**: Users can undertake missions related to different themes (e.g., environmental, educational) and earn points that contribute to a leaderboard.
 - **User Accounts**: Profiles where users can view their participation history, upcoming events, and mission progress.
+- **Certificates** : Volunteers can earn certificates after completion of an activity and is approved by an admin from the organisation. 
 - **Admin Panel**: Admins can post new opportunities, manage existing listings, and track user participation.
 
 ## Technologies Used
@@ -21,7 +22,7 @@ Volunteer Sphere is a mobile application designed to connect volunteers with opp
 1. **Clone the Repository**
 2. **Change to the Directory**
    ```bash
-   cd volunteersphere-app
+   cd volunteer-app
    ```
 4. **Install Dependencies**
    ```bash
@@ -40,16 +41,13 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Worked on by 
+1) Ashtian
+2) Bahar
+3) Keerthiha
+4) Matthew
+5) Tara
+6) Vaibhav 
 
 ## Learn more
 
@@ -57,6 +55,7 @@ To learn more about developing your project with Expo, look at the following res
 
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+
 
 ## Join the community
 
